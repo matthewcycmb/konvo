@@ -450,70 +450,80 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'keep lands on the comparison page');
   assert(!/[—]/.test(payText()) && !/\d+K\+|game changer/.test(payText()),
     'the comparison page carries no em dashes and no invented proof');
-  wtap('impact');
+  wtap('try');
   await settle(450);
-  assert(/users love Konvo/.test(payText()) &&
-    (wdoc.querySelector('#im-pay .imp-proof img') || {}).getAttribute('src').indexOf('data:image/png;base64,') === 0,
-    'the proof block (the laurel image, caption live) sits at the foot of the free-week page');
-  assert(wdoc.querySelector('#im-pay .imp-proof').compareDocumentPosition(wdoc.querySelector('#im-pay h2')) & 2,
-    'the headline comes before the proof block: the block is the last thing above Continue');
-  // The delete-Instagram ask is gone (Aug 16): the block replaced it, and
-  // perks lead straight to the impact screen.
-  //     What the trial is FOR, before the price. The hours are the
-  //     user's own quiz answer, carried across the origin boundary.
-  assert(/Try 7 days for free and/.test(payText()),
-    'the impact page opens on the free week, in Matthew\'s words (Sep 1)');
-  assert(/reclaim 15 hours back/.test(payText()),
-    "the impact page must use the visitor's own number from the quiz");
-  assert(/Stay connected/.test(payText()) && /Reclaim your focus/.test(payText())
-    && /Lock it when you're ready/.test(payText()),
-    'all three impact claims must render');
-  assert(!/\d+K\+|game changer/.test(payText()),
-    'the impact page carries the proof block and nothing else: no invented counts, no review card');
+  //     The Cal AI chain (Sep 6, Matthew): the try page shows the live
+  //     inbox through a phone window, the reminder page keeps the promise,
+  //     then the price page. "Try 7 days for free and reclaim N hours" is
+  //     gone, and so is the proof strip on the price page.
+  assert(/We want you to try Konvo for free\./.test(payText()) && wdoc.querySelector('#im-pay .imp-win'),
+    'perks hand to the try page: the headline and the phone window');
+  assert(wdoc.getElementById('im-pay').classList.contains('im-reveal') &&
+    wdoc.documentElement.classList.contains('im-mock'),
+    'the wall goes clear and Instagram\'s page is scaled into the window');
+  assert(/Continue/.test(payText()) && wdoc.querySelector("#im-pay [data-act='try-go']") && /Skip/.test(payText()) &&
+    wdoc.querySelector("#im-pay .imp-skip[data-act='pay']") && /No Payment Due Now/.test(payText()) && !/\$0\.00|per year/.test(payText()),
+    'the try page bottom (Sep 6): the check row, Continue, then Skip to the price page, no price line');
+  assert(!/reclaim|Try 7 days for free|imp-proof/.test(payText()), 'the impact page is gone');
+  wtap('try-go');
+  await settle(450);
+  assert(/We offer 7 days free so everyone can try Konvo\./.test(payText()) && wdoc.querySelector('#im-pay .imp-acc') &&
+    wdoc.querySelector('#im-pay h2 i') && /Continue/.test(payText()) && /Skip/.test(payText()) && /No Payment Due Now/.test(payText()),
+    'the offer page (Sep 6): the free days in the accent, everyone in italics, the check row, Continue and Skip');
+  wtap('offer-go');
+  await settle(450);
+  assert(/You'll get a reminder 2 days before your trial ends\./.test(payText()) && wdoc.querySelector('#im-pay .imp-acc') &&
+    wdoc.querySelector("#im-pay img[src^='data:image/png']") && /Continue/.test(payText()) && /Skip/.test(payText()) &&
+    /No Payment Due Now/.test(payText()),
+    'the reminder page: the 2 days in the accent, Matthew\'s bell, Continue and Skip');
+  assert(!wdoc.documentElement.classList.contains('im-mock') && !wdoc.querySelector('[data-im-mock]'),
+    'leaving the try page puts Instagram\'s page back');
   wtap('pay');
   await settle(450);   // crossfade
-  assert(/How your free trial works/.test(payText()),
-    'Continue on the perks page must reach S13');
-  assert(/First 7 days free, then \$19\.99 a year\./.test(payText()),
-    'the headline states the real yearly charge');
-  assert(/SAVE 76%/.test(payText()) && !/POPULAR|RECOMMENDED/.test(payText()),
-    'the Yearly badge is the live saving');
-  assert(/Yearly Plan/.test(payText()) && /Monthly Plan/.test(payText())
-    && !/Annual/.test(payText()),
-    'the plans are called Yearly Plan and Monthly Plan, never Annual');
-  assert(/\$1\.67\/month/.test(payText()) && /\$19\.99\/year/.test(payText()),
-    'the Yearly card: monthly equivalent as the price, yearly charge beneath');
-  assert(/\$6\.99\/month/.test(payText()) && !/Try free/.test(payText()),
-    'the Monthly card carries its price; no card carries a trial line (Aug 21)');
+  assert(/Start your 7-day FREE trial to continue\./.test(payText()),
+    'Continue for FREE reaches S13, titled for the trial');
+  assert(/7 days free, then \$19\.99 per year \(\$1\.67\/mo\)/.test(payText()),
+    'the bottom line states the free days and the real yearly charge');
+  assert(/7 DAYS FREE/.test(payText()) && /SAVE 76%/.test(payText()) && !/POPULAR|RECOMMENDED|3 DAYS FREE/.test(payText()),
+    'the Yearly card: free days on the badge, the live saving under the price; Monthly carries no trial badge');
+  assert(/Yearly/.test(payText()) && /Monthly/.test(payText()) && !/Annual/.test(payText()),
+    'the plans are called Yearly and Monthly, never Annual');
+  const pkY = wdoc.querySelector("#im-pay [data-act='pk-y']"), pkM = wdoc.querySelector("#im-pay [data-act='pk-m']");
+  assert(pkY && pkM && (pkY.compareDocumentPosition(pkM) & 4) && pkY.classList.contains('on'),
+    'Yearly sits on the left and is preselected');
+  assert(pkY.compareDocumentPosition(wdoc.querySelector('#im-pay .imp-tl')) & 2,
+    'the timeline sits above the prices');
+  assert(/\$1\.67\/mo/.test(payText()) && /\$6\.99\/mo/.test(payText()) && !/Try free/.test(payText()),
+    'each card carries its monthly price');
   assert(!wdoc.querySelector("#im-pay [data-act='notready']"),
     'no x on the paywall (Aug 21): the plans are the only choice');
   assert(!wdoc.querySelector("#im-pay [data-act='pk-l']"),
     'no Lifetime card: two plans, wider cards (Aug 21)');
-  assert(/Start your free 7 days/.test(payText()),
+  assert(/Start My 7-Day Free Trial/.test(payText()),
     'the trial CTA names the free days');
-  assert(/No commitment, cancel anytime/.test(payText()),
-    'the reassurance row sits above the CTA');
-  assert(/In 4 days/.test(payText()) && /In 7 days/.test(payText()),
-    'three nodes only: today, halfway, charge - the page must fit one screen');
+  assert(/No Payment Due Now/.test(payText()) && /7 days free, then \$19\.99 per year/.test(payText()),
+    'the check row sits above the trial CTA, the price line under it');
+  assert(/In 5 Days - Reminder/.test(payText()) && /In 7 Days - Billing Starts/.test(payText()),
+    'three nodes only: today, the reminder, billing - the page must fit one screen');
   assert(!/In 12 days/.test(payText()),
     'the fourth node is gone');
-  assert(/We'll remind you before anything is charged\./.test(payText()),
-    'the reminder promise rides the halfway node');
+  assert(/We'll send you a reminder that your trial is ending soon\./.test(payText()),
+    'the reminder promise rides the middle node');
 
   //     Both packages are side-by-side selectable; each tells its own
   //     truth. Monthly has no trial (ASC, Aug 21 evening).
   wtap('pk-m');
-  assert(/How your plan works/.test(payText()) &&
-    /\$6\.99 a month, cancel anytime\./.test(payText()),
+  assert(/\$6\.99 a month, cancel anytime\./.test(payText()),
     'the Monthly story states its price and no trial');
-  assert(/Continue with Monthly/.test(payText()) && !/free/.test(payText()),
+  assert(/Continue with Monthly/.test(payText()) && /No commitment, cancel anytime/.test(payText()) &&
+    !/days free, then/.test(payText()),
     'the Monthly CTA promises nothing free');
   assert(/Every month/.test(payText()) && /Renews at \$6\.99/.test(payText()),
     'the Monthly timeline says how much and how often');
   assert(!/forever/i.test(payText()),
     'the word forever is banned copy');
   wtap('pk-y');
-  assert(/First 7 days free/.test(payText()) && /In 7 days/.test(payText()),
+  assert(/Start your 7-day FREE trial/.test(payText()) && /In 7 Days - Billing Starts/.test(payText()),
     'flipping back to Yearly must restore the trial story');
 
   //     Live values beat the stand-ins: a bridge that answers products
@@ -539,23 +549,27 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   // Same route as a real user: perks -> impact -> price.
   ltap('keep');
   await settle(450);
-  ltap('impact');
+  ltap('try');
+  await settle(450);
+  ltap('try-go');
+  await settle(450);
+  ltap('offer-go');
   await settle(450);
   ltap('pay');
   await settle(450);
   const ltext = ldoc0.getElementById('im-pay').textContent;
-  assert(/First 7 days free, then US\$39\.99 a year\./.test(ltext),
+  assert(/7 days free, then US\$39\.99 per year \(US\$3\.33\/mo\)/.test(ltext),
     'live values must replace the stand-ins');
-  assert(/US\$3\.33\/month/.test(ltext) && /US\$39\.99\/year/.test(ltext),
-    'the card must carry the live monthly equivalent and the live yearly price');
-  assert(/SAVE 33%/.test(ltext),
-    'the badge must be the live-computed saving');
-  assert(/In 4 days/.test(ltext) && /In 7 days/.test(ltext),
-    'halfway and charge nodes must follow the live trial length');
+  assert(/US\$3\.33\/mo/.test(ltext),
+    'the card must carry the live monthly equivalent');
+  assert(/7 DAYS FREE/.test(ltext),
+    'the badge is the live trial length');
+  assert(/In 5 Days - Reminder/.test(ltext) && /In 7 Days - Billing Starts/.test(ltext),
+    'reminder and billing nodes must follow the live trial length');
   ltap('pk-m');
   const mtext = ldoc0.getElementById('im-pay').textContent;
-  assert(/First 3 days free, then US\$4\.99 a month\./.test(mtext) &&
-    /Start your free 3 days/.test(mtext) && /In 3 days/.test(mtext),
+  assert(/Start your 3-day FREE trial/.test(mtext) && /3 days free, then US\$4\.99 per month/.test(mtext) &&
+    /Start My 3-Day Free Trial/.test(mtext) && /In 1 Day - Reminder/.test(mtext) && /In 3 Days - Billing Starts/.test(mtext),
     'a live monthly intro offer renders its own trial story, no rebuild needed');
   assert(posted.includes('products:'),
     'the sequence must ask the bridge for products');
@@ -581,7 +595,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     if (m.cmd in INV_REPLIES) d.window.__konvoStoreReply(m.id, INV_REPLIES[m.cmd]);
   };
   const toSuccess = async (d, tap) => {
-    tap('keep'); await settle(450); tap('impact'); await settle(450); tap('pay'); await settle(450);
+    tap('keep'); await settle(450); tap('try'); await settle(450); tap('try-go'); await settle(450); tap('offer-go'); await settle(450); tap('pay'); await settle(450);
     tap('buy-y'); await settle(1300);
   };
   const inv = boot('/direct/inbox/', '', { seed: { konvoHandle: 'matt' }, bridge: invBridge });
@@ -590,7 +604,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const itap = act => idoc.querySelector(`[data-act='${act}']`).dispatchEvent(
     new inv.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   const ipage = () => idoc.getElementById('im-pay').textContent;
-  itap('keep'); await settle(450); itap('impact'); await settle(450); itap('pay'); await settle(450);
+  itap('keep'); await settle(450); itap('try'); await settle(450); itap('try-go'); await settle(450); itap('offer-go'); await settle(450); itap('pay'); await settle(450);
   assert(!idoc.querySelector("#im-pay [data-act='x']") && !idoc.querySelector('#im-pay .imp-close'),
     'the paywall has no close: a hard gate, as before');
   assert.strictEqual(invPosted.filter(p => p === 'claim:auto').length, 1,
@@ -650,7 +664,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const cldoc = clm.window.document;
   const cltap = act => cldoc.querySelector(`[data-act='${act}']`).dispatchEvent(
     new clm.window.MouseEvent('click', { bubbles: true, cancelable: true }));
-  cltap('keep'); await settle(450); cltap('impact'); await settle(450); cltap('pay'); await settle(1200);
+  cltap('keep'); await settle(450); cltap('try'); await settle(450); cltap('try-go'); await settle(450); cltap('offer-go'); await settle(450); cltap('pay'); await settle(1200);
   assert(claimMsgs.some(m => m.cmd === 'claim' && m.productId === 'auto'),
     'the price paint asks the bridge about the clipboard');
   assert(claimMsgs.some(m => m.event === 'invite_claimed' && m.props.method === 'clipboard'),
@@ -733,7 +747,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const nptap = act => npdoc.querySelector(`[data-act='${act}']`).dispatchEvent(
     new np.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   const nptext = () => npdoc.getElementById('im-pay').textContent;
-  nptap('keep'); await settle(450); nptap('impact'); await settle(450); nptap('pay'); await settle(450);
+  nptap('keep'); await settle(450); nptap('try'); await settle(450); nptap('try-go'); await settle(450); nptap('offer-go'); await settle(450); nptap('pay'); await settle(450);
   nptap('buy-y'); await settle(1300);
   assert(/Enable notifications for messages\?/.test(nptext()) && !/New DMs|heads up/.test(nptext()),
     'a purchase lands on the notifications page: the question alone, no description (Sep 2)');
@@ -759,7 +773,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const skdoc = sk.window.document;
   const sktap = act => skdoc.querySelector(`[data-act='${act}']`).dispatchEvent(
     new sk.window.MouseEvent('click', { bubbles: true, cancelable: true }));
-  sktap('keep'); await settle(450); sktap('impact'); await settle(450); sktap('pay'); await settle(450);
+  sktap('keep'); await settle(450); sktap('try'); await settle(450); sktap('try-go'); await settle(450); sktap('offer-go'); await settle(450); sktap('pay'); await settle(450);
   sktap('pk-m'); sktap('buy-m'); await settle(1300);
   assert(/We'll remind you 2 days before your trial ends\./.test(skdoc.getElementById('im-pay').textContent),
     'the live monthly plan carries a 3-day trial, so the page keeps the reminder promise');
@@ -780,7 +794,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const nfdoc = nf.window.document;
   const nftap = act => nfdoc.querySelector(`[data-act='${act}']`).dispatchEvent(
     new nf.window.MouseEvent('click', { bubbles: true, cancelable: true }));
-  nftap('keep'); await settle(450); nftap('impact'); await settle(450); nftap('pay'); await settle(1200);
+  nftap('keep'); await settle(450); nftap('try'); await settle(450); nftap('try-go'); await settle(450); nftap('offer-go'); await settle(450); nftap('pay'); await settle(1200);
   nftap('inv-open'); await settle(450);
   const nfText = nfdoc.getElementById('im-pay').textContent;
   assert(/Enable notifications for messages\?/.test(nfText) && /You can change this any time in Settings\./.test(nfText) && !/trial ends/.test(nfText),
@@ -877,13 +891,17 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const btext = () => betaWalk.window.document.getElementById('im-pay').textContent;
   btw('keep');
   await settle(450);
-  btw('impact');
+  btw('try');
   await settle(450);
-  assert(/Try 7 days for free/.test(btext()) && /reclaim 12 hours back/.test(btext()),
-    'beta must show the impact screen, with this visitor\'s own hours');
+  btw('try-go');
+  await settle(450);
+  btw('offer-go');
+  await settle(450);
+  assert(/You'll get a reminder 2 days before your trial ends\./.test(btext()),
+    'beta walks the same try and reminder pages');
   btw('pay');
   await settle(450);
-  assert(/How your free trial works/.test(btext()) && /\$19\.99/.test(btext()),
+  assert(/Start your 7-day FREE trial/.test(btext()) && /\$19\.99/.test(btext()),
     'beta must show the real price screen');
   btw('buy-y');
   await settle(1400);   // no cageStatus answer here: the 900ms fallback confirms
@@ -911,22 +929,19 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     .dispatchEvent(new noTrial.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   nttap('keep');
   await settle(450);
-  nttap('impact');
+  nttap('try');
   await settle(450);
-  //     A user with no trial must not be sold one on the way in either.
-  const itext = noTrial.window.document.getElementById('im-pay').textContent;
-  assert(!/Free Week|days free/.test(itext),
-    'the impact screen must not promise a free week to someone who is ineligible');
-  assert(/Start using Konvo/.test(itext),
-    'it falls back to a headline that is true without a trial');
-  nttap('pay');
-  await settle(450);
+  //     A user with no trial must not be sold one on the way in either:
+  //     the try and reminder pages are skipped and the price page paints.
+  assert(!noTrial.window.document.querySelector("#im-pay [data-act='try-go']") &&
+    !/try Konvo for free|reminder 2 days before/.test(noTrial.window.document.getElementById('im-pay').textContent),
+    'no try or reminder page for someone who is ineligible');
   const ntext = noTrial.window.document.getElementById('im-pay').textContent;
-  assert(/How your plan works/.test(ntext) && !/days free/.test(ntext),
+  assert(!/days free/i.test(ntext) && !/FREE trial/.test(ntext),
     'no trial may be described when the user is ineligible');
   assert(/Continue with Yearly/.test(ntext) && /In 12 months/.test(ntext),
     'the ineligible Annual story is renewal framing');
-  assert(/\$2\.50\/month/.test(ntext),
+  assert(/\$2\.50\/mo/.test(ntext),
     'the ineligible headline prices by the month too');
 
   //     The #konvo fragment from the onboarding persists into this origin.
@@ -940,11 +955,15 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     .dispatchEvent(new quiz.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   qtap('keep');
   await settle(450);
-  qtap('impact');
+  qtap('try');
   await settle(450);
-  assert(/reclaim 9 hours back/.test(
+  qtap('try-go');
+  await settle(450);
+  qtap('offer-go');
+  await settle(450);
+  assert(/You'll get a reminder 2 days before your trial ends\./.test(
     quiz.window.document.getElementById('im-pay').textContent),
-    'the impact screen must speak the hours this visitor actually answered');
+    'the quiz visitor walks the same chain');
 
   //     The outcome after the buy tap is recorded (Sep 2): a closed Apple
   //     sheet reports as cancelled and leaves the price page live; a
@@ -960,13 +979,13 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const prdoc = prBoot.window.document;
   const prtap = act => prdoc.querySelector(`[data-act='${act}']`).dispatchEvent(
     new prBoot.window.MouseEvent('click', { bubbles: true, cancelable: true }));
-  prtap('keep'); await settle(450); prtap('impact'); await settle(450); prtap('pay'); await settle(450);
+  prtap('keep'); await settle(450); prtap('try'); await settle(450); prtap('try-go'); await settle(450); prtap('offer-go'); await settle(450); prtap('pay'); await settle(450);
   prtap('buy-y'); await settle(450);
   const prEv = prMsgs.find(m => m.event === 'purchase_result');
   assert(prEv && prEv.props.result === 'cancelled' && prEv.props.plan === 'annual' && prEv.props.screen_id === 's13_paywall',
     'a closed Apple sheet reports purchase_result cancelled for the plan tapped');
   assert(!JSON.stringify(prEv.props).includes('Error'), 'no error text rides the event');
-  assert(/How your free trial works/.test(prdoc.getElementById('im-pay').textContent) &&
+  assert(/Start your 7-day FREE trial/.test(prdoc.getElementById('im-pay').textContent) &&
     !prdoc.querySelector("#im-pay [data-act='buy-y']").disabled,
     'the price page stays, with the button live again');
 
@@ -986,7 +1005,11 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     new buyer.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   btap('keep');
   await settle(450);
-  btap('impact');
+  btap('try');
+  await settle(450);
+  btap('try-go');
+  await settle(450);
+  btap('offer-go');
   await settle(450);
   btap('pay');
   await settle(450);
@@ -1061,7 +1084,11 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     .dispatchEvent(new monthlyBuy.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   mtap('keep');
   await settle(450);
-  mtap('impact');
+  mtap('try');
+  await settle(450);
+  mtap('try-go');
+  await settle(450);
+  mtap('offer-go');
   await settle(450);
   mtap('pay');
   await settle(450);
@@ -1095,19 +1122,23 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     new d.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   rcTap(rcBuy, 'keep'); rcTap(rcNone, 'keep');
   await settle(450);
-  rcTap(rcBuy, 'impact'); rcTap(rcNone, 'impact');
+  rcTap(rcBuy, 'try'); rcTap(rcNone, 'try');
+  await settle(450);
+  rcTap(rcBuy, 'try-go'); rcTap(rcNone, 'try-go');
+  await settle(450);
+  rcTap(rcBuy, 'offer-go'); rcTap(rcNone, 'offer-go');
   await settle(450);
   rcTap(rcBuy, 'pay'); rcTap(rcNone, 'pay');
   await settle(1400);
   assert(posted.includes('rcPaywall:'),
     'the price step asks the bridge for RevenueCat\'s paywall when the patch says so');
   const rbText = rcBuy.window.document.getElementById('im-pay').textContent;
-  assert(/You're in\./.test(rbText) && !/How your free trial works/.test(rbText),
+  assert(/You're in\./.test(rbText) && !/Start your 7-day FREE trial/.test(rbText),
     'a purchase on RevenueCat\'s paywall lands on the confirmation without painting the injected price screen');
   assert(/Free until/.test(rbText) && posted.includes('notify:7'),
     'the purchased product rides back so the recap and the reminder still happen');
   assert(posted.includes('track:rc_paywall'), 'the RevenueCat result is tracked');
-  assert(/How your free trial works/.test(rcNone.window.document.getElementById('im-pay').textContent),
+  assert(/Start your 7-day FREE trial/.test(rcNone.window.document.getElementById('im-pay').textContent),
     'no paywall in the offering: the injected price screen is the floor');
 
   //     The verdict beats the cache in both directions.
@@ -1125,7 +1156,13 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   ldoc.querySelector("[data-act='keep']").dispatchEvent(
     new lapsed.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   await settle(450);
-  ldoc.querySelector("[data-act='impact']").dispatchEvent(
+  ldoc.querySelector("[data-act='try']").dispatchEvent(
+    new lapsed.window.MouseEvent('click', { bubbles: true, cancelable: true }));
+  await settle(450);
+  ldoc.querySelector("[data-act='try-go']").dispatchEvent(
+    new lapsed.window.MouseEvent('click', { bubbles: true, cancelable: true }));
+  await settle(450);
+  ldoc.querySelector("[data-act='offer-go']").dispatchEvent(
     new lapsed.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   await settle(450);
   ldoc.querySelector("[data-act='pay']").dispatchEvent(
@@ -1154,7 +1191,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   await settle(1200);
   const lddoc = lapsedDone.window.document;
   assert(lddoc.getElementById('im-pay') &&
-    /Yearly Plan/.test(lddoc.getElementById('im-pay').textContent) &&
+    /Yearly/.test(lddoc.getElementById('im-pay').textContent) &&
     /US\$39\.99/.test(lddoc.getElementById('im-pay').textContent),
     'a lapsed install must open straight on the paywall with live prices');
   assert(!/Instagram connected/.test(lddoc.getElementById('im-pay').textContent),
@@ -1648,7 +1685,9 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     lptap(act); await settle(450);
   };
   await lpwalk('keep');
-  await lpwalk('impact');
+  await lpwalk('try');
+  await lpwalk('try-go');
+  await lpwalk('offer-go');
   await lpwalk('pay');
   assert(/Loading your plans/.test(lpText()) && !/\$/.test(lpText()),
     'a wall without live prices shows the loading page and not one dollar sign');
@@ -1816,10 +1855,14 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'keep must make the wall opaque again');
   assert(/Same account\. Different app\./.test(cdoc.getElementById('im-pay').textContent),
     'keep hands over to the comparison page');
-  cactap('impact');
+  cactap('try');
   await settle(450);
-  assert(/Try 7 days for free/.test(cdoc.getElementById('im-pay').textContent),
-    'then the impact page: setup first, sell second');
+  cactap('try-go');
+  await settle(450);
+  cactap('offer-go');
+  await settle(450);
+  assert(/You'll get a reminder 2 days before your trial ends\./.test(cdoc.getElementById('im-pay').textContent),
+    'then the try and reminder pages: setup first, sell second');
   cactap('pay');
   await settle(450);
   assert(!cageLog.includes('cageOn'),
@@ -1873,7 +1916,11 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     new armed.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   atap('keep');
   await settle(450);
-  atap('impact');
+  atap('try');
+  await settle(450);
+  atap('try-go');
+  await settle(450);
+  atap('offer-go');
   await settle(450);
   atap('pay');
   await settle(450);
@@ -1937,10 +1984,14 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   await settle(450);
   assert(/Same account\. Different app\./.test(odoc.getElementById('im-pay').textContent),
     'an unsupported bridge still reaches the comparison page through the reveal');
-  otap2('impact');
+  otap2('try');
   await settle(450);
-  assert(/Try 7 days for free/.test(odoc.getElementById('im-pay').textContent),
-    'and continue into the impact page');
+  otap2('try-go');
+  await settle(450);
+  otap2('offer-go');
+  await settle(450);
+  assert(/You'll get a reminder 2 days before your trial ends\./.test(odoc.getElementById('im-pay').textContent),
+    'and continue into the reminder page');
   assert(!oldLog.includes('track:cage_pitch_viewed'),
     'no connect event when the page never rendered');
 
@@ -1959,7 +2010,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     .dispatchEvent(new mashed.window.MouseEvent('click',
       { bubbles: true, cancelable: true }));
   // The connect page is opened from the inbox's lock button (Sep 1).
-  for (const a of ['keep', 'impact', 'pay', 'betafree']) { mact(a); await settle(450); }
+  for (const a of ['keep', 'try', 'try-go', 'offer-go', 'pay', 'betafree']) { mact(a); await settle(450); }
   mact('done');
   await settle(950);
   mdoc.getElementById('im-pass').dispatchEvent(
@@ -2104,24 +2155,30 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   await settle(450);
   assert(/Même compte\. Autre appli\./.test(frText()) && /Pas de fil\. Jamais\./.test(frText()),
     'the comparison page must be French');
-  frtap('impact');
+  frtap('try');
   await settle(450);
-  assert(/utilisateurs adorent Konvo/.test(frText()), 'the proof caption is French');
-  assert(/Essaie 7 jours gratuitement et/.test(frText()) && /récupère 15 heures/.test(frText()),
-    'the impact headline must compose in French with the visitor\'s own number');
+  assert(/On veut que tu essaies Konvo gratuitement\./.test(frText()) && /Continuer/.test(frText()) && /Passer/.test(frText()),
+    'the try page is French');
+  frtap('try-go');
+  await settle(450);
+  assert(/On offre 7 jours gratuits pour que tout le monde puisse essayer Konvo\./.test(frText()), 'the offer page is French');
+  frtap('offer-go');
+  await settle(450);
+  assert(/Tu recevras un rappel 2 jours avant la fin de ton essai\./.test(frText()) && /Continuer/.test(frText()) && /Passer/.test(frText()),
+    'the reminder page is French');
   frtap('pay');
   await settle(450);
   const ft = frText();
-  assert(/Comment marche ton essai gratuit/.test(ft),
+  assert(/Commence ton essai GRATUIT de 7 jours pour continuer\./.test(ft),
     'the paywall headline must be French');
-  assert(/7 premiers jours gratuits, puis \$19\.99 par an\./.test(ft),
-    'the trial line must carry the real price in French');
+  assert(/7 jours gratuits, puis \$19\.99 par an \(\$1\.67\/mois\)/.test(ft),
+    'the bottom line must carry the real price in French');
   assert(/Commencer mes 7 jours gratuits/.test(ft), 'the CTA must be French');
-  assert(/-76\u00a0%/.test(ft) && /\$1\.67\/mois/.test(ft) && /\$19\.99\/an/.test(ft),
-    'the cards must carry French units around the live numbers');
-  assert(/Dans 4 jours/.test(ft) && /Dans 7 jours/.test(ft) && /Annule quand tu veux/.test(ft),
+  assert(/7 JOURS GRATUITS/.test(ft) && /\$1\.67\/mois/.test(ft) && /\$6\.99\/mois/.test(ft) && /Annuel/.test(ft) && /Mensuel/.test(ft),
+    'the cards must carry French units and names around the live numbers');
+  assert(/Dans 5 jours : rappel/.test(ft) && /Dans 7 jours : début de la facturation/.test(ft) && /sauf si tu annules avant/.test(ft),
     'the timeline must be French');
-  assert(/Restaurer/.test(ft) && !/\bRestore\b|\bToday\b|Yearly Plan|cancel anytime/.test(ft),
+  assert(/Restaurer/.test(ft) && !/\bRestore\b|\bToday\b|\bYearly\b|\bMonthly\b|Billing|cancel anytime/.test(ft),
     'no English may survive on the French paywall');
   assert(!/\.\./.test(ft) && !/sept\./.test(ft),
     'French dates use the long month: "7 sept." plus our period read "7 sept.." on device');
@@ -2147,11 +2204,11 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const twoTap = act => twoDoc.querySelector(`[data-act='${act}']`)
     .dispatchEvent(new twoOnly.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   twoTap('keep'); await settle(450);
-  twoTap('impact'); await settle(450);
+  twoTap('try'); await settle(450); twoTap('try-go'); await settle(450); twoTap('offer-go'); await settle(450);
   twoTap('pay'); await settle(450);
   assert(!/Loading your plans/.test(twoText()),
     'two real prices must never leave the wall on the pending page');
-  assert(/First 7 days free, then \$24\.99 a year\./.test(twoText()) && /\$9\.99\/month/.test(twoText()),
+  assert(/7 days free, then \$24\.99 per year/.test(twoText()) && /\$9\.99\/mo/.test(twoText()),
     'the wall paints the live yearly and monthly prices without a lifetime product');
   assert(twoLog.filter(c => c === 'products').length === 1,
     'and does not keep re-fetching what it already has');

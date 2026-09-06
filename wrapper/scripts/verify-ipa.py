@@ -12,7 +12,7 @@ app=[n for n in names if re.match(r'Payload/[^/]+\.app/Info\.plist$',n)][0]; app
 pls=[app]+[n for n in names if re.match(re.escape(appdir)+r'/PlugIns/[^/]+\.appex/Info\.plist$',n)]
 check(len(pls)==4,'app + 3 appexes (%d)'%len(pls))
 for p in pls:
-    d=plistlib.loads(z.read(p)); check(d.get('CFBundleShortVersionString')=='1.5.1' and d.get('CFBundleVersion')=='102','%s %s(%s)'%(p.split('/')[-2],d.get('CFBundleShortVersionString'),d.get('CFBundleVersion')))
+    d=plistlib.loads(z.read(p)); check(d.get('CFBundleShortVersionString')=='1.5.1' and d.get('CFBundleVersion')=='104','%s %s(%s)'%(p.split('/')[-2],d.get('CFBundleShortVersionString'),d.get('CFBundleVersion')))
 binary=z.read(appdir+'/'+plistlib.loads(z.read(app))['CFBundleExecutable'])
 def c(x): return binary.count(x.encode())
 check(c('phc_')>0,'PostHog key present')
@@ -23,7 +23,7 @@ check(c('strip.id = "im-sheet"')>0 and c('ims-host')>0 and c('login_sheet')>0,'s
 check(c('Reset it here, then come back and sign in.')>0 and c('im-reset-bar')>0,'reset route + way back in the cage')
 check(c("I don't remember my password")==0 and c('Connect your Instagram')==0 and c("<button data-act='done'>")==0,'no Done, nothing behind the sheet (second build)')
 check(c('@keyframes ims-rise')>0 and c('im-rise')>0,'the rise on arrival')
-check(c('iVBORw0KGgoAAAANSUhEUgAAA4QAAAG/CAYAAAAAbBl8AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAA')>0,'the 1020+ proof image rides in the cage (free-week page)')
+check(c('We want you to try Konvo for free.')>0 and c('function tryPage')>0 and c('function reminderPage')>0 and c('Start your {n}-day FREE trial to continue.')>0 and c('impactPage')==0 and c('function impactRow')==0,'the Cal AI chain: try, reminder, trial timeline; the impact page is gone (Sep 6)')
 check(c('position:absolute;top:')>0 and c('top += window.pageYOffset')>0,'key tip anchored to the page')
 check(c('Réinitialise-le ici')>0 and c('在這裡重設')>0 and c('여기서 재설정한')>0 and c('Connecte ton Instagram')==0,'sheet strings in fr / zh-Hant / ko, dead ones gone')
 check(c('loginSheet(ls);\n      showKeyTip(ls);')>0,'sheet mounts before the key tip measures (reorder landed in this binary)')
@@ -36,7 +36,7 @@ check(c('Get a heads up')==0 and c('New DMs')==0 and c('Enable notifications for
 check(c('if (days < 3) return;')==0 and c('konvoReviewAsked')>0,'rating ask without the day gate')
 dist=open(W+'/dist/index.html').read()
 import hashlib
-check(hashlib.md5(open(W+'/dist/proof.png','rb').read()).hexdigest()=='b3d125cbc4c3d5e5d2f23543c41582e3','dist/proof.png is the 1020+ image')
+check(hashlib.md5(open(W+'/dist/proof.png','rb').read()).hexdigest()=='b3d125cbc4c3d5e5d2f23543c41582e3','dist/proof.png is the 1000+ image')
 check('WE NEVER SEE YOUR DMS' in dist and "YOUR DATA STAYS ON INSTAGRAM'S SERVERS" in dist and 'Before you sign in.' in dist and 'Konvo does not collect your Instagram' in dist and 'id="s10b"' in dist,'two privacy pages: the first as it was, the caps page after it')
 hit=None
 for a in glob.glob(W+'/src-tauri/target/aarch64-apple-ios/release/build/instamessages*/out/**/*.html*',recursive=True):

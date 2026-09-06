@@ -1,0 +1,127 @@
+<!doctype html>
+<!-- PROTOTYPE, throwaway. Three wall pages inspired by Cal AI, replacing the
+     "Try 7 days for free and reclaim N hours" page. Open this file directly.
+     Bottom bar: pages 1 to 3, style (Cal AI black / Konvo blue), light/dark,
+     plan (page 3). Arrow keys flip pages. Every text is editable in place:
+     click any line, type, and the change stays until reload. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Konvo paywall chain prototype</title>
+<style>
+  :root{--bg:#fff;--ink:#141d33;--mut:#5d6478;--line:#d9d9de;--chip:#f2f2f4;--icbg:#eef3ff;--accent:#0a5cf0;--btn:#0a5cf0;--btnink:#fff;--stem:rgba(10,92,240,.18);--dot:#0a5cf0;--sel:#f6f9ff}
+  .cal{--accent:#111;--btn:#111;--btnink:#fff;--dot:#f0a24b;--stem:#f3d5b0;--sel:#fafafa}
+  .dark{--bg:#000;--ink:#f2f3f7;--mut:#9aa0ae;--line:#2a2d36;--chip:#1c1f27;--icbg:#101c33;--sel:#101c33}
+  .dark.cal{--btn:#fff;--btnink:#111;--accent:#f2f3f7;--stem:#5a4630;--sel:#151515}
+  html,body{margin:0;height:100%;background:#1d2440;font-family:-apple-system,system-ui,"SF Pro Text",sans-serif;-webkit-font-smoothing:antialiased}
+  .stage{min-height:100%;display:flex;align-items:center;justify-content:center;padding:34px 16px 90px;box-sizing:border-box}
+  .phone{zoom:var(--z,1);width:390px;height:844px;border-radius:44px;background:var(--bg);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 10px #101425,0 0 0 12px #2b3350;overflow:hidden;position:relative;display:flex;flex-direction:column}
+  .status{height:54px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-size:15px;font-weight:600}
+  #page{flex:1;display:flex;flex-direction:column;min-height:0}
+  .page{flex:1;display:flex;flex-direction:column;min-height:0;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0}}
+  .mid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 24px;text-align:center;min-height:0}
+  .foot{flex:none;padding:0 24px 34px;text-align:center}
+  h2{margin:0;font-size:27px;font-weight:800;letter-spacing:-.035em;line-height:1.18}
+  .back{position:absolute;top:66px;left:20px;color:var(--mut);font-size:22px;line-height:1}
+  .ok{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;margin-bottom:14px}
+  .ok .ck{width:18px;height:18px;border-radius:50%;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .btn{width:100%;min-height:56px;border:0;border-radius:15px;background:var(--btn);color:var(--btnink);font:600 17px/1 inherit;font-family:inherit;letter-spacing:-.012em}
+  .konvo .btn{box-shadow:0 8px 18px rgba(10,92,240,.24)}
+  .fine{font-size:13px;color:var(--mut);margin-top:12px}
+  [contenteditable]{outline:none;border-radius:4px}
+  [contenteditable]:focus{box-shadow:0 0 0 2px rgba(255,170,0,.6)}
+  /* page 1: the mockup phone with the live inbox */
+  .mock{width:224px;height:440px;border-radius:34px;background:#0b0d12;padding:9px;box-shadow:0 20px 40px rgba(0,0,0,.35);margin:26px auto 22px}
+  .mock .scr{width:100%;height:100%;border-radius:27px;background:#fff;overflow:hidden;color:#141d33;text-align:left;font-size:11px;position:relative}
+  .dark .mock .scr{background:#0b0d12;color:#f2f3f7}
+  .mock .mhead{padding:26px 14px 6px;font-weight:800;font-size:15px;letter-spacing:-.02em;display:flex;justify-content:space-between;align-items:center}
+  .mock .mhead small{font-weight:400;font-size:10px;color:#5d6478}
+  .mock .search{margin:2px 12px 8px;height:24px;border-radius:9px;background:#eef0f3;color:#8a90a0;display:flex;align-items:center;padding:0 9px;font-size:10.5px}
+  .dark .mock .search{background:#1c1f27}
+  .mock .row{display:flex;align-items:center;gap:9px;padding:6px 12px}
+  .mock .av{width:34px;height:34px;border-radius:50%;flex:none;background:linear-gradient(135deg,#c9d3ff,#8fa7ff)}
+  .mock .av.b{background:linear-gradient(135deg,#ffd7c2,#ff9a76)}.mock .av.c{background:linear-gradient(135deg,#c8f1d6,#5fd39a)}.mock .av.d{background:linear-gradient(135deg,#ffe3a8,#f5b74a)}.mock .av.e{background:linear-gradient(135deg,#e6ccff,#b98cff)}
+  .mock .who{font-weight:600;font-size:11.5px}.mock .what{color:#5d6478;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+  .mock .dot{width:8px;height:8px;border-radius:50%;background:#0a5cf0;margin-left:auto;flex:none}
+  .mock .note{position:absolute;left:0;right:0;bottom:0;padding:8px;background:linear-gradient(transparent,rgba(255,255,255,.95) 40%);font-size:9.5px;color:#5d6478;text-align:center}
+  .dark .mock .note{background:linear-gradient(transparent,rgba(11,13,18,.95) 40%)}
+  /* page 2: the bell */
+  .bell{position:relative;width:150px;height:170px;margin:34px auto 10px}
+  .bell svg{width:150px;height:170px;display:block}
+  .bell .badge{position:absolute;top:8px;right:6px;width:54px;height:54px;border-radius:50%;background:#e03b2f;color:#fff;font-weight:800;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(224,59,47,.35)}
+  /* page 3: timeline and cards */
+  .tl{display:flex;gap:14px;text-align:left;width:100%}
+  .tl .col{flex:none;width:40px;display:flex;flex-direction:column;align-items:center}
+  .tl .col i{width:40px;height:40px;border-radius:50%;background:var(--dot);display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .tl .col i.last{background:#9aa0ae}
+  .cal .tl .col i.last{background:#111}.dark.cal .tl .col i.last{background:#444}
+  .tl .stem{flex:1;width:8px;border-radius:999px;background:var(--stem);margin:2px 0}
+  .tl h4{margin:0;font-size:17px;font-weight:700}
+  .tl p{margin:3px 0 0;font-size:14.5px;line-height:1.4;color:var(--mut)}
+  .tl .txt{padding:4px 0 18px}
+  .cards{display:flex;gap:10px;margin:22px 0 16px;width:100%}
+  .card{flex:1;border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--line);padding:16px 14px 14px;text-align:left;position:relative;display:flex;justify-content:space-between;align-items:center}
+  .card.on{box-shadow:inset 0 0 0 2.5px var(--accent);background:var(--sel)}
+  .card b{display:block;font-size:14px;font-weight:600}
+  .card i{display:block;font-style:normal;font-size:16px;font-weight:800;margin-top:3px}
+  .card i small{font-size:12px;font-weight:600}
+  .card .radio{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--line);flex:none}
+  .card.on .radio{background:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);display:flex;align-items:center;justify-content:center}
+  .card .badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:var(--btnink);font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:999px;box-shadow:0 0 0 3px var(--bg)}
+  .dark .card .badge{color:#fff}.dark.cal .card .badge{color:#111}
+  /* the switcher */
+  .bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:#0f1320;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.5);font:600 13px/1 -apple-system,system-ui,sans-serif;z-index:9}
+  .bar button{border:0;border-radius:999px;background:#242a3d;color:#fff;font:inherit;padding:8px 12px;cursor:pointer}
+  .bar button.on{background:#ffb545;color:#111}
+  .bar .lbl{padding:0 6px;min-width:150px;text-align:center;color:#ffd58a}
+</style></head>
+<body class="konvo">
+<div class="stage"><div class="phone" id="phone">
+  <div class="status"><span id="clock">9:41</span><span>●●● ⌔ ▮</span></div>
+  <div id="page"></div>
+</div></div>
+<div class="bar">
+  <button onclick="go(-1)">‹</button><span class="lbl" id="lbl"></span><button onclick="go(1)">›</button>
+  <button id="stCal" onclick="setStyle('cal')">Cal AI</button><button id="stKonvo" class="on" onclick="setStyle('konvo')">Konvo</button>
+  <button id="schemeBtn" onclick="toggleScheme()">Dark</button>
+  <button id="planBtn" onclick="togglePlan()">Plan: yearly</button>
+</div>
+<script>
+// Prices as StoreKit would hand them over for a US storefront.
+var P = { yearly: { price: "$19.99", perMonth: "$1.67", trialDays: 7 }, monthly: { price: "$6.99", trialDays: 3 } };
+var page = 1, plan = "y";
+var CHECK = "<svg width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='#fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6 9 17l-5-5'/></svg>";
+var LOCK = "<svg width='19' height='19' viewBox='0 0 24 24' fill='none' stroke='#fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='10.5' width='16' height='10.5' rx='3'/><path d='M8.5 10.5V7a3.5 3.5 0 0 1 7 0'/></svg>";
+var BELL = "<svg width='19' height='19' viewBox='0 0 24 24' fill='none' stroke='#fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 16V11a6 6 0 0 1 12 0v5l2 2H4Z'/><path d='M10 20a2 2 0 0 0 4 0'/></svg>";
+var STAR = "<svg width='19' height='19' viewBox='0 0 24 24' fill='none' stroke='#fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9Z'/></svg>";
+function dateIn(days){ var d=new Date(Date.now()+days*864e5); return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}); }
+function fine(){ return plan==="y" ? "Just "+P.yearly.price+" per year ("+P.yearly.perMonth+"/mo)" : "Just "+P.monthly.price+" per month"; }
+function ok(){ return "<div class='ok'><span class='ck'>"+CHECK+"</span><span contenteditable>No Payment Due Now</span></div>"; }
+function e(t){ return "<span contenteditable>"+t+"</span>"; }
+var ROWS=[["","Alex Chen","sent you a reel"],["b","Sam","are we still on for tonight?"],["c","Priya","lol ok fine you win"],["d","Marcus","Sent a photo"],["e","Jules","call me when you're free"],["","Study group","Mia: notes are in the drive"],["b","Dad","Dinner Sunday?"],["c","Nina","hahaha 😭"]];
+function mock(){ var r=ROWS.map(function(x,i){return "<div class='row'><span class='av "+x[0]+"'></span><div><div class='who'>"+x[1]+"</div><div class='what'>"+x[2]+"</div></div>"+(i<3?"<span class='dot'></span>":"")+"</div>";}).join("");
+  return "<div class='mock'><div class='scr'><div class='mhead'>Messages <small>Requests</small></div><div class='search'>Search</div>"+r+"<div class='note'>In the app this is your real inbox, live.</div></div></div>"; }
+function page1(){ return "<div class='page'><div class='mid'><h2>"+e("We want you to<br>try Konvo for free.")+"</h2>"+mock()+"</div><div class='foot'>"+ok()+"<button class='btn' onclick='go(1)'>"+e("Try for $0.00")+"</button><div class='fine'>"+e(fine())+"</div></div></div>"; }
+function page2(){ return "<div class='page'><div class='back' onclick='go(-1)'>‹</div><div class='mid'><h2>"+e("We'll send you<br>a reminder before your<br>free trial ends")+"</h2><div class='bell'><svg viewBox='0 0 150 170' fill='none'><path d='M75 18c-27 0-46 20-46 48v34l-14 16h120l-14-16V66c0-28-19-48-46-48Z' fill='#d7e0e6'/><path d='M75 18c-27 0-46 20-46 48v34l-14 16h120l-14-16V66c0-28-19-48-46-48Z' fill='#cbd6dd' opacity='.5'/><rect x='58' y='118' width='34' height='40' rx='10' fill='#cbd6dd'/><rect x='66' y='6' width='18' height='18' rx='9' fill='#cbd6dd'/></svg><div class='badge'>1</div></div></div><div class='foot'>"+ok()+"<button class='btn' onclick='go(1)'>"+e("Continue for FREE")+"</button><div class='fine'>"+e(fine())+"</div></div></div>"; }
+function node(icon,title,body,last,stem){ return "<div class='tl'><div class='col'><i class='"+(last?"last":"")+"'>"+icon+"</i>"+(stem?"<span class='stem'></span>":"")+"</div><div class='txt'><h4>"+e(title)+"</h4><p>"+e(body)+"</p></div></div>"; }
+function page3(){ var td = plan==="y"?P.yearly.trialDays:P.monthly.trialDays; var rem = Math.max(1, td-2);
+  var tl = node(LOCK,"Today","Unlock all of Konvo: your DMs, without the Feed, Explore or Reels.",false,true)
+    + node(BELL,"In "+rem+" Days - Reminder","We'll send you a reminder that your trial is ending soon.",false,true)
+    + node(STAR,"In "+td+" Days - Billing Starts","You'll be charged on "+dateIn(td)+" unless you cancel anytime before.",true,false);
+  var cards = "<div class='cards'>"
+    + "<div class='card"+(plan==="y"?" on":"")+"' onclick='pick(\"y\")'><span class='badge'>"+P.yearly.trialDays+" DAYS FREE</span><div><b>Yearly</b><i>"+P.yearly.perMonth+"<small>/mo</small></i></div><span class='radio'>"+(plan==="y"?CHECK:"")+"</span></div>"
+    + "<div class='card"+(plan==="m"?" on":"")+"' onclick='pick(\"m\")'><div><b>Monthly</b><i>"+P.monthly.price+"<small>/mo</small></i></div><span class='radio'>"+(plan==="m"?CHECK:"")+"</span></div></div>";
+  var bottom = plan==="y" ? td+" days free, then "+P.yearly.price+" per year ("+P.yearly.perMonth+"/mo)" : td+" days free, then "+P.monthly.price+" per month";
+  return "<div class='page'><div class='back' onclick='go(-1)'>‹</div><div class='mid' style='justify-content:flex-start;padding-top:64px'><h2 style='margin-bottom:26px'>"+e("Start your "+td+"-day FREE<br>trial to continue.")+"</h2>"+tl+cards+"</div><div class='foot'>"+ok()+"<button class='btn'>"+e("Start My "+td+"-Day Free Trial")+"</button><div class='fine'>"+e(bottom)+"</div></div></div>"; }
+var NAMES = {1:"1 of 3: Try for free", 2:"2 of 3: Reminder", 3:"3 of 3: Trial timeline + prices"};
+function render(){ document.getElementById("page").innerHTML = page===1?page1():page===2?page2():page3(); document.getElementById("lbl").textContent = NAMES[page]; document.getElementById("planBtn").style.display = page===3?"":"none"; document.getElementById("planBtn").textContent = "Plan: "+(plan==="y"?"yearly":"monthly"); }
+function go(d){ page = ((page-1+d+3)%3)+1; render(); }
+function pick(p){ plan=p; render(); }
+function togglePlan(){ pick(plan==="y"?"m":"y"); }
+function setStyle(s){ document.body.classList.toggle("cal", s==="cal"); document.body.classList.toggle("konvo", s==="konvo"); document.getElementById("stCal").classList.toggle("on", s==="cal"); document.getElementById("stKonvo").classList.toggle("on", s==="konvo"); }
+function toggleScheme(){ var d=document.body.classList.toggle("dark"); document.getElementById("schemeBtn").textContent = d?"Light":"Dark"; }
+document.addEventListener("keydown", function(ev){ if (document.activeElement && document.activeElement.isContentEditable) return; if (ev.key==="ArrowRight") go(1); if (ev.key==="ArrowLeft") go(-1); });
+function fit(){ document.documentElement.style.setProperty('--z', Math.min(1, (innerHeight-120)/844).toFixed(3)); }
+addEventListener('resize', fit); fit();
+render();
+</script>
+</body></html>

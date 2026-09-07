@@ -373,7 +373,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   // The walkthrough's bridge answers products like production does (Aug
   // 31): the wall no longer paints stand-in money, so a priced S13 needs
   // a live reply. The values are what the assertions below quote.
-  const wallFresh = boot('/direct/inbox/', '', { hash: '#konvo=15', bridge: (m, d) => {
+  const wallFresh = boot('/direct/inbox/', '', { hash: '#konvo=15,distracted', bridge: (m, d) => {
     if (m.cmd === 'products') d.window.__konvoStoreReply(m.id, { ok: true,
       yearly: { price: '$19.99', perWeek: '$0.38', perMonth: '$1.67', savePct: 76, trialDays: 7 },
       monthly: { price: '$6.99' }, lifetime: { price: '$19.99' } });
@@ -456,26 +456,30 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   //     inbox through a phone window, the reminder page keeps the promise,
   //     then the price page. "Try 7 days for free and reclaim N hours" is
   //     gone, and so is the proof strip on the price page.
-  assert(/We want you to try Konvo for free\./.test(payText()) && wdoc.querySelector('#im-pay .imp-win'),
-    'perks hand to the try page: the headline and the phone window');
+  assert(/We want you to try Konvo for free\./.test(payText()) && wdoc.querySelector('#im-pay .imp-win') &&
+    wdoc.querySelectorAll("#im-pay .imp-win img.imp-frame[src^='data:image/png']").length === 1,
+    'perks hand to the try page: the headline and the phone window with Matthew\'s frame around it, once');
   assert(wdoc.getElementById('im-pay').classList.contains('im-reveal') &&
     wdoc.documentElement.classList.contains('im-mock'),
     'the wall goes clear and Instagram\'s page is scaled into the window');
-  assert(/Continue/.test(payText()) && wdoc.querySelector("#im-pay [data-act='try-go']") && /Skip/.test(payText()) &&
-    wdoc.querySelector("#im-pay .imp-skip[data-act='pay']") && /No Payment Due Now/.test(payText()) && !/\$0\.00|per year/.test(payText()),
-    'the try page bottom (Sep 6): the check row, Continue, then Skip to the price page, no price line');
+  assert(/Continue/.test(payText()) && wdoc.querySelector("#im-pay [data-act='try-go']") && !/Skip/.test(payText()) &&
+    !wdoc.querySelector('#im-pay .imp-skip, #im-pay .imp-back') && /No Payment Due Now/.test(payText()) && !/\$0\.00|per year/.test(payText()),
+    'the try page bottom (Sep 6): the check row and Continue only, no Skip, no chevron, no price line');
   assert(!/reclaim|Try 7 days for free|imp-proof/.test(payText()), 'the impact page is gone');
   wtap('try-go');
   await settle(450);
   assert(/We offer 7 days free so everyone can try Konvo\./.test(payText()) && wdoc.querySelector('#im-pay .imp-acc') &&
-    wdoc.querySelector('#im-pay h2 i') && /Continue/.test(payText()) && /Skip/.test(payText()) && /No Payment Due Now/.test(payText()),
-    'the offer page (Sep 6): the free days in the accent, everyone in italics, the check row, Continue and Skip');
+    wdoc.querySelector('#im-pay h2 i') && /Continue/.test(payText()) && !/Skip/.test(payText()) &&
+    !wdoc.querySelector('#im-pay .imp-skip, #im-pay .imp-back') && /No Payment Due Now/.test(payText()),
+    'the offer page (Sep 6): the free days in the accent, everyone in italics, the check row, Continue only');
+  assert.strictEqual((payText().match(/So you can stop getting distracted on your phone\./g) || []).length, 1,
+    'the offer page speaks to the quiz answer, once (Sep 7)');
   wtap('offer-go');
   await settle(450);
   assert(/You'll get a reminder 2 days before your trial ends\./.test(payText()) && wdoc.querySelector('#im-pay .imp-acc') &&
-    wdoc.querySelector("#im-pay img[src^='data:image/png']") && /Continue/.test(payText()) && /Skip/.test(payText()) &&
-    /No Payment Due Now/.test(payText()),
-    'the reminder page: the 2 days in the accent, Matthew\'s bell, Continue and Skip');
+    wdoc.querySelector("#im-pay img[src^='data:image/png']") && /Continue/.test(payText()) && !/Skip/.test(payText()) &&
+    !wdoc.querySelector('#im-pay .imp-skip, #im-pay .imp-back') && /No Payment Due Now/.test(payText()),
+    'the reminder page: the 2 days in the accent, Matthew\'s bell, Continue only');
   assert(!wdoc.documentElement.classList.contains('im-mock') && !wdoc.querySelector('[data-im-mock]'),
     'leaving the try page puts Instagram\'s page back');
   wtap('pay');
@@ -507,13 +511,13 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'three nodes only: today, the reminder, billing - the page must fit one screen');
   assert(!/In 12 days/.test(payText()),
     'the fourth node is gone');
-  assert(/We'll send you a reminder that your trial is ending soon\./.test(payText()),
+  assert(/We'll remind you before your trial ends\./.test(payText()),
     'the reminder promise rides the middle node');
 
   //     Both packages are side-by-side selectable; each tells its own
   //     truth. Monthly has no trial (ASC, Aug 21 evening).
   wtap('pk-m');
-  assert(/\$6\.99 a month, cancel anytime\./.test(payText()),
+  assert(/Try for \$6\.99 a month, cancel anytime\./.test(payText()),
     'the Monthly story states its price and no trial');
   assert(/Continue with Monthly/.test(payText()) && /No commitment, cancel anytime/.test(payText()) &&
     !/days free, then/.test(payText()),
@@ -707,8 +711,11 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const copiedLinks = [];
   Object.defineProperty(fh.window.navigator, 'clipboard', { value: { writeText: t => { copiedLinks.push(t); return Promise.resolve(); } }, configurable: true });
   assert(/konvoinstall\.com\/i\/matt\.two/.test(fhdoc.querySelector('#im-pay .inv-link').textContent), 'the link row shows the sender\'s link');
+  assert(!invPosted.includes('claim:own'), 'nothing tells native about our own link before the copy');
   fhtap('inv-copy'); await settle(50);
   assert.deepStrictEqual(copiedLinks, ['https://konvoinstall.com/i/matt.two'], 'Copy link puts the full link on the clipboard');
+  assert.strictEqual(invPosted.filter(p => p === 'claim:own').length, 1,
+    'the copy row tells native this clipboard content is ours, so the friend sheet never asks for it (Sep 6)');
   assert(/Copied/.test(fhdoc.querySelector('#im-pay .inv-copy').textContent), 'the label says Copied');
   //     Instagram refusing the first endpoint is reported, and the second
   //     endpoint (by the ds_user_id cookie) still finds the username.
@@ -959,6 +966,8 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   await settle(450);
   qtap('try-go');
   await settle(450);
+  assert(!/So you can/.test(quiz.window.document.getElementById('im-pay').textContent),
+    'no why in the fragment: the offer page carries no personal line');
   qtap('offer-go');
   await settle(450);
   assert(/You'll get a reminder 2 days before your trial ends\./.test(
@@ -1265,6 +1274,19 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'the French search arrow must be tagged by geometry, not by an English label');
   assert(!sdocFr.querySelector("header div").classList.contains('im-keep-back'),
     'the French header escape arrow must stay hidden');
+  //     Message Requests (user report, Sep 5): the page is pushed over the
+  //     inbox like a thread and its arrow goes BACK to the inbox, so no
+  //     inbox rule may hide it. Counting the route as the inbox did.
+  const reqHtml = `<header><a href="/direct/inbox/"><svg aria-label="Back">${PL}</svg></a><h1>Message requests</h1></header>`;
+  const reqPage = boot('/direct/requests/', reqHtml, { bridge: () => {} });
+  await settle(600);
+  const rqdoc = reqPage.window.document;
+  const rSheets = [...rqdoc.querySelectorAll('style')].map(x => x.textContent).join('\n');
+  const backRules = rSheets.match(/html\.im-inbox[^{,]*?(Back|9\.276)[^{,]*/g) || [];
+  assert(backRules.length >= 6, 'the inbox back-arrow rules are still there for the inbox itself');
+  assert(!rqdoc.documentElement.classList.contains('im-inbox') &&
+    !backRules.some(r => rqdoc.querySelector('header a').matches(r.trim())),
+    'the Message Requests page is not the inbox: its back-to-inbox arrow stays visible');
 
   //     Login drop-off detail (Aug 23): taps by label, submits, the error
   //     Instagram shows (as an enum, never its text), and going to the
@@ -1536,7 +1558,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const inboxed = boot('/direct/inbox/',
     '<a href="/direct/t/111/">a</a><a href="/direct/t/222/">b</a>' +
     '<a href="/someone/">profile</a><span id="me">matthew_c</span>' +
-    '<div role="group">a message</div>',
+    '<div role="group">a message</div><div role="textbox"></div>',
     { bridge: m => {
         if (m.cmd === 'track' && m.event === 'inbox_ready') ready.push(m.props);
         if (m.cmd === 'track' && m.event === 'thread_ready') tready.push(m.props);
@@ -1706,6 +1728,8 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'the switch time must ride along');
   assert.strictEqual(tready[0].rows, 1,
     'thread_ready must wait for real message rows, not a quiet skeleton');
+  assert.strictEqual(tready[0].composer, true,
+    'thread_ready says whether the message box rendered (Sep 7): rows 0 alone cannot tell empty from stuck');
   inboxed.window.__loc.pathname = '/direct/inbox/';
   await settle(2600);
   assert.strictEqual(ready.length, 2, 'returning to the inbox must report again');
@@ -2130,7 +2154,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   assert(tkeys > 80, 'the whole sequence must go through T(), saw ' + tkeys);
   for (const l of LANGS) for (const [k, v] of Object.entries(I18N[l]))
     assert(!/—/.test(v) && v.length, `bad ${l} entry for: ${k}`);
-  const wallFr = boot('/direct/inbox/', '', { hash: '#konvo=15', lang: 'fr-FR',
+  const wallFr = boot('/direct/inbox/', '', { hash: '#konvo=15,attention', lang: 'fr-FR',
     bridge: (m, d) => {
       if (m.cmd === 'track') d.langs = (d.langs || []).concat(m.props.lang);
       if (m.cmd === 'products') d.window.__konvoStoreReply(m.id, { ok: true,
@@ -2157,14 +2181,15 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'the comparison page must be French');
   frtap('try');
   await settle(450);
-  assert(/On veut que tu essaies Konvo gratuitement\./.test(frText()) && /Continuer/.test(frText()) && /Passer/.test(frText()),
+  assert(/On veut que tu essaies Konvo gratuitement\./.test(frText()) && /Continuer/.test(frText()) && !/Passer/.test(frText()),
     'the try page is French');
   frtap('try-go');
   await settle(450);
-  assert(/On offre 7 jours gratuits pour que tout le monde puisse essayer Konvo\./.test(frText()), 'the offer page is French');
+  assert(/On offre 7 jours gratuits pour que tout le monde puisse essayer Konvo\./.test(frText()) &&
+    /Pour que tu retrouves ton attention\./.test(frText()), 'the offer page is French, its personal line too');
   frtap('offer-go');
   await settle(450);
-  assert(/Tu recevras un rappel 2 jours avant la fin de ton essai\./.test(frText()) && /Continuer/.test(frText()) && /Passer/.test(frText()),
+  assert(/Tu recevras un rappel 2 jours avant la fin de ton essai\./.test(frText()) && /Continuer/.test(frText()) && !/Passer/.test(frText()),
     'the reminder page is French');
   frtap('pay');
   await settle(450);

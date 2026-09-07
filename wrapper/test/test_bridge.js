@@ -45,7 +45,7 @@ const TABLE = {
                    replies: ['ok', 'granted'] },
   invite:        { arg: 'JSON {handle, text, url, draft}: the share sheet (Sep 1); nothing granted for sending (Sep 2)',
                    replies: ['ok', 'sent', 'expires'] },
-  claim:         { arg: '"auto" (the claim sheet only if the clipboard holds a link) | "ask" (always)',
+  claim:         { arg: '"auto" (the claim sheet only if the clipboard holds a link the sheet has not seen) | "ask" (always) | "own" (the copy row: this clipboard content is ours, never ask)',
                    replies: ['ok', 'shown', 'entitled', 'expires', 'method'] },
 };
 

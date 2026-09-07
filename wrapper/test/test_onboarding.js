@@ -275,8 +275,10 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'S10 must set the once-per-install flag at the handoff, not at the paywall');
   assert(d.nav.length === 1 && d.nav[0].startsWith(INBOX + '#konvo='),
     'the handoff must go through NATIVE navigation and carry the weekly hours');
-  assert(Number(d.nav[0].split('=')[1]) >= 1,
+  assert(Number(d.nav[0].split('=')[1].split(',')[0]) >= 1,
     'weekly hours floor at 1 so the pre-paywall screen never says zero');
+  assert(d.nav[0].endsWith(',attention'),
+    'the handoff carries the why answer after the hours (Sep 7): the offer page speaks to it');
   assert.deepStrictEqual(d.went, [],
     'the page must not navigate itself: that is the universal link that opens Instagram');
   assert(doc.getElementById('s11').classList.contains('on'),
@@ -338,8 +340,8 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   otap('#s10 [data-next]');
   await settle(1100);
   otap('#signin');
-  assert(one.nav[0].startsWith(INBOX + '#konvo='),
-    'the handoff carries the hours even from the minimum answers');
+  assert(one.nav[0].startsWith(INBOX + '#konvo=') && one.nav[0].endsWith(',present'),
+    'the handoff carries the hours and the why even from the minimum answers');
 
   // 9. The funnel speaks the phone's language (Aug 31). The table is
   //    complete (same keys in fr/zh/ko, every T() key and every visible

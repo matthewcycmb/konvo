@@ -17,7 +17,7 @@ const answer = new Function('posted', answerSrc + '\nreturn answer;')([]);
 const LIVE_PRODUCTS = { ok: true, yearly: { price: '$19.99', perWeek: '$0.38', perMonth: '$1.67', savePct: 76, trialDays: 7 }, monthly: { price: '$6.99' }, lifetime: { price: '$79.99' } }; // the US storefront as App Store Connect has it
 const settle = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
-  const dom = boot('/direct/inbox/', '', { hash: '#konvo=15', bridge: answer({ entitlements: { entitled: false }, products: LIVE_PRODUCTS }) });
+  const dom = boot('/direct/inbox/', '', { hash: '#konvo=15,distracted', bridge: answer({ entitlements: { entitled: false }, products: LIVE_PRODUCTS }) });
   await settle(8400);
   const doc = dom.window.document;
   const tap = act => { const el = doc.querySelector(`[data-act='${act}']`); if (!el) { console.log('missing', act, 'acts:', [...doc.querySelectorAll('[data-act]')].map(e => e.getAttribute('data-act')).join(','), '| text:', (doc.getElementById('im-pay')||{textContent:''}).textContent.slice(0,80)); process.exit(1); } el.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true })); };
@@ -30,6 +30,20 @@ const settle = ms => new Promise(r => setTimeout(r, ms));
   tap('pay'); await settle(450); out.pages.push(grab('4 Trial timeline, yearly'));
   tap('pk-m'); await settle(300); out.pages.push(grab('4b Trial timeline, monthly'));
   fs.writeFileSync(path.join(__dirname, 'out-chain.json'), JSON.stringify(out));
-  console.log('pages:', out.pages.map(p => p.name + ' (' + p.wall.length + ' chars, html.' + p.htmlClass + ')').join(' | '));
+  // Compose paywall-chain.exact.html in place: swap the cage styles (between
+  // the prototype's own styles and the dark overrides) and the five frames.
+  // The try frame keeps the static stand-in inbox behind the wall (jsdom has
+  // no Instagram page to scale).
+  const ep = path.join(__dirname, 'paywall-chain.exact.html');
+  let html = fs.readFileSync(ep, 'utf8');
+  const cut = (from, to) => { const a = html.indexOf(from) + from.length, b = html.indexOf(to, a); return [a, b]; };
+  let [a, b] = cut('.bar button.on{background:#ffb545;color:#111}\n', '\n.dark #im-pay#im-pay{');
+  html = html.slice(0, a) + out.styles + html.slice(b);
+  const mock = html.slice(...cut("<div class='screen'>", '<div id="im-pay"'));
+  [a, b] = cut('<div class="stage">', '</div>\n<div class="bar"');
+  const frames = out.pages.map((p, i) => "<figure class='frame'><div class='screen'>" + (i === 0 ? mock : '') + p.wall + '</div><figcaption>' + p.name + '</figcaption></figure>').join('');
+  html = html.slice(0, a) + frames + html.slice(b);
+  fs.writeFileSync(ep, html);
+  console.log('pages:', out.pages.map(p => p.name + ' (' + p.wall.length + ' chars, html.' + p.htmlClass + ')').join(' | '), '| wrote', ep);
   process.exit(0);
 })();

@@ -1217,7 +1217,11 @@
     show("s11");
     // CAGE_SCRIPT persists this into instagram.com-origin localStorage at
     // document-start and strips the hash.
-    var url = "https://www.instagram.com/direct/inbox/#konvo=" + weeklyHours();
+    // The why answer (s2c) rides after the hours, so the offer page can
+    // speak to the person's own reason (Sep 7). Missing: hours alone.
+    var whyOpt = document.querySelector("#s2c .opt.sel");
+    var url = "https://www.instagram.com/direct/inbox/#konvo=" + weeklyHours() +
+      (whyOpt && whyOpt.dataset.why ? "," + whyOpt.dataset.why : "");
     // Hand the navigation to native. A page-driven cross-origin navigation
     // to instagram.com is a universal link on iOS: with Instagram installed,
     // the system opens THEIR app and the tester never signs into Konvo.

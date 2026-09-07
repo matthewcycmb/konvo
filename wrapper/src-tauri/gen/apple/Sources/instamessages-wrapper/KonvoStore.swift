@@ -428,7 +428,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                     // FINISHED page - a timer here always guessed wrong.
                     // ponytail: 1.5s cap if the settle signal never comes.
                     wv.evaluateJavaScript(
-                        "if(!/^\\/direct\\/(inbox|requests)?\\/?$/.test(location.pathname))"
+                        "if(!/^\\/direct\\/(inbox)?\\/?$/.test(location.pathname))"
                             + "history.back()",
                         completionHandler: nil)
                     UIView.animate(
@@ -1528,6 +1528,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
               let front = frontViewController() else { return ["ok": false] }
         let rc = Purchases.shared.appUserID
         _ = await invitePost("/api/invite/register", ["handle": handle, "rc": rc])
+        let pbBefore = UIPasteboard.general.changeCount
         let completed: Bool = await withCheckedContinuation { cont in
             var done = false
             let sheet = UIActivityViewController(activityItems: [text, url], applicationActivities: nil)
@@ -1537,6 +1538,10 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 cont.resume(returning: ok)
             }
             front.present(sheet, animated: true)
+        }
+        // Copy from the share sheet puts our own link on the clipboard.
+        if UIPasteboard.general.changeCount != pbBefore {
+            UserDefaults.standard.set(UIPasteboard.general.changeCount, forKey: "konvoClaimSkip")
         }
         guard completed else { return ["ok": true, "sent": false] }
         let (_, r) = await invitePost("/api/invite/sent",
@@ -1555,15 +1560,29 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
     // "auto" asks the pasteboard only whether it holds a web link; nothing
     // is read and no alert shows. The link itself is read when the friend
     // taps the paste button (UIPasteControl reads without the alert).
+    // The same clipboard content asks once (Matthew, Sep 6: the sheet kept
+    // returning for his own invite link, copied days before). konvoClaimSkip
+    // holds the pasteboard changeCount the sheet must ignore: the app's own
+    // copy ("own", the copy row; the share sheet when it touched the
+    // pasteboard), or a link the sheet already came up for.
     @MainActor
     private static func inviteClaim(mode: String) async -> [String: Any] {
+        let pb = UIPasteboard.general, d = UserDefaults.standard
+        if mode == "own" {
+            d.set(pb.changeCount, forKey: "konvoClaimSkip")
+            return ["ok": true, "shown": false, "entitled": false]
+        }
         if mode == "auto" {
+            if d.object(forKey: "konvoClaimSkip") != nil && d.integer(forKey: "konvoClaimSkip") == pb.changeCount {
+                return ["ok": true, "shown": false, "entitled": false]
+            }
             let found: Bool = await withCheckedContinuation { cont in
-                UIPasteboard.general.detectPatterns(for: [.probableWebURL]) { r in
+                pb.detectPatterns(for: [.probableWebURL]) { r in
                     cont.resume(returning: ((try? r.get()) ?? []).contains(.probableWebURL))
                 }
             }
             if !found { return ["ok": true, "shown": false, "entitled": false] }
+            d.set(pb.changeCount, forKey: "konvoClaimSkip")
         }
         // The paste control is iOS 16+; below it there is no sheet, and
         // the paywall stays as it is.

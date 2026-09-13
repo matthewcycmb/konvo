@@ -1,0 +1,2 @@
+# Used by verify-ipa.py to inspect the embedded, compressed onboarding HTML.
+Brotli==1.2.0

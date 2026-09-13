@@ -1,7 +1,22 @@
-import os, sys, glob, plistlib, zipfile, re, time, brotli
-W='/Users/matthewchan/Instamessages/wrapper'
-BUILD_START=float(sys.argv[1]) if len(sys.argv)>1 else 0
-IPA=sys.argv[2] if len(sys.argv)>2 else W+'/src-tauri/gen/apple/build/arm64/Konvo.ipa'
+import argparse, os, sys, glob, plistlib, zipfile, re, time, json
+from pathlib import Path
+
+W=str(Path(__file__).resolve().parents[1])
+parser=argparse.ArgumentParser(description='Verify a release IPA against this checkout and its local Rust build artifacts.')
+parser.add_argument('build_start', nargs='?', type=float, default=0, help='Earliest acceptable IPA modification time (Unix seconds).')
+parser.add_argument('ipa', nargs='?', default=W+'/src-tauri/gen/apple/build/arm64/Konvo.ipa', help='Path to the IPA; defaults to this checkout\'s development export.')
+args=parser.parse_args()
+BUILD_START=args.build_start
+IPA=args.ipa
+try:
+    import brotli
+except ImportError:
+    parser.error('Missing Brotli. Install scripts/requirements.txt with the Python environment described in README.md.')
+if not Path(IPA).is_file():
+    parser.error('IPA not found: '+IPA+'. Build the iOS app first, or pass an existing IPA path.')
+config=json.loads(Path(W, 'src-tauri/tauri.conf.json').read_text())
+expected_version=config['version']
+expected_build=config['bundle']['iOS']['bundleVersion']
 print('verifying', IPA); fails=[]
 def check(ok,m):
     print(('PASS ' if ok else 'FAIL ')+m)
@@ -12,7 +27,7 @@ app=[n for n in names if re.match(r'Payload/[^/]+\.app/Info\.plist$',n)][0]; app
 pls=[app]+[n for n in names if re.match(re.escape(appdir)+r'/PlugIns/[^/]+\.appex/Info\.plist$',n)]
 check(len(pls)==4,'app + 3 appexes (%d)'%len(pls))
 for p in pls:
-    d=plistlib.loads(z.read(p)); check(d.get('CFBundleShortVersionString')=='1.6.0' and d.get('CFBundleVersion')=='108','%s %s(%s)'%(p.split('/')[-2],d.get('CFBundleShortVersionString'),d.get('CFBundleVersion')))
+    d=plistlib.loads(z.read(p)); check(d.get('CFBundleShortVersionString')==expected_version and d.get('CFBundleVersion')==expected_build,'%s %s(%s)'%(p.split('/')[-2],d.get('CFBundleShortVersionString'),d.get('CFBundleVersion')))
 binary=z.read(appdir+'/'+plistlib.loads(z.read(app))['CFBundleExecutable'])
 def c(x): return binary.count(x.encode())
 check(c('phc_')>0,'PostHog key present')

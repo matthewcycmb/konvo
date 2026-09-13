@@ -64,29 +64,72 @@ Full policy: https://konvoinstall.com/privacy.
 
 ## Build and run
 
-Requirements: macOS with Xcode, Node 24, Rust (stable), the Tauri CLI (`npx @tauri-apps/cli`), an Apple developer team for device builds (a free Apple ID works for a development-signed install on your own phone). Set your team and bundle id in `wrapper/src-tauri/gen/apple/project.yml` and the four `Info.plist` files; the committed values are mine.
+Use Node 24 and Python 3.10 or newer (the verification script is tested with Python 3.12). Native builds also need macOS, the full Xcode installation with iOS support, and stable Rust installed through rustup. Follow [Tauri's prerequisites](https://v2.tauri.app/start/prerequisites/) to finish the Xcode and Rust setup.
+
+Install dependencies from the repository root. The site and native wrapper have separate npm lockfiles; both need their own install. The Python environment is only for the IPA verification tool.
 
 ```sh
-# site
-npm install && npm run dev
-
-# iOS development build (about ten minutes), then verify the IPA and install
-cd wrapper
-PATH="$HOME/.cargo/bin:$PATH" npx @tauri-apps/cli ios build --export-method debugging --ci
-python3 scripts/verify-ipa.py 0 src-tauri/gen/apple/build/arm64/Konvo.ipa
-scripts/install-dev.sh <device udid> --keep
-
-# Mac
-PATH="$HOME/.cargo/bin:$PATH" npx @tauri-apps/cli build --bundles app
+git clone https://github.com/matthewcycmb/konvo.git
+cd konvo
+npm ci
+npm --prefix wrapper ci
+python3 -m venv .venv
+.venv/bin/python -m pip install -r wrapper/scripts/requirements.txt
 ```
 
-Development-signed installs talk to the real App Store sandbox: sign in to the phone with a sandbox tester to see the paywall and the trial. `scripts/ship.sh` and `scripts/store-swap.sh` drive App Store Connect through its API (`scripts/asc.sh`) and expect a key you own. Mac and Windows builds also run in `.github/workflows/`.
+RevenueCat, RevenueCatUI, Superwall, and UserJot are declared in the committed Xcode project and resolved through Swift Package Manager. Cargo resolves the Rust dependencies. `node_modules`, downloaded SDKs, signing credentials, and generated build output do not belong in the repository.
 
-The site needs the variables in `.env.example` only for the invite loop and the push heartbeat; the landing page runs without them.
+### Website
+
+From the repository root:
+
+```sh
+npm run dev
+```
+
+Open http://localhost:3000. The landing page runs without environment variables. To run the invite API and push heartbeat, copy `.env.example` to `.env.local` and supply credentials for your own services.
+
+### iPhone
+
+A signed device build needs an Apple developer team and provisioning profiles that support the app's Family Controls, App Groups, and Push Notifications capabilities. A free Personal Team is not sufficient for all of these capabilities. Next Gen judges can evaluate the video and source without signing an iPhone build; the JavaScript tests below also run without an Apple account.
+
+The committed signing values belong to the original app. To build under your own team:
+
+1. In `wrapper/src-tauri/tauri.conf.json`, set `identifier` and `bundle.iOS.developmentTeam` to your app identifier and team.
+2. Open the committed `wrapper/src-tauri/gen/apple/instamessages-wrapper.xcodeproj` in Xcode. Update Signing & Capabilities for the iOS app and its three extensions, using unique bundle identifiers under your team. Keep the matching values in `project.yml` and each target's `Info.plist` and entitlements file in sync. Editing `project.yml` alone does not change the existing Xcode project.
+3. Register an App Group for your team and replace `group.com.matthewchan.konvo` in the entitlements, `project.yml`, and `Shared/KonvoShared.swift`. Keep the background refresh identifier in the app's `Info.plist`, `project.yml`, and `KonvoStore.swift` consistent if you rename it.
+4. Configure your own RevenueCat app, `Pro` entitlement, and current offering with `konvo.pro.yearly` and `konvo.pro.monthly`. Update the public SDK key in `KonvoStore.swift`. The product identifiers must match your store configuration. Real sandbox purchases require matching products and a sandbox tester in your App Store Connect account.
+
+Build from `wrapper` after installing dependencies above:
+
+```sh
+cd wrapper
+rustup target add aarch64-apple-ios
+PATH="$HOME/.cargo/bin:$PATH" npm run tauri -- ios build --export-method debugging --ci
+../.venv/bin/python scripts/verify-ipa.py 0 src-tauri/gen/apple/build/arm64/Konvo.ipa
+scripts/install-dev.sh YOUR_DEVICE_UDID --keep
+```
+
+The scripts locate this checkout from their own file paths, so the clone can have any name or location. The verifier checks a release IPA against this checkout's version, UI, and local Rust build artifacts; run it after building in the same checkout. It does not download or build the app. Use `--help` for its arguments. The installer reads the bundle identifier from the IPA, preserves app data with `--keep`, and can install another export with `KONVO_IPA=/path/to/Konvo.ipa`. Omitting `--keep` uninstalls the existing app first and resets its data.
+
+Launching from Xcode with the committed scheme uses the local `Konvo.storekit` test products. An exported development IPA uses Apple's sandbox instead; the StoreKit file does not set production prices. The App Store upload scripts are maintainer release tools, not part of contributor setup.
+
+### Mac
+
+From `wrapper`, after installing dependencies above:
+
+```sh
+PATH="$HOME/.cargo/bin:$PATH" npm run tauri -- build --bundles app
+```
+
+Mac and Windows builds also run in `.github/workflows/`.
 
 ## Tests
 
+After dependency installation, run these from the repository root:
+
 ```sh
+python3 -m unittest discover -s wrapper/test -p 'test_setup.py'  # setup scripts, no device needed
 cd wrapper
 node test/test_bridge.js        # the bridge protocol, seconds
 node test/test_onboarding.js    # screen order, language tables, no em dashes, seconds

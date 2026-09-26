@@ -1,0 +1,7 @@
+{
+  "wrapper/src-tauri/gen/apple/Sources/instamessages-wrapper/KonvoStore.swift": "b7f7ac1bef6e26312159b41cc503d8ee352958faeec0c447f22e6728f0a162ad",
+  "wrapper/src-tauri/src/cage.js": "d0c3c6e39a3500fb616b09bd7f0361a88f91ea2b8b0491d3556872f5ba4103e9",
+  "wrapper/dist/index.html": "c547d41d6ce2cabcd9f39c180bd5ef600466ae35e584eff5c5dab7388ddb58f7",
+  "wrapper/src-tauri/tauri.conf.json": "a48ec2cdf30911cee0d37e06c30d3d6c9c02e07e54d7e319a31db36e795aa98e",
+  "wrapper/test/test_chat_transition_native.js": "032bad936d2fb550d4f953400a87492d955b46947cc1cea459f24068eb3f4b51"
+}

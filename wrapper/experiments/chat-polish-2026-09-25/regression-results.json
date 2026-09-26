@@ -1,0 +1,28 @@
+{
+  "all_required_checks_passed_before_archive": true,
+  "suites": [
+    "chat_handoff",
+    "profile_routing",
+    "authenticated_appearance",
+    "onboarding_experiment",
+    "onboarding_loading",
+    "onboarding_handoff",
+    "inbox_reveal_loading",
+    "login_readiness",
+    "weekly_paywall",
+    "special_offer",
+    "original_only",
+    "release_stability",
+    "bridge",
+    "cage",
+    "onboarding",
+    "onboarding_theme",
+    "wrapper_visual",
+    "chat_transition_native"
+  ],
+  "initial_failures_resolved": [
+    "Bridge command inventory updated to include nativeNav helper and nav-prepare/nav-cancel",
+    "Observer teardown guarded when the test document is disposed"
+  ],
+  "verification_note": "The initial npm run stopped at the bridge contract; that check and the remaining suites were rerun successfully after the inventory correction."
+}

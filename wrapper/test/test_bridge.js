@@ -12,9 +12,17 @@
 // window.__konvoStoreReply(id, {...}); `replies` lists every key a
 // handler may answer with. Fire-and-forget commands reply with nothing.
 const TABLE = {
+  onboardingExperiment: {nativeOnly:true, arg:'fresh or existing', replies:['variant','enrolled','offering_id']},
+  onboardingExperimentFallback: {nativeOnly:true, arg:'unused', replies:['variant','enrolled']},
+  onboardingContext: {arg:'unused', replies:['variant','enrolled','answers']},
+  onboardingAnswers: {arg:'whitelisted quiz JSON', replies:['ok']},
+  experimentExposure: {nativeOnly:true, arg:'placement', replies:['ok']},
+  paywallImpression: {arg:'paywall ID', replies:['ok']},
   track:         { arg: 'unused (event and props ride the message body)', replies: [] },
   route:         { arg: 'route name, plus the "-settled" suffix variant', replies: [] },
   nav:           { arg: 'swipe direction for the native transition', replies: [] },
+  'nav-prepare': { arg: 'unused; hold outgoing chat navigation snapshot', replies: [] },
+  'nav-cancel':  { arg: 'unused; release a pending chat snapshot', replies: [] },
   bg:            { arg: 'CSS color for the native letterbox', replies: [] },
   haptic:        { arg: 'haptic kind', replies: [] },
   open:          { arg: 'external URL for the system browser', replies: [] },
@@ -34,7 +42,7 @@ const TABLE = {
   cageOff:       { arg: 'unused', replies: ['active'] },
   entitlements:  { arg: 'unused', replies: ['entitled'] },
   products:      { arg: 'unused', replies: ['ok', 'error', 'yearly', 'monthly',
-                                            'lifetime'] },
+                                            'lifetime', 'offeringId'] },
   purchase:      { arg: 'product identifier', replies: ['ok', 'error', 'entitled',
                                                         'cancelled', 'pending'] },
   restore:       { arg: 'unused', replies: ['ok', 'entitled'] },
@@ -43,7 +51,7 @@ const TABLE = {
                    replies: ['ok', 'result', 'entitled', 'productId'] },
   notify:        { arg: 'trial length in days (schedules the reminder); empty = permission only',
                    replies: ['ok', 'granted'] },
-  invite:        { arg: 'JSON {handle, text, url, draft}: the share sheet (Sep 1); nothing granted for sending (Sep 2)',
+  invite:        { nativeOnly: true, arg: 'Legacy share-sheet handler; the sender referral page was removed',
                    replies: ['ok', 'sent', 'expires'] },
   claim:         { arg: '"auto" (the claim sheet only if the clipboard holds a link the sheet has not seen) | "ask" (always) | "own" (the copy row: this clipboard content is ours, never ask)',
                    replies: ['ok', 'shown', 'entitled', 'expires', 'method'] },
@@ -60,18 +68,19 @@ const MOCKS = fs.readFileSync(__dirname + '/test_cage.js', 'utf8');
 
 const tabled = new Set(Object.keys(TABLE));
 
-// 1. Every command the page sends is in the table, and vice versa.
+// 1. Every command the page sends matches the active web protocol.
+//    Legacy native handlers may remain without an onboarding entry point.
 const sent = new Set([...(CAGE + DIST).matchAll(
-  /cmd: ?"([a-zA-Z]+)"|storekit\("([a-zA-Z]+)"/g)]
-  .map(m => m[1] || m[2]));
-assert.deepStrictEqual([...sent].sort(), [...tabled].sort(),
+  /cmd: ?"([a-zA-Z-]+)"|storekit\("([a-zA-Z-]+)"|nativeNav\("([a-zA-Z-]+)"/g)]
+  .map(m => m[1] || m[2] || m[3]));
+assert.deepStrictEqual([...sent].sort(), [...tabled].filter(cmd => !TABLE[cmd].nativeOnly).sort(),
   'the commands the page sends must equal the table exactly');
 
 // 2. Every command the native store handles is in the table, and vice
 //    versa. Handlers live in two dispatch sites (the webView-needing
 //    if-chain and the run() switch); both spellings are matched.
 const handled = new Set([...SWIFT.matchAll(
-  /case "([a-zA-Z]+)":|cmd == "([a-zA-Z]+)"/g)]
+  /case "([a-zA-Z-]+)":|cmd == "([a-zA-Z-]+)"/g)]
   .map(m => m[1] || m[2]));
 assert.deepStrictEqual([...handled].sort(), [...tabled].sort(),
   'the commands the native store handles must equal the table exactly');

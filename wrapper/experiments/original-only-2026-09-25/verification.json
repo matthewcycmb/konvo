@@ -1,0 +1,60 @@
+{
+  "checked_at_utc": "2026-09-25T20:13:38.346435+00:00",
+  "automated": {
+    "npm_test": "passed (full regression suite)",
+    "browser_rendering": "passed: 375/390/430px tabs and fullscreen media; 375/390px question reachability",
+    "native_cage": "passed: actual app and monitor helpers with isolated fake OS store",
+    "native_login": "passed: actual WebKit callback dispatch with synthetic failures",
+    "original_only": "passed: stale assignment/preview guards and actual offering selection",
+    "diff_check": "passed"
+  },
+  "live_device": {
+    "unread_receipts": "not verified: no inspectable authenticated session",
+    "screen_time_enforcement": "not verified: requires iPhone picker/pass/relock test",
+    "chat_animation_and_real_media": "not verified against live Instagram"
+  },
+  "posthog": {
+    "experiment_id": 465606,
+    "status": "stopped",
+    "conclusion": "stopped_early",
+    "end_date": "2026-09-25T19:57:54.528865Z",
+    "feature_flag_id": 897359,
+    "feature_flag_active": false
+  },
+  "release": {
+    "version": "1.8.0",
+    "build": "127",
+    "uploaded": false,
+    "submitted": false,
+    "build_result": "signed iOS archive succeeded",
+    "archive_path": "/Users/matthewchan/Instamessages/wrapper/src-tauri/gen/apple/build/instamessages-wrapper_iOS.xcarchive",
+    "binary_sha256": "08ca05c0a54d5b715a3eb304448001060613e6ddd2941211ed4262041cd28a18",
+    "bundles": [
+      {
+        "bundle": "Konvo.app",
+        "version": "1.8.0",
+        "build": "127"
+      },
+      {
+        "bundle": "KonvoShieldConfig.appex",
+        "version": "1.8.0",
+        "build": "127"
+      },
+      {
+        "bundle": "KonvoActivityMonitor.appex",
+        "version": "1.8.0",
+        "build": "127"
+      },
+      {
+        "bundle": "KonvoShieldAction.appex",
+        "version": "1.8.0",
+        "build": "127"
+      }
+    ],
+    "embedded_cage_exact_source": true,
+    "embedded_onboarding_html": [
+      "54a24374f7f8faa11a9d4a1f70060a2e726896ee941ea4d5bc9a42704cce8c6a.html"
+    ],
+    "codesign_verification": "passed: deep/strict, valid on disk and designated requirement"
+  }
+}

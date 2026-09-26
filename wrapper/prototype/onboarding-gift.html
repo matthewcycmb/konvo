@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Konvo · Open your gift</title>
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#060b1b;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+    .phone.gift-screen[data-step=gift]{position:relative;isolation:isolate;display:flex;flex-direction:column;width:100%;height:100svh;min-height:0;padding:14px 23px 9px;background:#060b1b!important;color:#fff;color-scheme:dark;overflow:hidden}
+    .gift-screen::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 95% 36% at 50% -9%,#155cebd9,transparent 88%),linear-gradient(#03051000,#030510 45%)}
+    .gift-speckles{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.35;background-image:radial-gradient(circle at 14px 28px,#c1c6b4 0 1px,transparent 1.5px),radial-gradient(circle at 61px 92px,#b7c4e1 0 .7px,transparent 1.2px),radial-gradient(circle at 101px 49px,#c1c6b4 0 .9px,transparent 1.4px);background-size:137px 163px,173px 139px,191px 227px}
+    .gift-screen .gift-heading{flex:none;margin:10px 0 0;text-align:center;font-size:34px;line-height:1.13;letter-spacing:-.8px;font-weight:750}
+    .gift-screen .gift-caption{flex:none;align-self:center;max-width:350px;margin:18px 0 0;text-align:center;font-size:18px;line-height:1.3;letter-spacing:-.35px;color:#b4b4bf}
+    .gift-scene{flex:1;min-height:210px;display:flex;align-items:center;justify-content:center;padding:22px 0 120px}
+    .gift-screen .gift-art{display:block;width:min(100%,290px);height:auto;max-height:100%;overflow:visible}
+    .gift-present{transform-box:fill-box;transform-origin:50% 85%;animation:konvo-gift-shake 2.8s ease-in-out infinite}
+    .gift-lid{transform-box:fill-box;transform-origin:50% 80%}
+    .gift-twinkle{transform-box:fill-box;transform-origin:center;animation:konvo-gift-twinkle 2.8s ease-in-out infinite}
+    .gift-footer{flex:none;padding:0 0 13px}
+    .gift-screen .gift-open{width:100%;min-height:60px;border:0;border-radius:19px;background:#fff;color:#141414;box-shadow:0 6px 0 #474955;font:700 21px/1.2 -apple-system,BlinkMacSystemFont,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,box-shadow .15s}
+    .gift-open:active{transform:translateY(3px);box-shadow:0 3px 0 #474955}
+    .gift-open:focus-visible{outline:3px solid #79a4ff;outline-offset:6px}
+    .gift-open:disabled{cursor:default}
+    .gift-screen.is-opening .gift-present{animation:none;transform:rotate(0)}
+    .gift-screen.is-opening .gift-lid{animation:konvo-gift-open .42s cubic-bezier(.16,1,.3,1) both}
+    .gift-screen.is-opening .gift-art{animation:konvo-gift-reveal .42s ease-out both}
+    @keyframes konvo-gift-shake{0%,48%,82%,100%{transform:rotate(0)}54%{transform:rotate(-7deg)}60%{transform:rotate(6deg)}66%{transform:rotate(-4deg)}72%{transform:rotate(3deg)}77%{transform:rotate(-1.5deg)}}
+    @keyframes konvo-gift-twinkle{0%,45%,100%{opacity:.65;transform:scale(.8)}62%,78%{opacity:1;transform:scale(1.08)}}
+    @keyframes konvo-gift-open{to{transform:translateY(-38px) rotate(-12deg);opacity:0}}
+    @keyframes konvo-gift-reveal{0%,40%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+    @media(max-height:700px){.gift-screen .gift-heading{font-size:30px;margin-top:14px}.gift-screen .gift-caption{font-size:16px;margin-top:15px}.gift-scene{min-height:150px;padding:15px 0 46px}.gift-screen .gift-art{width:min(100%,245px)}.gift-screen .gift-open{min-height:56px;font-size:20px}}
+    @media(prefers-reduced-motion:reduce){.gift-screen *{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="phone gift-screen" data-step="gift" aria-labelledby="gift-heading">
+    <div class="gift-speckles" aria-hidden="true"></div>
+    <h1 class="gift-heading" id="gift-heading">We have a gift!<br>Just for you!</h1>
+    <p class="gift-caption">Open your gift to reveal your exclusive discount.</p>
+    <div class="gift-scene" aria-hidden="true">
+      <svg class="gift-art" viewBox="0 0 320 330" fill="none">
+        <g class="gift-present">
+          <path d="M65 163h190v130c0 15-10 24-24 24H89c-14 0-24-9-24-24V163Z" fill="#2EDDC1"/>
+          <path d="M145 161h29v156h-29z" fill="#3268FF"/>
+          <g class="gift-lid">
+            <g transform="rotate(-6 160 128)">
+              <path d="M161 100C135 61 115 45 100 51c-33 14-26 43 61 49Zm0 0c13-50 28-74 45-68 35 12 23 48-45 68Z" stroke="#3268FF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="54" y="99" width="213" height="45" rx="12" fill="#3268FF"/>
+            </g>
+          </g>
+        </g>
+        <path class="gift-twinkle" d="m290 136 5 9 8 4-8 5-5 9-5-9-8-5 8-4Z" fill="#3268FF"/>
+      </svg>
+    </div>
+    <div class="gift-footer"><button class="gift-open" data-gift="open" type="button">Open now</button></div>
+  </main>
+</body>
+</html>

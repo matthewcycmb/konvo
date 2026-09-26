@@ -67,10 +67,18 @@ class KonvoActivityMonitor: DeviceActivityMonitor {
             return
         }
         let store = ManagedSettingsStore(named: .init(KonvoShared.cageStoreName))
+        guard CageSelectionPolicy.isSafe(applications: selection.applicationTokens.count,
+            categories: selection.categoryTokens.count, domains: selection.webDomainTokens.count) else {
+            store.clearAllSettings()
+            defaults?.set(false, forKey: KonvoShared.keyPassActive)
+            report("cage_relock_invalid_selection", ["via": via])
+            return
+        }
+        store.shield.webDomains = nil
+        store.shield.webDomainCategories = nil
+        store.shield.applicationCategories = nil
         store.shield.applications = selection.applicationTokens.isEmpty
             ? nil : selection.applicationTokens
-        store.shield.applicationCategories = selection.categoryTokens.isEmpty
-            ? nil : .specific(selection.categoryTokens)
         defaults?.set(false, forKey: KonvoShared.keyPassActive)
         report("cage_relock", ["via": via])
     }

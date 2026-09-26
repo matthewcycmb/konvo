@@ -16,6 +16,7 @@ tauri-build = { version = "2", features = [] }
 # Rust Code phase, so option_env! silently compiled the flag out. The tauri
 # CLI's --features flag is the channel that survives that boundary.
 [features]
+onboarding-preview = []
 konvo-beta = []
 # konvo-free: the App Store v1.0. Onboarding and the post-login sequence run
 # in full - including the delete-Instagram step, which IS the product

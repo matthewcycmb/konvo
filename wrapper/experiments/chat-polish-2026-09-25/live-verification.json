@@ -1,0 +1,15 @@
+{
+  "device": "iPhone 16e",
+  "profile_correct": true,
+  "profile_account_scoped": true,
+  "profile_has_edit_link": true,
+  "dark_media_query": true,
+  "profile_background": "rgb(12, 16, 20)",
+  "bad_legacy_cache_removed": true,
+  "diagnostic_message_content_collected": false,
+  "chat_trace": {
+    "route_to_native_ms": 29,
+    "nav_to_composer_and_message_rows_ms": 343
+  },
+  "visual_test": "Held frame shows Messages and synthetic inbox; completed frame shows Ready conversation. No intermediate white loading frame visible."
+}

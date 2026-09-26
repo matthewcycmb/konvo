@@ -1,0 +1,14 @@
+{
+  "created_at_utc": "2026-09-25T20:09:36.071352+00:00",
+  "version": "1.8.0",
+  "build": "127",
+  "files": {
+    "wrapper/dist/index.html": "c547d41d6ce2cabcd9f39c180bd5ef600466ae35e584eff5c5dab7388ddb58f7",
+    "wrapper/src-tauri/src/cage.js": "d0c3c6e39a3500fb616b09bd7f0361a88f91ea2b8b0491d3556872f5ba4103e9",
+    "wrapper/src-tauri/src/lib.rs": "0c10b6483c31ec39657c430e86af21f6ff105e3d2205b831e1d298eac63adf87",
+    "wrapper/src-tauri/tauri.conf.json": "92dc48b80b2e5b2162b5e3bca93d96807bc418b04d8d2577f59c85ce0da12f56",
+    "wrapper/src-tauri/gen/apple/Sources/instamessages-wrapper/KonvoStore.swift": "51d915e0170fd0dc6d4ab93869ec9a1946217ba3ee0a1f24fcfe8636205b6b40",
+    "wrapper/src-tauri/gen/apple/ActivityMonitor/KonvoActivityMonitor.swift": "2773feac8a38f7b3e2169e982df085e66537b0d9f4d6fc9155071a29e41815e3",
+    "wrapper/src-tauri/gen/apple/Shared/PassPolicy.swift": "2b0625943e5d65238f3e27311a66aad0902d2c51eec0270e5baf7a5309e6b7e2"
+  }
+}

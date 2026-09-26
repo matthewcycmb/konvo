@@ -1,5 +1,13 @@
 import Foundation
 
+// Shared by the app and the relock extension. Website/category restrictions
+// can also cover Konvo's Instagram web content; require a deliberate app pick.
+enum CageSelectionPolicy {
+    static func isSafe(applications: Int, categories: Int, domains: Int) -> Bool {
+        applications == 1 && categories == 0 && domains == 0
+    }
+}
+
 // The pass policy, whole and in one place: how many unlocks a day, how
 // long each is, and every number the schedule needs. The smear this
 // replaces put "2 passes" in five sites across three languages, and the

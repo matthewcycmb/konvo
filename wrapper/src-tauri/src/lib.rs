@@ -16,7 +16,7 @@ use tauri::Manager;
 /// /direct page are left completely alone, so the auth flow never gets
 /// interrupted. Redirect is deferred to the SPA router (assign, not replace
 /// at parse time) to avoid blanking.
-const CAGE_SCRIPT: &str = include_str!("cage.js");
+const CAGE_SCRIPT: &str = concat!(include_str!("onboarding-views.js"), "\n", include_str!("onboarding-experiment.js"), "\n", include_str!("cage.js"));
 
 /// Navigation gate: allow all web navigation so Meta's login / new-device
 /// verification chain (which bounces across Meta domains and can hop to
@@ -106,6 +106,14 @@ pub fn run() {
     });
     tauri_builder
         .setup(|app| {
+            // Dedicated internal TestFlight/device preview. Never enabled for an
+            // App Store release; the production experiment stays independently gated.
+            #[cfg(all(target_os = "ios", feature = "onboarding-preview"))]
+            unsafe {
+                if let Some(cls) = objc2::runtime::AnyClass::get(c"KonvoStore") {
+                    let _: () = objc2::msg_send![cls, enableOnboardingPreview];
+                }
+            }
             // Start on the bundled splash, not on instagram.com directly.
             // instagram.com begins with a network round-trip, and until its
             // response arrives there is no document for CAGE_SCRIPT to paint
@@ -127,7 +135,9 @@ pub fn run() {
             // A feature, not an env var: xcodebuild rebuilds the script
             // phase env from build settings, so an env var dies before
             // cargo; --features rides the tauri CLI all the way through.
-            let cage: std::borrow::Cow<str> = if cfg!(feature = "konvo-beta") {
+            let cage: std::borrow::Cow<str> = if cfg!(feature = "onboarding-preview") {
+                format!("window.__konvoOnboardingPreview=true;try{{window.__konvoOnboardingPreview=sessionStorage.konvoPreviewCompleted!==\"1\";}}catch(e){{}}\n{CAGE_SCRIPT}").into()
+            } else if cfg!(feature = "konvo-beta") {
                 format!("window.__konvoBeta=true;\n{CAGE_SCRIPT}").into()
             } else if cfg!(feature = "konvo-free") {
                 format!("window.__konvoFree=true;\n{CAGE_SCRIPT}").into()
@@ -188,6 +198,13 @@ pub fn run() {
                     let wk: *mut AnyObject = webview.inner().cast();
                     let vc: *mut AnyObject = webview.view_controller().cast();
                     let root: *mut AnyObject = msg_send![vc, view];
+                    // Preview always starts on the white onboarding hero, including safe areas.
+                    #[cfg(feature = "onboarding-preview")]
+                    {
+                        let _: () = msg_send![vc, setOverrideUserInterfaceStyle: 1isize];
+                        let white: *mut AnyObject = msg_send![objc2::class!(UIColor), whiteColor];
+                        let _: () = msg_send![root, setBackgroundColor: white];
+                    }
                     let guide: *mut AnyObject = msg_send![root, safeAreaLayoutGuide];
 
                     // Hand sizing to Auto Layout; wry set a flexible

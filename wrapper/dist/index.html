@@ -23,10 +23,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Konvo</title>
+<style>
+html.experiment-new{color-scheme:only light;--bg:#fff;--card:#fff;--ink:#141d33;--mut:#5d6478;--line:#d9d9de;--chip:#f2f2f4;--icbg:#eef3ff;--accent:#0a5cf0;--track:rgba(20,29,51,.12);--dbg:#05070A;--dink:#f5f5f7;--dmut:#8e8e93;--daccent:#0a84ff}
+html.experiment-new,html.experiment-new body,html.experiment-new .screen{background:#fff!important;color:var(--ink)}
+html.experiment-new #s4b{background:var(--dbg)!important;color:var(--dink);--ink:#f5f5f7;--mut:#8e8e93;--chip:#1c1f27;color-scheme:dark}
+html.experiment-new .screen.dark{background:var(--dbg)!important;color:var(--dink);color-scheme:dark}
+html.experiment-new .screen.dark .glow{display:block}
+html.experiment-new .screen:not(.dark) .glow,html.experiment-new .halo{display:none}
+</style>
 <script>
 (function () {
   var done = false;
   try { done = !!localStorage.konvoOnboarded; } catch (e) {}
+  if (window.__konvoOnboardingPreview) done = false;
   var ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
   // The onboarding opens light; native launches pinned Light to match
   // (lib.rs). The dark S5-S7 stretch asks the bridge for "dark" and S8a
@@ -49,28 +58,42 @@
     // "onboard" goes on at once so the flow script below initialises;
     // "holding" keeps the splash over it until the verdict lands.
     document.documentElement.classList.add("onboard", "holding");
+    if(window.__konvoOnboardingPreview) try { window.webkit.messageHandlers.konvoStore.postMessage({cmd:"appearance",id:0,productId:"auto"}); } catch(e) {}
     var decided = false;
     var decide = function (entitled) {
+      if (window.__konvoOnboardingPreview) entitled = false;
       if (decided) return;
       decided = true;
       if (!entitled) {
-        document.documentElement.classList.remove("holding");
-        document.dispatchEvent(new Event("konvo-onboard"));
+        var shown = false;
+        var reveal = function (res) {
+          if (shown) return; shown = true;
+          window.__konvoExperiment = {variant:"control",enrolled:false,retired:true};
+          document.documentElement.classList.remove("holding");
+          document.dispatchEvent(new Event("konvo-onboard"));
+        };
+        window.__konvoExperimentReveal = reveal;
+        // The original onboarding is now the sole production flow. No flag/network wait.
+        reveal(null);
         return;
       }
       try { localStorage.konvoOnboarded = "1"; } catch (e) {}
       try {
         window.webkit.messageHandlers.konvoStore.postMessage(
           { cmd: "appearance", id: 0, productId: "auto" });
+      } catch (e) {}
+      // Native owns this request. A timer-based fallback restarts a slow
+      // provisional load before Instagram can return its first response.
+      try {
         window.webkit.messageHandlers.konvoStore.postMessage(
           { cmd: "go", id: 0, productId: "https://www.instagram.com/direct/inbox/" });
-      } catch (e) {}
-      setTimeout(function () {
+      } catch (e) {
         location.replace("https://www.instagram.com/direct/inbox/");
-      }, 1200);
+      }
     };
     window.__konvoStoreReply = function (id, res) {
       if (id === 1) decide(!!(res && res.entitled));
+      if (id === 2 && window.__konvoExperimentReveal) window.__konvoExperimentReveal(res);
     };
     try {
       window.webkit.messageHandlers.konvoStore.postMessage(
@@ -207,6 +230,9 @@
   .screen.hold { transform: none; opacity: 1; z-index: 1 }
   .screen.dark { background: var(--dbg); color: var(--dink) }
   .body { flex: 1; display: flex; flex-direction: column; padding: 26px 20px 0 }
+  /* Seven ranges must remain reachable on compact phones. */
+  #s3 .body { min-height: 0; overflow-y: auto; padding-bottom: 20px }
+  #s3 .opts { flex-shrink: 0 }
   .mid { justify-content: center; padding: 0 24px }
   .foot { flex: none; padding: 0 20px 34px }
   .btn { width: 100%; min-height: 54px; border: 0; border-radius: 13px;
@@ -291,9 +317,6 @@
   .dark .body { position: relative; z-index: 1 }
   .trust { display: flex; align-items: center; gap: 14px; font-size: 17px;
            font-weight: 600 }
-  /* The second privacy page (Sep 1) speaks in caps, Matthew's words; 14px
-     keeps the longest line on one line at 390pt. */
-  #s10b .trust { font-size: 14px; font-weight: 700; letter-spacing: 0.01em }
   .trust .ic { width: 34px; height: 34px; flex: none; border-radius: 10px;
                background: var(--icbg); display: inline-flex; align-items: center;
                justify-content: center; color: var(--accent) }
@@ -305,14 +328,16 @@
           pointer-events: none }
   .dots { display: flex; gap: 7px; justify-content: center;
           margin-bottom: 18px }
-  /* social proof (S9t, Sep 1): the classic rating-screen composition,
-     measured from the reference at 390x844 and placed by percentage of the
-     WHOLE screen so the stagger survives 375x812 and 430x932 (the box used
-     to stop 88px short, which stacked everything higher and the top two
-     bubbles overlapped). Konvo's palette, the laurels in the classic gold. */
+  /* Community reviews lead directly to Instagram sign-in. Reserve space
+     for the explanation and policy link beneath the existing artwork. */
   #s9t { background: #f6f7fb }
   @media (prefers-color-scheme: dark) { #s9t { background: var(--bg) } }
-  .proof { position: absolute; inset: 0 }
+  .proof { position: absolute; inset: 0 0 80px }
+  .login-foot { position: relative; z-index: 2; text-align: center; padding-bottom: 20px }
+  .login-context { margin: 0 0 10px; font-size: 13px; line-height: 1.4; color: var(--mut) }
+  .privacy-link { display: inline-flex; min-height: 44px; align-items: center;
+                  padding: 0 14px; color: var(--mut); font-size: 13px;
+                  text-decoration: underline; text-underline-offset: 3px }
   .bubble { position: absolute; box-sizing: border-box; margin: 0; padding: 11px 13px 9px; border-radius: 15px;
             background: var(--card); color: var(--ink); font-size: 13.5px; line-height: 1.3;
             letter-spacing: -0.005em; box-shadow: 0 8px 22px rgba(20,29,51,0.07) }
@@ -328,6 +353,12 @@
   .bubble.b2 { right: 4%; top: 28%; width: 48% }
   .bubble.b3 { left: 5%; top: 62%; width: 42% }
   .bubble.b4 { right: 4%; top: 67.5%; width: 38% }
+  @media (max-height: 740px) {
+    #s9t .bubble { font-size: 12px; padding: 9px 11px }
+    #s9t .bubble.b1 { top: 8% }
+    #s9t .bubble.b2 { top: 26% }
+    #s9t .laurel { width: 220px }
+  }
   @media (prefers-color-scheme: dark) {
     .bubble { background: #17191f; box-shadow: 0 8px 22px rgba(0,0,0,0.5) }
   }
@@ -481,11 +512,12 @@
       <h2>What&rsquo;s your average screen time on Instagram per day?</h2>
       <p class="sub">Best guess is fine.</p>
       <div class="opts">
-        <button class="opt" data-m="45">&lt; 1 hour</button>
-        <button class="opt" data-m="90">1 - 2 hours</button>
-        <button class="opt" data-m="150">2 - 3 hours</button>
+        <button class="opt" data-m="360">5+ hours</button>
+        <button class="opt" data-m="270">4 - 5 hours</button>
         <button class="opt" data-m="210">3 - 4 hours</button>
-        <button class="opt" data-m="300">&gt; 4 hours</button>
+        <button class="opt" data-m="150">2 - 3 hours</button>
+        <button class="opt" data-m="90">1 - 2 hours</button>
+        <button class="opt" data-m="45">&lt; 1 hour</button>
         <button class="opt" data-m="150">Not sure</button>
       </div>
     </div>
@@ -649,82 +681,22 @@
     </div>
     <!-- The bubbles sit out of flow; this spacer keeps the foot at the foot. -->
     <div style="flex: 1"></div>
-    <div class="foot"><button class="btn" data-next="s10">Next</button></div>
-  </div>
-
-  <div class="screen" id="s10">
-    <div class="body mid">
-      <span style="width: 44px; height: 44px; border-radius: 13px;
-            background: var(--icbg); display: inline-flex; align-items: center;
-            justify-content: center; margin-bottom: 20px;
-            color: var(--accent)"><svg width="23"
-            height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6Z"/><path d="m9 12 2 2 4-4"/></svg></span>
-      <h2 style="margin-bottom: 28px">Konvo does not collect your Instagram
-        information.</h2>
-      <div style="display: flex; flex-direction: column; gap: 20px">
-        <div class="trust">
-          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="3"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0"/></svg></span>
-          <span>Your password goes to Instagram, never to us</span>
-        </div>
-        <div class="trust">
-          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><path d="m4.5 4.5 15 15"/></svg></span>
-          <span>Your messages are never stored by us</span>
-        </div>
-        <div class="trust">
-          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg></span>
-          <span>Your session stays on this phone</span>
-        </div>
-      </div>
+    <div class="foot login-foot">
+      <p class="login-context">Connect your Instagram to access your DMs.</p>
+      <button class="btn" id="signin">Continue with Instagram</button>
+      <a class="privacy-link" id="onboarding-privacy" href="https://konvoinstall.com/privacy" target="_blank" rel="noopener noreferrer">Privacy</a>
     </div>
-    <div class="foot"><button class="btn" data-next="s10b">Next</button></div>
-  </div>
-
-  <div class="screen" id="s10b">
-    <div class="body mid">
-      <span style="width: 44px; height: 44px; border-radius: 13px;
-            background: var(--icbg); display: inline-flex; align-items: center;
-            justify-content: center; margin-bottom: 20px;
-            color: var(--accent)"><svg width="23"
-            height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6Z"/><path d="m9 12 2 2 4-4"/></svg></span>
-      <h2 style="margin-bottom: 28px">Before you sign in.</h2>
-      <div style="display: flex; flex-direction: column; gap: 20px">
-        <div class="trust">
-          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="3"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0"/></svg></span>
-          <span>WE NEVER SEE YOUR DMS</span>
-        </div>
-        <div class="trust">
-          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><path d="m4.5 4.5 15 15"/></svg></span>
-          <span>WE DO NOT COLLECT YOUR PASSWORD</span>
-        </div>
-        <div class="trust">
-          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg></span>
-          <span>YOUR DATA STAYS ON INSTAGRAM'S SERVERS</span>
-        </div>
-      </div>
-      <p class="sub" style="margin-top: 26px; text-align: center">Have your Instagram password ready</p>
-    </div>
-    <div class="foot"><button class="btn" id="signin">Got it, sign in</button></div>
   </div>
 
   <div class="screen t-fade" id="s11">
     <div class="body mid" style="align-items: center; gap: 20px">
       <span class="spin" style="width: 20px; height: 20px; border-width: 2px"></span>
-      <span style="font-size: 15px; color: var(--mut)">Opening Instagram
+      <span role="status" style="font-size: 15px; color: var(--mut)">Opening Instagram
         sign-in&hellip;</span>
+      <div id="signin-recovery" hidden style="text-align:center;max-width:300px">
+        <p style="font-size:14px;color:var(--mut);line-height:1.5">Instagram is taking longer to respond.</p>
+        <button class="btn" id="signin-retry">Try again</button>
+      </div>
     </div>
   </div>
 
@@ -769,6 +741,8 @@
       "What’s your average screen time on Instagram per day?": "Combien de temps passes-tu sur Instagram par jour, en moyenne ?",
       "Best guess is fine.": "Une estimation suffit.",
       "< 1 hour": "< 1 heure",
+      "5+ hours": "5 heures ou plus",
+      "4 - 5 hours": "4 - 5 heures",
       "1 - 2 hours": "1 - 2 heures",
       "2 - 3 hours": "2 - 3 heures",
       "3 - 4 hours": "3 - 4 heures",
@@ -813,8 +787,12 @@
       "WE DO NOT COLLECT YOUR PASSWORD": "NOUS NE COLLECTONS PAS TON MOT DE PASSE",
       "YOUR DATA STAYS ON INSTAGRAM'S SERVERS": "TES DONNÉES RESTENT SUR LES SERVEURS D'INSTAGRAM",
       "Have your Instagram password ready": "Prépare ton mot de passe Instagram",
-      "Got it, sign in": "Compris, me connecter",
+      "Continue with Instagram": "Continuer avec Instagram",
+      "Connect your Instagram to access your DMs.": "Connecte ton Instagram pour accéder à tes DM.",
+      "Privacy": "Confidentialité",
       "Opening Instagram sign-in…": "Ouverture de la connexion Instagram…",
+      "Instagram is taking longer to respond.": "Instagram met plus de temps à répondre.",
+      "Try again": "Réessayer",
       "8 h +": "8 h +",
       "{h} h {r} m": "{h} h {r}",
       "{h} h": "{h} h",
@@ -839,6 +817,8 @@
       "What’s your average screen time on Instagram per day?": "你每天平均花多少時間在 Instagram？",
       "Best guess is fine.": "大概就好。",
       "< 1 hour": "少於 1 小時",
+      "5+ hours": "5 小時以上",
+      "4 - 5 hours": "4 - 5 小時",
       "1 - 2 hours": "1 - 2 小時",
       "2 - 3 hours": "2 - 3 小時",
       "3 - 4 hours": "3 - 4 小時",
@@ -883,8 +863,12 @@
       "WE DO NOT COLLECT YOUR PASSWORD": "我們不會收集你的密碼",
       "YOUR DATA STAYS ON INSTAGRAM'S SERVERS": "你的資料只留在 Instagram 的伺服器",
       "Have your Instagram password ready": "先準備好你的 Instagram 密碼",
-      "Got it, sign in": "明白了，登入",
+      "Continue with Instagram": "使用 Instagram 繼續",
+      "Connect your Instagram to access your DMs.": "連結你的 Instagram，即可查看私訊。",
+      "Privacy": "隱私權",
       "Opening Instagram sign-in…": "正在開啟 Instagram 登入…",
+      "Instagram is taking longer to respond.": "Instagram 回應的時間比平常久。",
+      "Try again": "再試一次",
       "8 h +": "8 小時+",
       "{h} h {r} m": "{h} 小時 {r} 分",
       "{h} h": "{h} 小時",
@@ -909,6 +893,8 @@
       "What’s your average screen time on Instagram per day?": "하루 평균 인스타그램 사용 시간은 얼마나 되나요?",
       "Best guess is fine.": "대략이면 돼요.",
       "< 1 hour": "1시간 미만",
+      "5+ hours": "5시간 이상",
+      "4 - 5 hours": "4 - 5시간",
       "1 - 2 hours": "1 - 2시간",
       "2 - 3 hours": "2 - 3시간",
       "3 - 4 hours": "3 - 4시간",
@@ -953,8 +939,12 @@
       "WE DO NOT COLLECT YOUR PASSWORD": "비밀번호를 수집하지 않아요",
       "YOUR DATA STAYS ON INSTAGRAM'S SERVERS": "데이터는 인스타그램 서버에만 있어요",
       "Have your Instagram password ready": "인스타그램 비밀번호를 준비해 두세요",
-      "Got it, sign in": "알겠어요, 로그인",
+      "Continue with Instagram": "Instagram으로 계속하기",
+      "Connect your Instagram to access your DMs.": "Instagram을 연결해 DM을 확인하세요.",
+      "Privacy": "개인정보 처리방침",
       "Opening Instagram sign-in…": "인스타그램 로그인 여는 중…",
+      "Instagram is taking longer to respond.": "Instagram 응답이 평소보다 오래 걸리고 있어요.",
+      "Try again": "다시 시도",
       "8 h +": "8시간+",
       "{h} h {r} m": "{h}시간 {r}분",
       "{h} h": "{h}시간",
@@ -1058,6 +1048,7 @@
   // side can paint that, so the screen announces itself as "blue".
   var BLUE = {};
   function setMode(m) {
+    if (document.documentElement.classList.contains("experiment-new") && m === "auto") m = "light";
     if (m === mode) return;
     mode = m;
     try {
@@ -1087,7 +1078,7 @@
     cur = next;
     busy = Date.now() + (DWELL[id] || 1000);
     track("onboarding_screen_viewed", { screen_id: id });
-    setMode(BLUE[id] ? "blue" : DARK[id] ? "dark" : "auto");
+    setMode(BLUE[id] ? "blue" : (DARK[id] || (id === "s4b" && document.documentElement.classList.contains("experiment-new"))) ? "dark" : "auto");
     if (id === "s4") gateOptions();
     if (id === "s4b") { prime(); sequence("s4b", 3400, "s5"); }
     if (id === "s5") reveal();
@@ -1209,8 +1200,38 @@
   // stalled mid-story, and the cage now identifies users by Instagram
   // handle at the inbox instead, which covers everyone at zero screens.
 
+  document.getElementById("onboarding-privacy").addEventListener("click", function (e) {
+    // Present the policy over onboarding; dismissing it returns to the same step.
+    try {
+      window.webkit.messageHandlers.konvoStore.postMessage(
+        { cmd: "open", id: 0, productId: this.href });
+      e.preventDefault();
+    } catch (err) { /* Without the native bridge, use the link's new tab. */ }
+  });
+
+  var signInURL = "", signInRecoveryTimer = 0;
+  function openSignIn() {
+    var recovery = document.getElementById("signin-recovery");
+    recovery.hidden = true;
+    clearTimeout(signInRecoveryTimer);
+    // Keep slow connections recoverable without automatically cancelling a
+    // request that WebKit is still loading. Retrying is an explicit action.
+    signInRecoveryTimer = setTimeout(function () { recovery.hidden = false; }, 8000);
+    try {
+      window.webkit.messageHandlers.konvoStore.postMessage(
+        { cmd: "go", id: 0, productId: signInURL });
+    } catch (e) {
+      location.replace(signInURL);
+    }
+  }
+  document.getElementById("signin-retry").addEventListener("click", function () {
+    if (cur.id !== "s11" || document.getElementById("signin-recovery").hidden) return;
+    openSignIn();
+  });
   document.getElementById("signin").addEventListener("click", function () {
-    track("login_started", { screen_id: "s10" });
+    if (Date.now() < busy || cur.id !== "s9t") return;
+    this.disabled = true;
+    track("login_started", { screen_id: "s9t" });
     // The once-per-install flag, set at the login handoff on purpose: a
     // killed app mid-login must never replay the quiz.
     try { localStorage.konvoOnboarded = "1"; } catch (e) {}
@@ -1219,21 +1240,21 @@
     // document-start and strips the hash.
     // The why answer (s2c) rides after the hours, so the offer page can
     // speak to the person's own reason (Sep 7). Missing: hours alone.
+    var beforeOpt = document.querySelector("#s3 .opt.sel"), afterOpt = document.querySelector("#s4 .opt.sel");
+    var answers = {instagramMinutes: mins(), messagingMinutes: msgMins(),
+      instagramUnknown: !beforeOpt || beforeOpt === document.querySelector("#s3 .opt:last-child"),
+      messagingUnknown: !afterOpt || afterOpt.dataset.est === "1",
+      instagramLabel: beforeOpt ? (beforeOpt.dataset.en || beforeOpt.textContent.trim()) : ""};
+    try { window.webkit.messageHandlers.konvoStore.postMessage({cmd:"onboardingAnswers",id:0,productId:JSON.stringify(answers)}); } catch(e) {}
     var whyOpt = document.querySelector("#s2c .opt.sel");
-    var url = "https://www.instagram.com/direct/inbox/#konvo=" + weeklyHours() +
+    signInURL = "https://www.instagram.com/direct/inbox/#konvo=" + weeklyHours() +
       (whyOpt && whyOpt.dataset.why ? "," + whyOpt.dataset.why : "");
     // Hand the navigation to native. A page-driven cross-origin navigation
     // to instagram.com is a universal link on iOS: with Instagram installed,
     // the system opens THEIR app and the tester never signs into Konvo.
     // A native load carries no such rule. The location.replace stays as the
     // fallback for the Mac and for any build without the bridge.
-    try {
-      window.webkit.messageHandlers.konvoStore.postMessage(
-        { cmd: "go", id: 0, productId: url });
-      setTimeout(function () { location.replace(url); }, 1200);
-    } catch (e) {
-      location.replace(url);
-    }
+    openSignIn();
   });
 
 })();

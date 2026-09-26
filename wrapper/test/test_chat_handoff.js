@@ -1,0 +1,21 @@
+const fs=require('fs'),assert=require('assert'),{JSDOM}=require('jsdom');
+const CAGE=fs.readFileSync(process.env.KONVO_CAGE_SOURCE||__dirname+'/../src-tauri/src/cage.js','utf8');
+const base=fs.readFileSync(__dirname+'/test_cage.js','utf8');
+const IPHONE='Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Safari/604.1',open=[];
+let setup=base.slice(base.indexOf('function boot('),base.indexOf('const settle ='));
+setup=setup.replace('  dom.window.eval(`','  dom.window.history.pushState = (state,title,url) => { dom.window.__loc.pathname = new URL(url,dom.window.__loc.href).pathname; dom.window.document.body.innerHTML="<main>Loading</main>"; };\n  dom.window.eval(`');
+const boot=new Function('JSDOM','CAGE','IPHONE','open',setup+';return boot;')(JSDOM,CAGE,IPHONE,open);
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{try{
+ const events=[],d=boot('/direct/inbox/','<main>Inbox</main>',{paid:true,seed:{konvoHandle:'fixture_owner',konvoHandleUid:'1234567'},bridge:m=>events.push({...m,hasComposer:!!d?.window.document.querySelector('[role=textbox]')})});
+ events.length=0;d.window.history.pushState({},'', '/direct/t/fixture/');
+ assert(events.some(m=>m.cmd==='nav-prepare'),'Freeze outgoing inbox before Instagram changes its route');
+ await wait(80);assert(!events.some(m=>m.cmd==='nav'&&m.productId==='push'),'Do not slide an empty, partially rendered chat');
+ d.window.document.body.innerHTML='<main><div role="textbox" contenteditable="true"></div></main>';
+ await wait(100);const slides=events.filter(m=>m.cmd==='nav'&&m.productId==='push');
+ assert.equal(slides.length,1);assert(slides[0].hasComposer,'Slide begins once composer is painted');
+ d.window.history.pushState({},'', '/direct/t/second/');await wait(30);
+ d.window.history.pushState({},'', '/notifications/');await wait(100);
+ assert(events.some(m=>m.cmd==='nav-cancel'),'Leaving a pending chat must release its snapshot');
+ console.log('CHAT HANDOFF PASSED: prepare before routing, wait for rendered composer, single slide, cancellation');
+}finally{open.forEach(d=>d.window.close())}})().catch(e=>{console.error(e);process.exitCode=1});

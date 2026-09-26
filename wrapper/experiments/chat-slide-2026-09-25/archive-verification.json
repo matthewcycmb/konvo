@@ -1,0 +1,28 @@
+{
+  "bundles": {
+    "Konvo.app": {
+      "version": "1.8.0",
+      "build": "128"
+    },
+    "KonvoShieldConfig.appex": {
+      "version": "1.8.0",
+      "build": "128"
+    },
+    "KonvoActivityMonitor.appex": {
+      "version": "1.8.0",
+      "build": "128"
+    },
+    "KonvoShieldAction.appex": {
+      "version": "1.8.0",
+      "build": "128"
+    }
+  },
+  "binary_sha256": "4a8b9488cd15d5f9202e330553db84cacc04bc24b4192a81c9ef8b36c29654a2",
+  "embedded_cage_matches_source": true,
+  "source_manifest_matches": true,
+  "codesign": "passed --deep --strict",
+  "installed_device": "iPhone 16e (Matty16E)",
+  "installed_version": "1.8.0 (128)",
+  "launch": "succeeded",
+  "installation": "in-place update; no uninstall"
+}

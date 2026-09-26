@@ -36,6 +36,8 @@
 		F23657B56E778145A4750D6C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7740352F1FBB08F13A802A3 /* CoreGraphics.framework */; };
 		F872EE291AD812280AFB7B07 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDBA0A83D3429C96EF9809F5 /* MetalKit.framework */; };
 		F92DB226D8DA4DBED23FB703 /* PassPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFCAF782BC03667682D671B /* PassPolicy.swift */; };
+		A9E81341840C4E6DB116271B /* ActivationPal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E81341840C4E6DB116271A /* ActivationPal.swift */; };
+		A9E81341840C4E6DB116271D /* KonvoActivationAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E81341840C4E6DB116271C /* KonvoActivationAnalytics.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +120,8 @@
 		F0537448B6DF47CC3C5820D9 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		FE982207D66EA4EFCA170A08 /* KonvoLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = KonvoLogo.png; sourceTree = "<group>"; };
 		FEFCAF782BC03667682D671B /* PassPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassPolicy.swift; sourceTree = "<group>"; };
+		A9E81341840C4E6DB116271A /* ActivationPal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationPal.swift; sourceTree = "<group>"; };
+		A9E81341840C4E6DB116271C /* KonvoActivationAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KonvoActivationAnalytics.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +175,8 @@
 		3347429CE70F404531F09DE9 /* instamessages-wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				A9E81341840C4E6DB116271A /* ActivationPal.swift */,
+				A9E81341840C4E6DB116271C /* KonvoActivationAnalytics.swift */,
 				E997D26F9E699F957C6A1361 /* KonvoStore.swift */,
 				A79BDBF47F2511D3579F17D6 /* main.mm */,
 				C4FE8784ECD08BC66C3E58F3 /* bindings */,
@@ -527,6 +533,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3BB87C41B44D4A9D51375BA /* KonvoShared.swift in Sources */,
+				A9E81341840C4E6DB116271B /* ActivationPal.swift in Sources */,
+				A9E81341840C4E6DB116271D /* KonvoActivationAnalytics.swift in Sources */,
 				7E4C87DD927DD830F9FDBDB8 /* KonvoStore.swift in Sources */,
 				4523AE038BC42152156819E5 /* PassPolicy.swift in Sources */,
 				3274EEB8AD3B404B6E55C41F /* main.mm in Sources */,

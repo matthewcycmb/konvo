@@ -1,0 +1,5 @@
+The original onboarding now skips the "Send Konvo to 3 friends" referral page after purchase.
+
+Please test the annual trial and monthly purchase paths. The notifications page should still appear once, and both turning notifications on and choosing "Not now" should continue to "You're in" and then your inbox.
+
+Both onboarding variants remain included. This is a production build without the forced new-onboarding preview.

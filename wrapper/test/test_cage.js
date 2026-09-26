@@ -37,6 +37,7 @@ function boot(path, html, opts = {}) {
   if (!opts.loggedOut) dom.window.document.cookie = 'ds_user_id=1234567';
   // Beta builds prepend window.__konvoBeta=true before the cage runs.
   if (opts.beta) dom.window.__konvoBeta = true;
+  if (opts.onboardingPreview) dom.window.__konvoOnboardingPreview = true;
   dom.window.fetch = () => new Promise(() => {});
   // Paywall state, seeded before the cage runs: `paid` is the offline cache a
   // paying user relies on; `bridge` stands in for KonvoStore.swift and gets
@@ -54,7 +55,7 @@ function boot(path, html, opts = {}) {
   if (opts.sseed) for (const k in opts.sseed) dom.window.sessionStorage.setItem(k, opts.sseed[k]);
   if (opts.patch) dom.window.localStorage.setItem('konvoPatch', JSON.stringify(opts.patch));
   if (opts.bridge) dom.window.webkit = { messageHandlers: { konvoStore: {
-    postMessage: m => opts.bridge(m, dom) } } };
+    postMessage: m => m.cmd === 'onboardingContext' ? dom.window.__konvoStoreReply(m.id, opts.experiment || {}) : opts.bridge(m, dom) } } };
   // jsdom refuses to navigate and locks window.location, so shadow `location`
   // with a recorder. dom.went holds every place the cage tried to send us.
   dom.went = [];
@@ -581,18 +582,13 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     posted.includes('track:paywall_viewed'),
     'the funnel events must reach the bridge');
 
-  //     The invite loop (Sep 2, final): the paywall is a hard gate with no
-  //     close; "Send Konvo to 3 friends" is its own page after the
-  //     notifications page and before "You're in" (Sep 2, Matthew).
-  //     Send is the share sheet through the bridge; the sender gets
-  //     nothing; a friend who pastes the link at their paywall gets 3 days,
-  //     three friends per code. Nothing typed leaves the page.
+  // A completed purchase keeps notifications and then goes straight to
+  // the confirmation. The removed sender referral page cannot reappear.
   const invPosted = [], invMsgs = [];
   const INV_REPLIES = { entitlements: { entitled: false }, products: LIVE_PRODUCTS,
     purchase: { ok: true, entitled: true }, notify: { ok: true, granted: true },
     cageStatus: { supported: true, authorized: false, picked: false, active: false },
-    claim: { ok: true, shown: false, entitled: false },
-    invite: { ok: true, sent: true, expires: null } };
+    claim: { ok: true, shown: false, entitled: false } };
   const invBridge = (m, d) => {
     invMsgs.push(m);
     invPosted.push(m.cmd + ':' + (m.event || m.productId || ''));
@@ -615,44 +611,26 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'the first price paint asks once whether the clipboard holds an invite');
   assert(!/Have an invite|Send Konvo/.test(ipage()), 'no invite door on the price page');
   itap('buy-y'); await settle(1300);
-  assert(/Send Konvo to 3 friends/.test(ipage()) && /Every friend who joins gets 3 days free!/.test(ipage()),
-    'a purchase lands on the invite page, its own step, with Matthew\'s two lines');
-  assert(!/You're in\./.test(ipage()) && !idoc.querySelector("#im-pay [data-act='inv-go']"),
-    'the gift is a page of its own, not a door on You\'re in');
-  assert.strictEqual(invMsgs.filter(m => m.event === 'onboarding_completed').length, 1, 'the purchase completed the sequence once');
-  assert(!idoc.querySelector('#im-pay .inv-text') && !/Restore/.test(ipage()) && !/get 3 days free\b.*and/.test(ipage()),
-    'a gift: no message card, no Restore, no reward for the sender');
-  assert(invMsgs.some(m => m.event === 'invite_page_viewed' && m.props.via === 'flow'),
-    'the page view says where from');
-  assert(/konvoinstall\.com\/i\/matt/.test(idoc.querySelector('#im-pay .inv-link').textContent), 'the link row shows the sender\'s link');
-  assert(!/—/.test(ipage()), 'no em dashes on the invite page');
-  assert(!idoc.querySelector("#im-pay [data-act='inv-send']").disabled, 'Send is live once the handle is known');
-  itap('inv-send'); await settle(450);
-  const sendArg = JSON.parse(invMsgs.find(m => m.cmd === 'invite').productId);
-  assert.strictEqual(sendArg.url, 'https://konvoinstall.com/i/matt');
-  assert.strictEqual(sendArg.handle, 'matt');
-  assert(/^not an ad lol/.test(sendArg.text) && /3 days free off my link/.test(sendArg.text) &&
-    sendArg.text.endsWith('konvoinstall.com/i/matt') && sendArg.draft === 0 && !/week/.test(sendArg.text),
-    'the share sheet gets the draft, 3 days, link last, with the sender\'s handle');
-  assert(invMsgs.some(m => m.event === 'invite_sent' && m.props.draft === 0), 'invite_sent carries the draft index only');
-  assert(!invMsgs.some(m => m.cmd === 'track' && /not an ad|kinda deleted|remember we said/.test(JSON.stringify(m.props))),
-    'no draft text rides an event');
-  assert(/Link sent\./.test(ipage()) && idoc.querySelector("#im-pay [data-act='inv-send']") &&
-    idoc.querySelector("#im-pay [data-act='inv-open']") && !/free week|3 free days start/.test(ipage()),
-    'a completed share sheet paints the sent state: send again, or open the inbox');
-  assert(!invPosted.includes('inviteStatus:'), 'the sender is never asked about joins: there is nothing to earn');
-  itap('inv-open'); await settle(1200);
+  assert(/You're in\./.test(ipage()) && !/Send Konvo|konvoinstall\.com\/i\//.test(ipage()),
+    'a purchase goes straight to confirmation when notifications were already asked');
+  assert(!idoc.querySelector("[data-act='inv-send'],[data-act='inv-copy']"),
+    'no sender referral controls remain after purchase');
   assert.strictEqual(invMsgs.filter(m => m.event === 'onboarding_completed').length, 1,
-    'Open my messages from the invite page does not complete the sequence twice');
-  //     {"invite": false} in the cage patch skips the page.
-  const noInv = boot('/direct/inbox/', '', { patch: { invite: false }, seed: { konvoHandle: 'matt' }, bridge: invBridge });
+    'the purchase completed the sequence once');
+  assert(!invMsgs.some(m => m.event === 'invite_page_viewed' || m.cmd === 'invite'),
+    'no referral impression or share request occurs');
+  itap('done'); await settle(1200);
+  assert(!idoc.getElementById('im-pay') && inv.window.localStorage.konvoPaid === '1',
+    'Open my messages dismisses confirmation and preserves purchased access');
+  // A cached legacy invite:true patch cannot restore the removed page.
+  const noInv = boot('/direct/inbox/', '', { patch: { invite: true }, seed: { konvoHandle: 'matt' }, bridge: invBridge });
   await settle(8400);
   const nidoc = noInv.window.document;
   const nitap = act => nidoc.querySelector(`[data-act='${act}']`).dispatchEvent(
     new noInv.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   await toSuccess(noInv, nitap);
   assert(/You're in\./.test(nidoc.getElementById('im-pay').textContent) && !/Send Konvo/.test(nidoc.getElementById('im-pay').textContent),
-    'with invite:false the purchase goes straight to You\'re in');
+    'even with a legacy invite:true patch, the purchase goes straight to You\'re in');
   //     A friend at the paywall with a link on the clipboard: the bridge
   //     shows the claim sheet, the days are on, and Open my messages ends
   //     the sequence like a purchase.
@@ -678,63 +656,6 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   cltap('inv-open'); await settle(1200);
   assert(claimMsgs.some(m => m.event === 'onboarding_completed' && m.props.screen_id === 's15_invite'),
     'Open my messages ends the friend\'s sequence');
-  //     A sender whose handle is not known yet cannot send a broken link:
-  //     Send waits, and says so.
-  const noHandle = boot('/direct/inbox/', '', { bridge: invBridge });
-  await settle(8400);
-  const nhdoc = noHandle.window.document;
-  const nhtap = act => nhdoc.querySelector(`[data-act='${act}']`).dispatchEvent(
-    new noHandle.window.MouseEvent('click', { bubbles: true, cancelable: true }));
-  await toSuccess(noHandle, nhtap);
-  const nsend = nhdoc.querySelector("#im-pay [data-act='inv-send']");
-  assert(nsend && nsend.disabled && /Loading your username/.test(nsend.textContent),
-    'no handle yet: Send waits rather than sending a broken link');
-  nhtap('inv-later'); await settle(450);
-  const nhText = nhdoc.getElementById('im-pay').textContent;
-  assert(/You're in\./.test(nhText) && !/Send Konvo/.test(nhText), 'Not now goes on to You\'re in, which has no door');
-  //     Instagram's own account endpoint is the reliable source of the
-  //     handle (Sep 2): when it answers, Send wakes up with the link.
-  const fetched = [];
-  const fh = boot('/direct/inbox/', '', { bridge: invBridge });
-  fh.window.fetch = (u) => { fetched.push(String(u)); return Promise.resolve({ ok: true, json: () => Promise.resolve({ user: { username: 'matt.two' } }) }); };
-  await settle(8400);
-  const fhdoc = fh.window.document;
-  const fhtap = act => fhdoc.querySelector(`[data-act='${act}']`).dispatchEvent(
-    new fh.window.MouseEvent('click', { bubbles: true, cancelable: true }));
-  await toSuccess(fh, fhtap); await settle(1200);
-  assert(fetched.some(u => /\/api\/v1\/accounts\/current_user\//.test(u)), 'the invite page asks Instagram for the username');
-  const fsend = fhdoc.querySelector("#im-pay [data-act='inv-send']");
-  assert(fsend && !fsend.disabled && /Send to 3 friends/.test(fsend.textContent) &&
-    fh.window.localStorage.getItem('konvoHandle') === 'matt.two',
-    'the answer wakes Send with the handle as the code');
-  //     The link row: the code in the open, one tap copies it (Sep 2).
-  const copiedLinks = [];
-  Object.defineProperty(fh.window.navigator, 'clipboard', { value: { writeText: t => { copiedLinks.push(t); return Promise.resolve(); } }, configurable: true });
-  assert(/konvoinstall\.com\/i\/matt\.two/.test(fhdoc.querySelector('#im-pay .inv-link').textContent), 'the link row shows the sender\'s link');
-  assert(!invPosted.includes('claim:own'), 'nothing tells native about our own link before the copy');
-  fhtap('inv-copy'); await settle(50);
-  assert.deepStrictEqual(copiedLinks, ['https://konvoinstall.com/i/matt.two'], 'Copy link puts the full link on the clipboard');
-  assert.strictEqual(invPosted.filter(p => p === 'claim:own').length, 1,
-    'the copy row tells native this clipboard content is ours, so the friend sheet never asks for it (Sep 6)');
-  assert(/Copied/.test(fhdoc.querySelector('#im-pay .inv-copy').textContent), 'the label says Copied');
-  //     Instagram refusing the first endpoint is reported, and the second
-  //     endpoint (by the ds_user_id cookie) still finds the username.
-  const secondMsgs = [], asked = [];
-  const sh = boot('/direct/inbox/', '', { bridge: (m, d) => { secondMsgs.push(m); invBridge(m, d); } });
-  sh.window.fetch = (u) => { asked.push(String(u));
-    if (/current_user/.test(String(u))) return Promise.resolve({ ok: false, status: 403, json: () => Promise.reject(new Error('html')) });
-    return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ user: { username: 'matt.three' } }) }); };
-  await settle(8400);
-  const shdoc = sh.window.document;
-  const shtap = act => shdoc.querySelector(`[data-act='${act}']`).dispatchEvent(
-    new sh.window.MouseEvent('click', { bubbles: true, cancelable: true }));
-  await toSuccess(sh, shtap); await settle(1200);
-  assert(asked.some(u => /\/api\/v1\/users\/1234567\/info\//.test(u)), 'the second source is the user info endpoint by id');
-  const reports = secondMsgs.filter(m => m.event === 'invite_handle').map(m => [m.props.source, m.props.status, m.props.found]);
-  assert.deepStrictEqual(reports, [['current_user', 403, false], ['user_info', 200, true]], 'each attempt reports its status and outcome');
-  assert(!shdoc.querySelector("#im-pay [data-act='inv-send']").disabled && sh.window.localStorage.getItem('konvoHandle') === 'matt.three',
-    'the second source wakes Send');
-
   //     The notifications page (Sep 2, Matthew): after the money, before
   //     "You're in", in the Screen Time page's style, once per install.
   //     The system prompt fires only from its button; Not now records a
@@ -763,7 +684,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   assert(/Would Like to Send You Notifications/.test(nptext()) && /Allow/.test(nptext()),
     'the page echoes the system dialog, like the Screen Time page');
   assert(!npPosted.some(p => p.startsWith('notify:')), 'the system prompt waits for the button');
-  assert(!/You're in\.|Send Konvo/.test(nptext()), 'the gift and You\'re in come after');
+  assert(!/You're in\.|Send Konvo/.test(nptext()), 'confirmation waits until after the notification choice');
   nptap('notify-go'); await settle(1200);
   assert(npPosted.includes('notify:7'), 'Turn on notifications fires the prompt with the trial length');
   assert(/Enable notifications for messages\?/.test(nptext()) && npdoc.querySelector("#im-pay [data-act='notify-go']").disabled,
@@ -771,7 +692,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   assert(!npPosted.includes('track:notify_answered'), 'nothing reports before the answer');
   npHeld.forEach(f => f()); await settle(1200);
   assert(npPosted.includes('track:notify_answered'), 'the answer reports');
-  assert(/Send Konvo to 3 friends/.test(nptext()), 'then the gift page, its own step');
+  assert(/You're in\./.test(nptext()) && !/Send Konvo/.test(nptext()), 'granting notifications leads directly to confirmation');
   assert.strictEqual(np.window.localStorage.getItem('konvoNotifyAsked'), '1', 'asked once, remembered');
   //     Not now: a skip is recorded, and the sequence still ends.
   const skipMsgs = [];
@@ -788,7 +709,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   assert(!skipMsgs.some(m => m.cmd === 'notify'), 'Not now never fires the prompt');
   assert(skipMsgs.some(m => m.event === 'notify_answered' && m.props.granted === false && m.props.skipped === true),
     'a skip reports as not granted, skipped');
-  assert(/Send Konvo to 3 friends/.test(skdoc.getElementById('im-pay').textContent), 'and the sequence goes on to the gift page');
+  assert(/You're in\./.test(skdoc.getElementById('im-pay').textContent) && !/Send Konvo/.test(skdoc.getElementById('im-pay').textContent), 'skipping notifications after a monthly purchase leads directly to confirmation');
   //     A friend ending a claim sees it once too, then the inbox.
   const nfMsgs = [];
   const nf = boot('/direct/inbox/', '', { askNotify: true, bridge: (m, d) => {
@@ -989,11 +910,18 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const prtap = act => prdoc.querySelector(`[data-act='${act}']`).dispatchEvent(
     new prBoot.window.MouseEvent('click', { bubbles: true, cancelable: true }));
   prtap('keep'); await settle(450); prtap('try'); await settle(450); prtap('try-go'); await settle(450); prtap('offer-go'); await settle(450); prtap('pay'); await settle(450);
+  assert.strictEqual(prMsgs.filter(m => m.event === 'paywall_presented').length, 1,
+    'ActivationPal gets one impression when the price screen is actually painted');
+  prtap('pk-m'); prtap('pk-y');
+  assert.strictEqual(prMsgs.filter(m => m.event === 'paywall_presented').length, 1,
+    'switching plans must not add paywall impressions');
   prtap('buy-y'); await settle(450);
   const prEv = prMsgs.find(m => m.event === 'purchase_result');
   assert(prEv && prEv.props.result === 'cancelled' && prEv.props.plan === 'annual' && prEv.props.screen_id === 's13_paywall',
     'a closed Apple sheet reports purchase_result cancelled for the plan tapped');
   assert(!JSON.stringify(prEv.props).includes('Error'), 'no error text rides the event');
+  assert(!prMsgs.some(m => m.event === 'paywall_exited'),
+    'cancelling the Apple sheet leaves the paywall open, so is not a dismissal');
   assert(/Start your 7-day FREE trial/.test(prdoc.getElementById('im-pay').textContent) &&
     !prdoc.querySelector("#im-pay [data-act='buy-y']").disabled,
     'the price page stays, with the button live again');

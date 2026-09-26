@@ -61,7 +61,11 @@ final class RCPurchaseController: PurchaseController {
                     userInfo: [NSLocalizedDescriptionKey: "no SK2 product"]))
             }
             let storeProduct = RevenueCat.StoreProduct(sk2Product: sk2Product)
+            KonvoActivationAnalytics.shared.record("native_plan_selected", ["plan": storeProduct.productIdentifier])
             let result = try await Purchases.shared.purchase(product: storeProduct)
+            if !result.userCancelled, result.customerInfo.entitlements.active["Pro"] != nil {
+                KonvoActivationAnalytics.shared.record("native_purchase_completed", ["plan": storeProduct.productIdentifier])
+            }
             return result.userCancelled ? .cancelled : .purchased
         } catch let error as ErrorCode {
             return error == .paymentPendingError ? .pending : .failed(error)
@@ -88,8 +92,13 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
     // identify with RC's anonymous id so both dashboards and PostHog join
     // on the same user without Konvo ever having accounts.
     private static let configureOnce: Void = {
+        if #available(iOS 16.0, *) { migrateCageSelection() }
         Purchases.logLevel = .warn
         Purchases.configure(withAPIKey: "appl_ghuOElWpSeJyXhbJcOKQpQoRSsQ")
+        ActivationPal.configure(
+            app: "konvodmsonly",
+            key: "ap_pk_e9129afb4aa3bb0d5d1a54a14d024b2f100b81b9af3eb65b",
+            userId: Purchases.shared.appUserID)
         Superwall.configure(
             apiKey: "pk_qgUOhtAwezkyYCcEJ8kT_",
             purchaseController: purchaseController)
@@ -113,16 +122,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
     // whose inputAccessoryView answers nil. Patched once, on the first
     // bridge message - the bundled onboarding tracks s1 at launch, long
     // before any keyboard (earliest: Instagram's login form) can appear.
-    // Instagram's mobile web renders everything smaller than their native
-    // app - text, avatars, row heights, the compose bar. Page zoom scales
-    // the whole layout at once, which is what "match the native app" means;
-    // bumping font-size selector by selector only makes text bigger inside
-    // boxes that stayed small.
-    // Sizing lives in the cage's viewport override, NOT here. pageZoom
-    // scales rendered pixels without reflowing the layout, so the page
-    // grew wider than the screen and could be panned around. Narrowing the
-    // viewport instead makes Instagram lay out in fewer CSS pixels, which
-    // the screen then scales up: same "bigger", but it always fits.
+    // Keep native and CSS zoom at 1:1, including media opened inside a chat.
     private static func applyZoom(_ webView: WKWebView) {
         if webView.pageZoom != 1 { webView.pageZoom = 1 }
     }
@@ -267,6 +267,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 snapStack.forEach { $0.removeFromSuperview() }
                 snapStack.removeAll()
                 settledSnap = nil
+                cancelPreparedChat()
             }
         }
     }
@@ -275,6 +276,32 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
     // Taptic Engine up synchronously, and it was being allocated on the
     // exact frame the swipe animation starts.
     fileprivate static let haptic = UIImpactFeedbackGenerator(style: .light)
+
+    // CHAT_PREPARATION_BEGIN
+    fileprivate static var preparedChat: UIView?
+    private static var preparedChatTimeout: DispatchWorkItem?
+    fileprivate static func cancelPreparedChat() {
+        preparedChatTimeout?.cancel()
+        preparedChatTimeout = nil
+        preparedChat?.removeFromSuperview()
+        preparedChat = nil
+    }
+    fileprivate static func prepareChat(_ webView: WKWebView) {
+        guard preparedChat == nil, !swiping,
+              Date() >= swipeSettleUntil,
+              let host = webView.superview,
+              let cover = webView.snapshotView(afterScreenUpdates: false) ?? settledSnap
+        else { return }
+        cover.frame = webView.frame
+        cover.isUserInteractionEnabled = false
+        host.addSubview(cover)
+        preparedChat = cover
+        // No navigation, failed router, or backgrounding: always release.
+        let timeout = DispatchWorkItem { cancelPreparedChat() }
+        preparedChatTimeout = timeout
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: timeout)
+    }
+    // CHAT_PREPARATION_END
 
     fileprivate static func pushIntoThread(
         _ webView: WKWebView, back: Bool = false
@@ -292,12 +319,15 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         // destination mid-render. Older than that, live pixels win - a
         // stored picture goes stale the moment the user scrolls.
         let tapFresh = Date().timeIntervalSince(tapSnapAt) < 1.0
-        let live = (firstNavDone && !tapFresh)
+        let live = (preparedChat == nil && firstNavDone && !tapFresh)
             ? webView.snapshotView(afterScreenUpdates: false) : nil
         guard let host = webView.superview,
-              let current = live ?? settledSnap
+              let current = preparedChat ?? live ?? settledSnap
                 ?? webView.snapshotView(afterScreenUpdates: false)
         else { return }
+        preparedChatTimeout?.cancel()
+        preparedChatTimeout = nil
+        preparedChat = nil
         firstNavDone = true
         settledSnap = nil
         // Forward: the screen being left goes on the stack. Back: the
@@ -337,7 +367,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             if started { return }
             started = true
             UIView.animate(
-                withDuration: 0.2, delay: 0,
+                withDuration: 0.22, delay: 0,
                 options: [.curveEaseOut, .beginFromCurrentState]
             ) {
                 webView.transform = .identity
@@ -347,10 +377,8 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 under.removeFromSuperview()
             }
         }
-        // Instantly. Any wait at all - even a quarter second capped on the
-        // destination painting - reads as the app hesitating after a tap.
-        // An unpainted destination shows the page's own background colour
-        // (set from the "bg" command), not black.
+        // The cage reports a chat push after its usable shell has painted.
+        // The prepared snapshot covers the earlier DOM replacement.
         slide()
     }
 
@@ -489,6 +517,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         guard !gesturesInstalled else { return }
         gesturesInstalled = true
         gestures.webView = webView
+        installScreenTimeRecovery(webView)
         let edge = UIScreenEdgePanGestureRecognizer(
             target: gestures, action: #selector(KonvoGestures.edgeBack(_:)))
         edge.edges = .left
@@ -499,6 +528,28 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         tap.cancelsTouchesInView = false
         tap.delegate = gestures
         webView.addGestureRecognizer(tap)
+    }
+
+    private static var screenTimeObservation: NSKeyValueObservation?
+    private static func installScreenTimeRecovery(_ webView: WKWebView) {
+        guard #available(iOS 26.0, *), screenTimeObservation == nil else { return }
+        screenTimeObservation = webView.observe(\.isBlockedByScreenTime, options: [.initial, .new]) { wv, _ in
+            guard wv.isBlockedByScreenTime else { return }
+            DispatchQueue.main.async { [weak wv] in
+                guard let wv, wv.isBlockedByScreenTime,
+                      UserDefaults.standard.bool(forKey: cageActiveKey) else { return }
+                // Some OS restrictions include the corresponding website. Release
+                // only our own shield rather than leave Konvo locked out of DMs.
+                cageClear()
+                track("cage_paused_for_web_conflict", [:])
+                wv.evaluateJavaScript("window.dispatchEvent(new Event('konvo-cage-paused'))", completionHandler: nil)
+                guard let front = frontViewController(), front.presentedViewController == nil else { return }
+                let alert = UIAlertController(title: "Instagram block paused",
+                    message: "Screen Time also blocked Instagram inside Konvo, so Konvo’s block was turned off. You can choose the Instagram app again from the lock tab. Other Screen Time limits are unchanged.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                front.present(alert, animated: true)
+            }
+        }
     }
 
     // iOS reclaims the webview's content process under memory pressure and
@@ -521,6 +572,114 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 as @convention(block) (Any, WKWebView) -> Void)
         class_addMethod(cls, sel, imp, "v@:@")
     }
+
+    // Login navigation diagnostics: observe WebKit callbacks while an explicit
+    // sign-in handoff is active. Preserve wry's handlers and never retry here.
+    // LOGIN_DIAGNOSTICS_BEGIN (also compiled by the focused native regression)
+    private static var loginDiagnosticClasses = Set<ObjectIdentifier>()
+    private static weak var loginDiagnosticWebView: WKWebView?
+    private static var loginDiagnosticActive = false
+    private static let loginNavigationTimes = NSMapTable<WKNavigation, NSNumber>.weakToStrongObjects()
+
+    private static func beginLoginNavigationDiagnostics(_ webView: WKWebView, url: URL) {
+        // The same go command also restores the inbox on ordinary launches.
+        // Only an explicit onboarding handoff starts this diagnostic window.
+        loginDiagnosticActive = url.fragment?.hasPrefix("konvo=") == true
+        loginDiagnosticWebView = loginDiagnosticActive ? webView : nil
+        loginNavigationTimes.removeAllObjects()
+        guard loginDiagnosticActive else { return }
+        installLoginNavigationDiagnostics(webView)
+        track("login_handoff_started", ["stage": loginNavigationStage(url)])
+    }
+
+    private static func loginNavigationStage(_ url: URL?) -> String {
+        guard let url, let host = url.host?.lowercased() else { return "handoff" }
+        if host == "instagram.com" || host == "www.instagram.com" {
+            let path = url.path
+            if path.contains("/challenge") { return "challenge" }
+            if path.contains("two_factor") { return "two_factor" }
+            if path.hasPrefix("/accounts/password/reset") { return "reset" }
+            if path.hasPrefix("/accounts/login") { return "login" }
+            if path.hasPrefix("/direct/inbox") { return "inbox" }
+            return "instagram_other"
+        }
+        if host.hasSuffix(".instagram.com") || host == "facebook.com" ||
+            host.hasSuffix(".facebook.com") || host == "meta.com" || host.hasSuffix(".meta.com") {
+            return "verification_host"
+        }
+        return "other"
+    }
+
+    private static func loginNavigationEvent(_ webView: WKWebView, _ navigation: WKNavigation?,
+                                              phase: String, error: NSError? = nil) {
+        guard loginDiagnosticActive, loginDiagnosticWebView === webView else { return }
+        let now = ProcessInfo.processInfo.systemUptime
+        let started = navigation.flatMap { loginNavigationTimes.object(forKey: $0)?.doubleValue }
+        if phase == "started", let navigation {
+            loginNavigationTimes.setObject(NSNumber(value: now), forKey: navigation)
+        }
+        let failedURL = error?.userInfo[NSURLErrorFailingURLErrorKey] as? URL
+        var props: [String: Any] = ["stage": loginNavigationStage(failedURL ?? webView.url), "phase": phase]
+        if let started { props["ms"] = Int(max(0, now - started) * 1000) }
+        var event = "login_navigation_" + phase
+        if let error {
+            // Full errors can contain URLs, usernames, or request details.
+            // Only a fixed domain category and numeric code leave the device.
+            props["error_domain"] = error.domain == NSURLErrorDomain ? "url"
+                : error.domain == WKErrorDomain ? "webkit" : "other"
+            props["error_code"] = error.code
+            event = error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled
+                ? "login_navigation_cancelled" : "login_navigation_failed"
+        }
+        track(event, props)
+        if phase != "started", let navigation { loginNavigationTimes.removeObject(forKey: navigation) }
+    }
+
+    private static func installLoginNavigationDiagnostics(_ webView: WKWebView) {
+        guard let delegate = webView.navigationDelegate else { return }
+        // WebKit caches which optional callbacks the delegate implements.
+        // Refresh that cache before load(), retaining the exact same delegate.
+        defer {
+            webView.navigationDelegate = nil
+            webView.navigationDelegate = delegate
+        }
+        let cls: AnyClass = type(of: delegate)
+        guard loginDiagnosticClasses.insert(ObjectIdentifier(cls)).inserted else { return }
+        typealias NavigationCallback = @convention(c) (AnyObject, Selector, WKWebView, WKNavigation?) -> Void
+        typealias ErrorCallback = @convention(c) (AnyObject, Selector, WKWebView, WKNavigation?, NSError) -> Void
+        let navigationCallbacks: [(Selector, String)] = [
+            (#selector(WKNavigationDelegate.webView(_:didStartProvisionalNavigation:)), "started"),
+            (#selector(WKNavigationDelegate.webView(_:didFinish:)), "finished")
+        ]
+        for (selector, phase) in navigationCallbacks {
+            let method = class_getInstanceMethod(cls, selector)
+            let original = method.map { unsafeBitCast(method_getImplementation($0), to: NavigationCallback.self) }
+            let imp = imp_implementationWithBlock({ (receiver: AnyObject, wv: WKWebView, nav: WKNavigation?) in
+                Self.loginNavigationEvent(wv, nav, phase: phase)
+                original?(receiver, selector, wv, nav)
+            } as @convention(block) (AnyObject, WKWebView, WKNavigation?) -> Void)
+            // Add an override for inherited implementations; never mutate a superclass.
+            if !class_addMethod(cls, selector, imp, "v@:@@") {
+                class_replaceMethod(cls, selector, imp, "v@:@@")
+            }
+        }
+        let errorCallbacks: [(Selector, String)] = [
+            (#selector(WKNavigationDelegate.webView(_:didFailProvisionalNavigation:withError:)), "provisional"),
+            (#selector(WKNavigationDelegate.webView(_:didFail:withError:)), "committed")
+        ]
+        for (selector, phase) in errorCallbacks {
+            let method = class_getInstanceMethod(cls, selector)
+            let original = method.map { unsafeBitCast(method_getImplementation($0), to: ErrorCallback.self) }
+            let imp = imp_implementationWithBlock({ (receiver: AnyObject, wv: WKWebView, nav: WKNavigation?, error: NSError) in
+                Self.loginNavigationEvent(wv, nav, phase: phase, error: error)
+                original?(receiver, selector, wv, nav, error)
+            } as @convention(block) (AnyObject, WKWebView, WKNavigation?, NSError) -> Void)
+            if !class_addMethod(cls, selector, imp, "v@:@@@") {
+                class_replaceMethod(cls, selector, imp, "v@:@@@")
+            }
+        }
+    }
+    // LOGIN_DIAGNOSTICS_END
 
     public func userContentController(
         _ userContentController: WKUserContentController,
@@ -559,6 +718,11 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             // stretch, "blue" is the full-bleed pact screen, "auto" hands
             // the app to the phone. Blue takes the dark style so the status
             // bar draws white over it.
+            let inboxOnboarding = productId == "onboarding-inbox"
+            let inboxReveal = productId == "inbox-reveal"
+            let specialOffer = productId == "onboarding-offer"
+            let inboxDark = productId == "inbox-dark" ||
+                (productId == "auto" && UserDefaults.standard.bool(forKey: "konvoInboxDark"))
             let blue = productId == "blue"
             // "black" (Sep 1) is the sign-in sheet: the band above
             // Instagram's page is the dark Konvo page the sheet rose over,
@@ -566,16 +730,17 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             // the sheet stays a light sheet whatever the phone prefers.
             let black = productId == "black"
             let style: UIUserInterfaceStyle =
-                productId == "light" ? .light
-                : (productId == "dark" || blue || black) ? .dark
+                (productId == "light" || inboxOnboarding) ? .light
+                : (productId == "dark" || inboxDark || inboxReveal || specialOffer || blue || black) ? .dark
                 : .unspecified
             // Remembered across launches: lib.rs pins Light at startup only
             // while the funnel is unfinished. Only "auto" means done.
-            UserDefaults.standard.set(productId == "auto", forKey: "konvoFunnelDone")
+            UserDefaults.standard.set(productId == "auto" || inboxDark, forKey: "konvoFunnelDone")
+            if inboxDark { UserDefaults.standard.set(true, forKey: "konvoInboxDark") }
             DispatchQueue.main.async {
                 let root = webView.window?.rootViewController
                 root?.overrideUserInterfaceStyle = style
-                webView.overrideUserInterfaceStyle = black ? .light : .unspecified
+                webView.overrideUserInterfaceStyle = inboxOnboarding || inboxDark || inboxReveal || specialOffer ? .dark : black ? .light : .unspecified
                 if let root, black || Self.sheetBand != nil {
                     Self.band(in: root, over: webView).isHidden = !black
                 }
@@ -587,9 +752,13 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 // (#1C1C1E) and framed the pure-black wall with grey bands
                 // above and below (device, Sep 1). The wall and Instagram's
                 // dark theme are #000, light is #fff.
-                let bg: UIColor = blue
+                let bg: UIColor = specialOffer
+                    ? UIColor(red: 6 / 255, green: 11 / 255, blue: 27 / 255, alpha: 1)
+                    : blue
                     ? UIColor(red: 10 / 255, green: 92 / 255, blue: 240 / 255, alpha: 1)
                     : black ? UIColor(white: 0.97, alpha: 1)  // the sheet's toolbar grey, under the home indicator
+                    : style == .light ? .white
+                    : style == .dark ? .black
                     : UIColor { $0.userInterfaceStyle == .dark ? .black : .white }
                 root?.view.backgroundColor = bg
                 webView.backgroundColor = bg
@@ -644,7 +813,9 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             if let url = URL(string: productId),
                url.host?.hasSuffix("instagram.com") == true {
                 DispatchQueue.main.async { [weak webView] in
-                    webView?.load(URLRequest(url: url))
+                    guard let webView else { return }
+                    Self.beginLoginNavigationDiagnostics(webView, url: url)
+                    webView.load(URLRequest(url: url))
                 }
             }
             return
@@ -663,7 +834,10 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             guard (nums.count > 3 ? nums[3] : 1) > 0.01 else { return }
             DispatchQueue.main.async { [weak webView] in
                 guard let wv = webView else { return }
-                wv.window?.rootViewController?.view.backgroundColor = color
+                let root = wv.window?.rootViewController
+                // The dark inbox underneath must not recolor white onboarding's safe areas.
+                root?.view.backgroundColor = (wv.overrideUserInterfaceStyle == .dark &&
+                    root?.overrideUserInterfaceStyle == .light) ? .white : color
                 wv.backgroundColor = color
                 wv.scrollView.backgroundColor = color
             }
@@ -673,6 +847,14 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         // Every SPA navigation animates the same way, wherever it goes:
         // forward slides in from the right, back from the left. The
         // back-swipe owns its own animation, so it opts out.
+
+        if cmd == "nav-prepare" || cmd == "nav-cancel" {
+            DispatchQueue.main.async { [weak webView] in
+                if cmd == "nav-cancel" { Self.cancelPreparedChat() }
+                else if let webView { Self.prepareChat(webView) }
+            }
+            return
+        }
 
         if cmd == "nav" {
             DispatchQueue.main.async { [weak webView] in
@@ -691,13 +873,18 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 }
                 guard !Self.swiping else { return }
                 if productId == "push-silent" {
-                    // Stack it without animating: the back-swipe still
-                    // needs a picture of the screen underneath.
-                    if let s = wv.snapshotView(afterScreenUpdates: false) {
+                    Self.cancelPreparedChat()
+                    // Bottom tabs change directly. Chat pushes continue to
+                    // the slide below; back-swipes still need this snapshot.
+                    let leaving = Date().timeIntervalSince(Self.tapSnapAt) < 1.0
+                        ? Self.settledSnap : nil
+                    if let s = leaving ?? wv.snapshotView(afterScreenUpdates: false) {
                         s.frame = wv.frame
                         Self.snapStack.append(s)
                         if Self.snapStack.count > 5 { Self.snapStack.removeFirst() }
                     }
+                    Self.settledSnap = nil
+                    Self.firstNavDone = true
                     return
                 }
                 Self.pushIntoThread(wv, back: productId == "pop")
@@ -716,6 +903,10 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         // Fire-and-forget funnel event. Never blocks, never replies.
         if cmd == "track" {
             if let event = body["event"] as? String {
+                if event == "login_succeeded", Self.loginDiagnosticWebView === webView {
+                    Self.loginDiagnosticActive = false
+                    Self.loginNavigationTimes.removeAllObjects()
+                }
                 Self.track(event, body["props"] as? [String: Any] ?? [:])
             }
             return
@@ -848,8 +1039,106 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         }
     }
 
+    // One native assignment shared by the bundled quiz and instagram.com webview.
+    // An inactive/missing flag, timeout, existing customer, or bad offering stays OG
+    // and is excluded from the experiment. Never reassign an exposed install.
+    private static let experimentKey = "konvo-onboarding-annual-v1"
+    private static let specialOfferingIdentifier = "konvo_special_offer_v1"
+    private static let specialProductIdentifier = "konvo.pro.yearly.special"
+    private static var specialOfferEligible = false
+    private static var onboardingPreview = false
+    @objc public static func enableOnboardingPreview() { onboardingPreview = true }
+    private static let experimentStorage = "konvo.onboarding.annual.v1"
+    private static var experimentTask: Task<[String: Any], Never>?
+    // Retirement overrides cached test assignments and preview launch arguments.
+    // Keep historical assignment storage intact; do not relabel old exposures.
+    private static var experiment: [String: Any] {
+        ["variant": "control", "enrolled": false, "retired": true,
+         "offering_id": "konvo_ab_control_v1"]
+    }
+    private static var experimentTest: Bool { experiment["variant"] as? String == "test" }
+    private static var experimentEnrolled: Bool { experiment["enrolled"] as? Bool == true }
+    private static func selectedOffering() async throws -> Offering? {
+        let offerings = try await Purchases.shared.offerings()
+        return offerings.all["konvo_ab_control_v1"]
+    }
+    @MainActor private static func resolveExperiment(fresh: Bool) async -> [String: Any] {
+        _ = configureOnce
+        return experiment
+    }
+
+    private static func productFailure(_ reason: String, code: Int = 0) -> [String: Any] {
+        // Enumerated catalog diagnostics only: never receipts, account data or raw SDK errors.
+        track("store_products_failed", ["reason": reason, "code": code])
+        return ["ok": false, "reason": reason, "code": code]
+    }
+
+    // The personalized paywall supports full-price annual and weekly packages only.
+    // Validate again at checkout; a dashboard change must never introduce a trial
+    // or a different billing period than the one displayed in the app.
+    private static func validPersonalizedPackage(_ package: Package) -> Bool {
+        let product = package.storeProduct
+        guard product.introductoryDiscount == nil,
+              product.price > 0, product.subscriptionPeriod?.value == 1 else { return false }
+        return (package.packageType == .annual && product.subscriptionPeriod?.unit == .year) ||
+               (package.packageType == .weekly && product.subscriptionPeriod?.unit == .week)
+    }
+
+    private static func specialOfferPackage(regular: Package) async throws -> Package? {
+        guard experimentTest, validPersonalizedPackage(regular), regular.packageType == .annual,
+              let offer = try await Purchases.shared.offerings().all[specialOfferingIdentifier]?.annual,
+              offer.storeProduct.productIdentifier == specialProductIdentifier,
+              offer.packageType == .annual, validPersonalizedPackage(offer),
+              let currency = regular.storeProduct.currencyCode, !currency.isEmpty,
+              offer.storeProduct.currencyCode == currency,
+              offer.storeProduct.price < regular.storeProduct.price else { return nil }
+        return offer
+    }
+
     static func run(_ cmd: String, _ productId: String) async -> [String: Any] {
         switch cmd {
+        case "onboardingExperiment":
+            return await resolveExperiment(fresh: productId == "fresh")
+        case "onboardingExperimentFallback":
+            if experiment.isEmpty { UserDefaults.standard.set(["variant": "control", "enrolled": false], forKey: experimentStorage) }
+            return experiment
+        case "experimentExposure":
+            #if !DEBUG
+            if !onboardingPreview, experimentEnrolled, let variant = experiment["variant"] as? String {
+                track("$experiment_exposure", ["$feature_flag": experimentKey,
+                    "$feature_flag_response": variant, "placement": productId])
+                track("experiment_exposed", ["placement": productId,
+                    "$set_once": ["konvo_onboarding_annual_v1": variant]])
+            }
+            #endif
+            return ["ok": true]
+        case "onboardingAnswers":
+            if let data = productId.data(using: .utf8),
+               let input = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                // Whitelist quiz values. Never save a username or signature here.
+                var answers: [String: Any] = [:]
+                for key in ["instagramMinutes", "messagingMinutes", "instagramUnknown", "messagingUnknown", "instagramLabel"] {
+                    if let v = input[key] { answers[key] = v }
+                }
+                UserDefaults.standard.set(answers, forKey: "konvo.onboarding.answers.v1")
+            }
+            return ["ok": true]
+        case "onboardingContext":
+            var result = experiment
+            result["answers"] = UserDefaults.standard.dictionary(forKey: "konvo.onboarding.answers.v1") ?? [:]
+            return result
+        case "paywallImpression":
+            let offering: Offering?
+            if experimentTest && specialOfferEligible && productId == "inbox_special_annual_v3" {
+                offering = try? await Purchases.shared.offerings().all[specialOfferingIdentifier]
+            } else {
+                offering = try? await selectedOffering()
+            }
+            if let offering {
+                Purchases.shared.trackCustomPaywallImpression(
+                    CustomPaywallImpressionParams(paywallId: productId, offering: offering))
+            }
+            return ["ok": true]
         // ── The Screen Time cage (locked Aug 16) ──────────────────────
         // Shields the native Instagram app so Konvo is the only window to
         // the messages. The JS wall gates these behind Pro/beta access;
@@ -935,19 +1224,27 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             // Shapes consumed by pay() in CAGE_SCRIPT. trialDays is present
             // only when this user is actually eligible for the intro trial.
             do {
-                let offerings = try await Purchases.shared.offerings()
-                guard let current = offerings.current else {
-                    return ["ok": false, "error": "no current offering"]
+                guard let current = try await selectedOffering() else {
+                    return productFailure("offering_unavailable")
                 }
-                var out: [String: Any] = ["ok": true]
-                let yearly = current.availablePackages.first {
+                var out: [String: Any] = ["ok": true, "offeringId": current.identifier]
+                let yearly = experimentTest ? current.annual : current.availablePackages.first {
                     $0.storeProduct.productIdentifier == "konvo.pro.yearly" }
+                if experimentTest && yearly == nil { return productFailure("annual_product_unavailable") }
+                if experimentTest && (yearly?.storeProduct.introductoryDiscount != nil ||
+                    yearly?.storeProduct.subscriptionPeriod?.unit != .year ||
+                    yearly?.storeProduct.subscriptionPeriod?.value != 1) {
+                    return productFailure("invalid_annual_product")
+                }
                 let monthly = current.availablePackages.first {
                     $0.storeProduct.productIdentifier == "konvo.pro.monthly" }
+                let weekly = experimentTest ? current.weekly : nil
                 let lifetime = current.availablePackages.first {
                     $0.storeProduct.productIdentifier == "konvo.pro.lifetime" }
                 if let p = yearly?.storeProduct {
-                    var d: [String: Any] = ["price": p.localizedPriceString]
+                    var d: [String: Any] = ["price": p.localizedPriceString,
+                        "productId": p.productIdentifier, "amount": NSDecimalNumber(decimal: p.price),
+                        "currency": p.currencyCode ?? "", "noIntroOffer": p.introductoryDiscount == nil]
                     // Both framings, computed from the live price: the card
                     // shows per-month, other copy can use per-week.
                     if let f = p.priceFormatter {
@@ -968,32 +1265,90 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                     out["yearly"] = d
                 }
                 if let p = monthly?.storeProduct {
-                    var d: [String: Any] = ["price": p.localizedPriceString]
+                    var d: [String: Any] = ["price": p.localizedPriceString,
+                        "productId": p.productIdentifier, "amount": NSDecimalNumber(decimal: p.price),
+                        "currency": p.currencyCode ?? "", "noIntroOffer": p.introductoryDiscount == nil]
                     if let days = await trialDays(p) { d["trialDays"] = days }
                     out["monthly"] = d
+                }
+                if let package = weekly, validPersonalizedPackage(package) {
+                    let p = package.storeProduct
+                    var weeklyData: [String: Any] = ["price": p.localizedPriceString,
+                        "productId": p.productIdentifier, "amount": NSDecimalNumber(decimal: p.price),
+                        "currency": p.currencyCode ?? "", "noIntroOffer": true]
+                    weeklyData["annualizedPrice"] = p.priceFormatter?.string(from: NSDecimalNumber(decimal: p.price * 52))
+                    out["weekly"] = weeklyData
+                } else if experimentTest {
+                    // Annual remains usable if Apple's weekly product is unavailable.
+                    out["weeklyUnavailableReason"] = weekly == nil ? "weekly_product_unavailable" : "invalid_weekly_product"
+                }
+                if experimentTest, let regular = yearly {
+                    // Offer failures must not take down regular annual or weekly checkout.
+                    if let special = try? await specialOfferPackage(regular: regular) {
+                        let p = special.storeProduct
+                        var data: [String: Any] = ["price": p.localizedPriceString,
+                            "productId": p.productIdentifier, "amount": NSDecimalNumber(decimal: p.price),
+                            "currency": p.currencyCode ?? "", "noIntroOffer": true,
+                            "offeringId": specialOfferingIdentifier]
+                        data["perWeek"] = p.priceFormatter?.string(from: NSDecimalNumber(decimal: p.price / 52))
+                        out["specialOffer"] = data
+                    } else { out["specialOfferUnavailableReason"] = "special_offer_unavailable" }
                 }
                 if let p = lifetime?.storeProduct {
                     out["lifetime"] = ["price": p.localizedPriceString]
                 }
+                if experimentTest {
+                    track("store_products_ready", ["offering_id": current.identifier,
+                        "product_id": yearly?.storeProduct.productIdentifier ?? "",
+                        "weekly_product_id": (out["weekly"] as? [String: Any])?["productId"] ?? "",
+                        "currency": yearly?.storeProduct.currencyCode ?? ""])
+                    if onboardingPreview, let product = out["weekly"] as? [String: Any] {
+                        // Device QA evidence contains only public catalog metadata.
+                        print("KONVO_WEEKLY_QA catalog \(current.identifier) \(product["productId"] ?? "") \(product["price"] ?? "") \(product["currency"] ?? "")")
+                    }
+                }
                 return out
             } catch {
-                return ["ok": false, "error": "\(error)"]
+                return productFailure("store_unavailable", code: (error as NSError).code)
             }
         case "purchase":
             do {
-                let offerings = try await Purchases.shared.offerings()
-                guard let package = offerings.current?.availablePackages.first(
-                    where: { $0.storeProduct.productIdentifier == productId })
-                else {
-                    return ["ok": false, "error": "unknown product"]
+                guard let offering = try await selectedOffering() else {
+                    return ["ok": false, "error": "offering unavailable"]
                 }
+                let selectedPackage: Package?
+                if productId == specialProductIdentifier {
+                    guard experimentTest, specialOfferEligible, let regular = offering.annual else {
+                        return ["ok": false, "error": "special offer unavailable"]
+                    }
+                    selectedPackage = try await specialOfferPackage(regular: regular)
+                } else {
+                    selectedPackage = offering.availablePackages.first { $0.storeProduct.productIdentifier == productId }
+                }
+                guard let package = selectedPackage else { return ["ok": false, "error": "unknown product"] }
+                if experimentTest && !validPersonalizedPackage(package) {
+                    return ["ok": false, "error": "invalid experimental purchase"]
+                }
+                KonvoActivationAnalytics.shared.record("native_plan_selected", ["plan": productId])
                 let result = try await Purchases.shared.purchase(package: package)
                 if result.userCancelled {
+                    if experimentTest && productId != specialProductIdentifier { specialOfferEligible = true }
                     return ["ok": false, "cancelled": true]
                 }
                 let ok = result.customerInfo.entitlements.active["Pro"] != nil
+                if onboardingPreview {
+                    let entitlement = result.customerInfo.entitlements.active["Pro"]
+                    print("KONVO_WEEKLY_QA purchase requested=\(productId) entitlement_product=\(entitlement?.productIdentifier ?? "none") sandbox=\(entitlement?.isSandbox ?? false) active=\(ok)")
+                }
+                if ok {
+                    KonvoActivationAnalytics.shared.record("native_purchase_completed", ["plan": productId])
+                }
                 return ["ok": ok, "entitled": ok]
             } catch {
+                if let rcError = error as? RevenueCat.ErrorCode, rcError == .purchaseCancelledError {
+                    if experimentTest && productId != specialProductIdentifier { specialOfferEligible = true }
+                    return ["ok": false, "cancelled": true]
+                }
                 if let rcError = error as? RevenueCat.ErrorCode,
                    rcError == .paymentPendingError {
                     // Ask to Buy and the like: the entitlement lands later,
@@ -1028,7 +1383,14 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                     if !done { done = true; cont.resume() }
                 }
                 let handler = PaywallPresentationHandler()
-                handler.onDismiss { _, _ in finish() }
+                handler.onPresent { _ in
+                    KonvoActivationAnalytics.shared.record("paywall_presented", ["placement": "campaign_trigger"])
+                }
+                handler.onDismiss { _, _ in
+                    // A verified purchase already clears the visible state.
+                    KonvoActivationAnalytics.shared.record("paywall_exited")
+                    finish()
+                }
                 handler.onSkip { _ in finish() }
                 handler.onError { _ in finish() }
                 Superwall.shared.register(
@@ -1046,7 +1408,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             // anything short of a purchase or restore falls back to the
             // injected price screen, the enforcement floor.
             _ = configureOnce
-            guard let offering = try? await Purchases.shared.offerings().current,
+            guard let offering = try? await selectedOffering(),
                   offering.paywall != nil || offering.paywallComponents != nil
             else { return ["ok": false, "result": "no_paywall", "entitled": await entitled()] }
             let outcome = await presentRCPaywall(offering)
@@ -1110,7 +1472,23 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         // no caller has to remember.
         _ = configureOnce
         _ = netMonitor
+        ActivationPal.setUserId(Purchases.shared.appUserID)
+        KonvoActivationAnalytics.shared.record(event, props)
         var properties = props
+        properties["onboarding_version"] = "original"
+        properties["onboarding_experiment_retired"] = true
+        if experimentEnrolled, let variant = experiment["variant"] as? String {
+            properties["experiment_key"] = experimentKey
+            properties["experiment_variant"] = variant
+            properties["$feature/" + experimentKey] = variant
+            properties["onboarding_version"] = variant == "test" ? "personalized_weekly_offer_v3" : "original"
+        }
+        #if DEBUG
+        properties["is_test_build"] = true
+        #else
+        properties["is_test_build"] = onboardingPreview
+        #endif
+        properties["onboarding_preview"] = onboardingPreview
         properties["net"] = netType
         properties["platform"] = "ios"
         // Every event carries the build number: funnels that mixed builds
@@ -1171,6 +1549,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             forName: UIApplication.didFinishLaunchingNotification,
             object: nil, queue: .main
         ) { _ in
+            _ = configureOnce
             installPushHooks()
             Task {
                 let status = await UNUserNotificationCenter.current()
@@ -1338,7 +1717,9 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         controller.delegate = bridge
         controller.modalPresentationStyle = .fullScreen
         controller.isModalInPresentation = true
-        front.present(controller, animated: true)
+        front.present(controller, animated: true) {
+            KonvoActivationAnalytics.shared.record("paywall_presented", ["placement": "onboarding_revenuecat"])
+        }
         return await withCheckedContinuation { cont in bridge.continuation = cont }
     }
 
@@ -1348,13 +1729,22 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         var result = "dismissed"
         var productId: String?
         func finish() {
+            guard continuation != nil else { return }
+            KonvoActivationAnalytics.shared.record("paywall_exited")
             continuation?.resume(returning: (result, productId))
             continuation = nil
+        }
+        func paywallViewController(_ controller: RevenueCatUI.PaywallViewController,
+                                   didStartPurchaseWith package: RevenueCat.Package) {
+            KonvoActivationAnalytics.shared.record("native_plan_selected", ["plan": package.storeProduct.productIdentifier])
         }
         func paywallViewController(_ controller: RevenueCatUI.PaywallViewController,
                                    didFinishPurchasingWith customerInfo: RevenueCat.CustomerInfo) {
             result = "purchased"
             productId = customerInfo.entitlements.active["Pro"]?.productIdentifier
+            if let productId = productId {
+                KonvoActivationAnalytics.shared.record("native_purchase_completed", ["plan": productId])
+            }
         }
         func paywallViewController(_ controller: RevenueCatUI.PaywallViewController,
                                    didFinishRestoringWith customerInfo: RevenueCat.CustomerInfo) {
@@ -1399,22 +1789,44 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
 
     @available(iOS 16.0, *)
     private static func cageCount(_ s: FamilyActivitySelection) -> Int {
-        s.applicationTokens.count + s.categoryTokens.count + s.webDomainTokens.count
+        CageSelectionPolicy.isSafe(applications: s.applicationTokens.count,
+            categories: s.categoryTokens.count, domains: s.webDomainTokens.count) ? 1 : 0
+    }
+
+    @available(iOS 16.0, *)
+    private static func migrateCageSelection() {
+        // Clear restrictions owned by Konvo only. OS/user/other-app limits remain theirs.
+        cageStore.shield.webDomains = nil
+        cageStore.shield.webDomainCategories = nil
+        cageStore.shield.applicationCategories = nil
+        if storedCageSelection().map({ cageCount($0) == 1 }) != true {
+            cageClear()
+            cageDefaults.removeObject(forKey: cageSelectionKey)
+            UserDefaults.standard.removeObject(forKey: cageSelectionKey)
+        }
     }
 
     @available(iOS 16.0, *)
     static func cageApply() -> Bool {
-        guard let s = storedCageSelection(), cageCount(s) > 0 else { return false }
+        guard let s = storedCageSelection(), cageCount(s) > 0 else {
+            cageClear()
+            return false
+        }
         let store = cageStore
+        store.shield.webDomains = nil
+        store.shield.webDomainCategories = nil
+        store.shield.applicationCategories = nil
         store.shield.applications = s.applicationTokens.isEmpty ? nil : s.applicationTokens
-        store.shield.applicationCategories = s.categoryTokens.isEmpty
-            ? nil : .specific(s.categoryTokens)
         UserDefaults.standard.set(true, forKey: cageActiveKey)
         return true
     }
 
     @available(iOS 16.0, *)
     static func cageClear() {
+        // Mark stale before stopping: stopMonitoring can trigger a final callback.
+        cageDefaults.set("disabled", forKey: KonvoShared.keyPassName)
+        cageDefaults.set(false, forKey: KonvoShared.keyPassActive)
+        DeviceActivityCenter().stopMonitoring(PassPolicy.allActivityNames.map { DeviceActivityName($0) })
         cageStore.clearAllSettings()
         UserDefaults.standard.set(false, forKey: cageActiveKey)
     }
@@ -1481,7 +1893,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             warningTime: DateComponents(
                 minute: PassPolicy.warningMinutes(for: mins)))
         let event = DeviceActivityEvent(
-            applications: s.applicationTokens, categories: s.categoryTokens,
+            applications: s.applicationTokens, categories: [],
             webDomains: [], threshold: DateComponents(minute: mins))
         let center = DeviceActivityCenter()
         center.stopMonitoring(
@@ -1680,7 +2092,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 finish: { sel in
                     guard !resumed else { return }
                     resumed = true
-                    if let sel, let data = try? JSONEncoder().encode(sel) {
+                    if let sel, cageCount(sel) > 0, let data = try? JSONEncoder().encode(sel) {
                         cageDefaults.set(data, forKey: cageSelectionKey)
                     }
                     front.dismiss(animated: true)
@@ -1717,7 +2129,7 @@ private struct CagePickerSheet: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Select Instagram")
                     .font(.largeTitle.bold())
-                Text("Tick it in the list. Add anything else you want blocked too.")
+                Text("Expand the category and select the Instagram app only. Leave categories and websites unchecked.")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -1738,15 +2150,18 @@ private struct CagePickerSheet: View {
                     .background(Color(red: 0.10, green: 0.42, blue: 0.95))
                     .clipShape(Capsule())
             }
-            .disabled(selection.applicationTokens.isEmpty
-                && selection.categoryTokens.isEmpty)
-            .opacity(selection.applicationTokens.isEmpty
-                && selection.categoryTokens.isEmpty ? 0.4 : 1)
+            .disabled(!validSelection)
+            .opacity(validSelection ? 1 : 0.4)
             .padding(.horizontal, 20)
             .padding(.top, 8)
             .padding(.bottom, 6)
         }
         .background(Color(.systemBackground).ignoresSafeArea())
+    }
+
+    private var validSelection: Bool {
+        CageSelectionPolicy.isSafe(applications: selection.applicationTokens.count,
+            categories: selection.categoryTokens.count, domains: selection.webDomainTokens.count)
     }
 }
 

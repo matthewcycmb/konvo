@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="only light"><title>Konvo · Complete onboarding</title>
+<style>
+html{color-scheme:only light}
+*{box-sizing:border-box}body{margin:0;background:#f3f5f9;color:#141d33;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer}a{color:#0a5cf0;text-decoration:none}button:focus-visible,a:focus-visible{outline:3px solid #0a5cf0;outline-offset:4px}.wrap{max-width:1440px;margin:auto;padding:36px 34px 70px}header{display:flex;justify-content:space-between;gap:25px;align-items:flex-start}.brand{font-size:12px;font-weight:750;letter-spacing:1.4px;color:#0a5cf0;text-transform:uppercase}h1{font-size:36px;letter-spacing:-1.4px;line-height:1.15;margin:10px 0 12px}header p{color:#616d82;line-height:1.6;font-size:14px;max-width:730px;margin:0}.demo-link{background:#fff;border:1px solid #dce3ef;padding:12px 16px;border-radius:12px;font-size:12px;font-weight:650;white-space:nowrap;margin-top:9px}.toolbar{display:flex;justify-content:space-between;gap:20px;align-items:center;position:sticky;top:0;z-index:4;background:#f3f5f9ed;backdrop-filter:blur(14px);padding:23px 0 18px;margin-top:15px}.filters{display:flex;gap:7px;flex-wrap:wrap}.filters button{border:1px solid #dde3ee;background:#fff;color:#64718a;padding:9px 13px;border-radius:30px;font-size:12px;font-weight:600}.filters button[aria-pressed=true]{background:#141d33;color:#fff;border-color:#141d33}.counter{font-size:12px;color:#7a8598;white-space:nowrap}.section-head{margin:25px 0 20px;display:flex;gap:12px;align-items:baseline}.section-head h2{font-size:19px;letter-spacing:-.4px;margin:0}.section-head span{font-size:12px;color:#7a8598}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:32px 26px;align-items:start}.card{min-width:0;max-width:100%;display:flex;align-items:center;flex-direction:column}.card-title{display:flex;align-items:center;justify-content:space-between;width:265.2px;gap:8px;margin-bottom:10px}.card-title strong{font-size:12px;font-weight:650;line-height:1.3}.card-title small{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#7b889d;white-space:nowrap}.card-title .new{color:#0a5cf0}.viewport{width:265.2px;height:573.92px;position:relative;border-radius:25px;overflow:hidden;background:#fff;box-shadow:0 0 0 5px #172032,0 10px 24px #17203210}.viewport iframe{border:0;width:390px;height:844px;transform:scale(.68);transform-origin:top left;pointer-events:none;background:#fff}.expand{position:absolute;inset:0;background:transparent;border:0;border-radius:25px}.expand:hover{box-shadow:inset 0 0 0 3px #0a5cf075}.note{width:265.2px;font-size:11px;color:#7b8799;line-height:1.5;margin:13px 0 0;min-height:33px}.group{margin-bottom:40px}.empty{text-align:center;color:#6b7689;padding:40px}.footnote{border-top:1px solid #dde3ed;padding-top:18px;margin-top:35px;color:#7a8598;font-size:12px;line-height:1.6}dialog{padding:0;border:0;background:#eef1f7;border-radius:22px;max-width:calc(100vw - 20px);max-height:calc(100vh - 20px);width:680px;color:#141d33;box-shadow:0 20px 100px #0005}dialog::backdrop{background:#121a2acf;backdrop-filter:blur(5px)}.viewer-header{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 20px;border-bottom:1px solid #dce2ed}.viewer-header strong{font-size:14px}.viewer-header small{display:block;color:#7a879b;font-size:11px;margin-top:3px}.viewer-header button,.viewer-nav button{border:1px solid #d7deeb;background:white;padding:8px 12px;border-radius:9px;font-size:12px;color:#141d33}.viewer-stage{display:flex;justify-content:center;padding:18px 0}.viewer-crop{position:relative;overflow:hidden;border-radius:25px;box-shadow:0 0 0 5px #172032;background:white}.viewer-crop iframe{position:absolute;inset:0;background:white;width:390px;height:844px;border:0;transform-origin:top left}.viewer-nav{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:3px 20px 16px}.viewer-nav p{font-size:11px;color:#6b768b;line-height:1.5;margin:0;max-width:340px}.viewer-nav button:disabled{opacity:.35;cursor:default}@media(max-width:700px){.wrap{padding:22px 18px 45px}header{display:block}h1{font-size:29px}.demo-link{display:inline-block;margin-top:18px}.toolbar{align-items:flex-start;gap:9px;flex-direction:column}.grid{gap:30px}.section-head{align-items:flex-start;flex-direction:column;gap:5px}.viewer-nav p{max-width:200px}.viewer-header{padding:12px}.viewer-nav{padding:3px 12px 12px;gap:8px}}
+</style></head><body><div class="wrap">
+<header><div><div class="brand">Konvo / Design review</div><h1>Every step to your inbox.</h1><p>The complete onboarding, pulled from the current app code, with your new before-and-after screen-time illustration after the inbox reveal, followed by signing, a circular loading transition, and the annual-only paywall. Click a page to inspect it, then use the arrows to walk through.</p></div><a class="demo-link" href="paywall-yearly-inbox-preview.html#commitment" target="_blank">Open working signing + paywall demo ↗</a></header>
+<nav class="toolbar" aria-label="Gallery filters"><div class="filters"><button data-filter="all" aria-pressed="true">All pages</button><button data-filter="flow" aria-pressed="false">Proposed flow</button><button data-filter="new" aria-pressed="false">New pages</button><button data-filter="legacy" aria-pressed="false">Previous trial screens</button><button data-filter="optional" aria-pressed="false">Optional states</button></div><span class="counter" id="counter"></span></nav>
+<div id="gallery"></div><p class="footnote">Standalone visual review only. No app code, pricing, analytics, purchases, or account settings are changed. Existing screens retain their current copy. Quiz values and inbox contents are illustrative. The new paywall’s 1,000+ claim and generated avatars remain draft design content. Instagram sign-in is an external screen and is labeled as a placeholder.</p>
+</div>
+<dialog id="viewer"><div class="viewer-header"><div><strong id="viewer-title"></strong><small id="viewer-count"></small></div><button id="close-viewer" aria-label="Close page preview">Close ✕</button></div><div class="viewer-stage"><div class="viewer-crop"><iframe id="viewer-frame" title="Onboarding page detail" sandbox="allow-scripts"></iframe></div></div><div class="viewer-nav"><button id="prev">← Previous</button><p id="viewer-note"></p><button id="next">Next →</button></div></dialog>
+<script>
+const pages=/*__PAGES__*/;
+const groups={flow:['Proposed onboarding','Current pages + new signing and paywall designs'],legacy:['Previous trial screens','Reference only; not part of the proposed no-trial flow'],optional:['Optional and conditional states','Blocking setup and launch']};
+let filter='all',visible=[],current=0;
+const gallery=document.getElementById('gallery'),viewer=document.getElementById('viewer');
+let frame=document.getElementById('viewer-frame');
+const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){const iframe=entry.target;iframe.srcdoc=pages[+iframe.dataset.index].html;observer.unobserve(iframe)}}),{rootMargin:'400px'});
+function render(){observer.disconnect();gallery.replaceChildren();visible=pages.map((p,i)=>({p,i})).filter(({p})=>filter==='all'||(filter==='new'?p.badge==='New':p.group===filter));document.getElementById('counter').textContent=visible.length+' / '+pages.length+' pages';
+ for(const [group,[title,description]]of Object.entries(groups)){const items=visible.filter(x=>x.p.group===group);if(!items.length)continue;const section=document.createElement('section');section.className='group';const heading=document.createElement('div');heading.className='section-head';const h=document.createElement('h2');h.textContent=title;const sub=document.createElement('span');sub.textContent=description;heading.append(h,sub);section.append(heading);const grid=document.createElement('div');grid.className='grid';
+ for(const {p,i}of items){const card=document.createElement('article');card.className='card';card.dataset.page=p.id;const label=document.createElement('div');label.className='card-title';const name=document.createElement('strong');name.textContent=String(i+1).padStart(2,'0')+' · '+p.title.replace('NEW · ','').replace('Previous · ','');const badge=document.createElement('small');badge.textContent=p.badge;if(p.badge==='New')badge.className='new';label.append(name,badge);const viewport=document.createElement('div');viewport.className='viewport';const iframe=document.createElement('iframe');iframe.title=p.title;iframe.setAttribute('sandbox','allow-scripts');iframe.dataset.index=i;iframe.tabIndex=-1;const expand=document.createElement('button');expand.className='expand';expand.setAttribute('aria-label','Inspect '+p.title);expand.onclick=()=>openPage(i);viewport.append(iframe,expand);const note=document.createElement('p');note.className='note';note.textContent=p.note||'From the current post-login onboarding.';card.append(label,viewport,note);grid.append(card);observer.observe(iframe)}section.append(grid);gallery.append(section)}
+}
+function sizeViewer(){const scale=Math.min(1,(innerHeight-175)/844,(innerWidth-55)/390);const crop=document.querySelector('.viewer-crop');crop.style.width=390*scale+'px';crop.style.height=844*scale+'px';crop.querySelectorAll('iframe').forEach(f=>f.style.transform='scale('+scale+')')}
+// Decode neighboring pages before navigation; keep the current page visible until ready.
+const prepared=new Map();let viewerVersion=0,busy=false,viewerAnimations=[];
+function preparePage(index){
+ if(prepared.has(index))return prepared.get(index);
+ const element=document.createElement('iframe');element.title=pages[index].title;element.setAttribute('sandbox','allow-scripts');element.style.opacity='0';element.inert=true;
+ let resolve;const record={element,ready:new Promise(r=>resolve=r),resolve:()=>resolve(),loaded:false};prepared.set(index,record);
+ const boot='<script>window.__konvoPreviewStandby=true;<'+ '/script>';
+ const ready='<script>Promise.all(Array.from(document.images,img=>img.decode().catch(()=>{}))).then(()=>parent.postMessage({konvoGallery:"ready"},"*"));<'+ '/script>';
+ element.srcdoc=pages[index].html.replace('</head>',boot+'</head>').replace('</body>',ready+'</body>');
+ document.querySelector('.viewer-crop').append(element);sizeViewer();return record;
+}
+function warmNeighbors(){
+ const n=visible.findIndex(v=>v.i===current);const keep=new Set([current]);
+ for(const offset of [-1,1]){const neighbor=visible[n+offset];if(neighbor){keep.add(neighbor.i);preparePage(neighbor.i)}}
+ for(const [index,record]of prepared){if(!keep.has(index)){record.resolve();record.element.remove();prepared.delete(index)}}
+}
+function cancelViewerReveal(){viewerVersion++;busy=false;viewerAnimations.forEach(a=>a.cancel());viewerAnimations=[];for(const record of prepared.values()){record.resolve();record.element.remove()}prepared.clear();frame=document.createElement('iframe');frame.id='viewer-frame';frame.title='Onboarding page detail';frame.setAttribute('sandbox','allow-scripts');document.querySelector('.viewer-crop').replaceChildren(frame)}
+async function showPage(index){
+ if(busy||index<0||index>=pages.length)return;
+ busy=true;const version=++viewerVersion,previous=current,outgoing=frame;
+ const incoming=preparePage(index);await incoming.ready;
+ if(version!==viewerVersion||!viewer.open)return;
+ const animated=outgoing.hasAttribute('srcdoc')&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const reveal=pages[previous]?.id==='loading'&&pages[index].id==='paywall';
+ current=index;frame=incoming.element;outgoing.removeAttribute('id');frame.id='viewer-frame';frame.style.opacity='1';frame.inert=false;frame.style.zIndex='1';outgoing.inert=true;
+ const p=pages[index];document.getElementById('viewer-title').textContent=p.title;document.getElementById('viewer-count').textContent='Page '+(index+1)+' of '+pages.length+' · '+p.badge;document.getElementById('viewer-note').textContent=p.note||'From the current app code.';
+ const n=visible.findIndex(v=>v.i===index);document.getElementById('prev').disabled=n<=0;document.getElementById('next').disabled=n>=visible.length-1;
+ // Standby frames do not run their loading timers or paywall reveal until activated.
+ frame.contentWindow.postMessage({konvoGallery:'activate'},'*');
+ if(animated){
+  const distance=document.querySelector('.viewer-crop').clientWidth*(index>previous?1:-1);
+  const options={duration:reveal?500:260,easing:reveal?'cubic-bezier(.16,1,.3,1)':'cubic-bezier(.25,.8,.25,1)',fill:'both'};
+  viewerAnimations=[outgoing.animate(reveal?[{opacity:1},{opacity:0}]:[{translate:'0 0'},{translate:-distance+'px 0'}],options),frame.animate(reveal?[{opacity:0},{opacity:1}]:[{translate:distance+'px 0'},{translate:'0 0'}],options)];
+  await Promise.all(viewerAnimations.map(a=>a.finished.catch(()=>{})));
+  if(version!==viewerVersion)return;
+  viewerAnimations.forEach(a=>a.cancel());viewerAnimations=[];
+ }
+ outgoing.style.opacity='0';frame.style.zIndex='';
+ if(!outgoing.hasAttribute('srcdoc'))outgoing.remove();
+ busy=false;warmNeighbors();
+}
+function openPage(index){if(!viewer.open)viewer.showModal();showPage(index)}
+function move(dir){if(busy)return;const n=visible.findIndex(v=>v.i===current)+dir;if(n>=0&&n<visible.length)showPage(visible[n].i)}
+document.querySelectorAll('[data-filter]').forEach(button=>button.onclick=()=>{filter=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));render()});
+document.getElementById('close-viewer').onclick=()=>viewer.close();document.getElementById('prev').onclick=()=>move(-1);document.getElementById('next').onclick=()=>move(1);window.addEventListener('resize',sizeViewer);window.addEventListener('keydown',e=>{if(!viewer.open)return;if(e.key==='ArrowRight'){e.preventDefault();move(1)}if(e.key==='ArrowLeft'){e.preventDefault();move(-1)}});window.addEventListener('message',e=>{
+ if(e.data?.konvoGallery==='ready'){for(const record of prepared.values()){if(e.source===record.element.contentWindow){record.loaded=true;record.resolve();break}}}
+ if(e.source===frame.contentWindow&&viewer.open&&e.data?.konvoGallery==='privacy')window.open('https://konvoinstall.com/privacy','_blank','noopener,noreferrer');
+ if(e.source===frame.contentWindow&&viewer.open&&e.data?.konvoGallery==='navigate')move(e.data.direction===-1?-1:1);
+});viewer.addEventListener('close',cancelViewerReveal);render();
+if(location.hash==='#after-progress')openPage(pages.findIndex(p=>p.id==='commitment'));
+</script></body></html>

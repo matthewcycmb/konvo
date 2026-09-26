@@ -1,6 +1,6 @@
 // Exercises the bundled onboarding page (wrapper/dist/index.html): the
 // once-per-install gate, the Mac bypass, the full v2 walk (S1 -> S3 ranges
-// -> S4 ranges -> S5/S6/S7 dark impact -> S8a/S8b -> S10 privacy) with the
+// -> S4 ranges -> S5/S6/S7 dark impact -> S8a/S8b -> proof and login) with the
 // sheet's disclosed math, the S4 gating rule, the tap lock that stops
 // spam-throughs, and the once-per-install flag being set at the login
 // handoff, not later. The S2 motive screen was removed on Aug 11.
@@ -40,12 +40,14 @@ function boot(opts = {}) {
       { value: [opts.lang], configurable: true });
   }
   if (opts.onboarded) dom.window.localStorage.konvoOnboarded = '1';
+  if (opts.onboardingPreview) dom.window.__konvoOnboardingPreview = true;
   if (opts.macWelcomed) dom.window.localStorage.konvoMacWelcomed = '1';
   // The bridge mock splits streams: appearance changes and funnel events.
   dom.appearance = [];
   dom.events = [];
   dom.tracked = [];
   dom.nav = [];
+  dom.opened = [];
   dom.window.webkit = { messageHandlers: { konvoStore: {
     postMessage: m => {
       if (m.cmd === 'appearance') dom.appearance.push(m.productId);
@@ -56,7 +58,10 @@ function boot(opts = {}) {
       // The login handoff goes through native: a page-driven navigation to
       // instagram.com is a universal link on iOS and opens the Instagram
       // APP instead, stranding the user outside Konvo.
+      if (m.cmd === 'onboardingExperiment') setTimeout(() => dom.window.__konvoStoreReply(m.id, opts.experiment || {variant:'control',enrolled:false}), 10);
+      if (m.cmd === 'onboardingAnswers') dom.answers = JSON.parse(m.productId);
       if (m.cmd === 'go') dom.nav.push(m.productId);
+      if (m.cmd === 'open') dom.opened.push(m.productId);
       if (m.cmd === 'review') dom.reviews = (dom.reviews || 0) + 1;
       // The receipt check at the splash: answered unless the test wants a
       // silent bridge; `entitled` makes this a paying user's reinstall.
@@ -72,9 +77,22 @@ function boot(opts = {}) {
   return dom;
 }
 const settle = ms => new Promise(r => setTimeout(r, ms));
+async function waitFor(check) {
+  const deadline = Date.now() + 2000;
+  while (!check() && Date.now() < deadline) await settle(20);
+  assert(check(), 'mock native onboarding assignment must resolve');
+}
 process.on('exit', () => open.forEach(d => d.window.close()));
 
 (async () => {
+  const preview = boot({onboarded:true,entitled:true,onboardingPreview:true,experiment:{variant:'test',enrolled:true}});
+  await settle(200);
+  assert(!preview.window.document.documentElement.classList.contains('experiment-new'));
+  assert(preview.window.document.documentElement.classList.contains('onboard'));
+  assert.equal(preview.window.localStorage.konvoOnboarded, '1', 'preview preserves original onboarding state');
+  assert.equal(preview.nav.length, 0, 'preview does not skip the quiz for an existing subscriber');
+  assert.equal(preview.appearance[0], 'auto', 'original preview follows system appearance');
+  assert.equal(preview.appearance.at(-1), 'auto', 'cached preview assignment cannot pin the retired theme');
   // 1. The Mac gets ONE welcome screen on a fresh install - never the phone
   //    quiz, and never again after the first run. Before this, a Mac user
   //    double-clicked Konvo and landed on an Instagram login with no context.
@@ -128,7 +146,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   // 3. A fresh iPhone stays, on S1.
   const d = boot();
   const doc = d.window.document;
-  await settle(100);
+  await waitFor(() => !doc.documentElement.classList.contains('holding'));
   assert(doc.documentElement.classList.contains('onboard') &&
     !doc.documentElement.classList.contains('holding'),
     'a new user gets the quiz once the receipt says not entitled');
@@ -136,6 +154,12 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'and the hero view is counted once it is shown');
   assert.strictEqual(d.went.length, 0, 'a fresh install must not navigate away');
   assert(doc.getElementById('s1').classList.contains('on'), 'S1 must be showing');
+
+  const experimental = boot({experiment:{variant:'test',enrolled:true}});
+  await waitFor(() => !experimental.window.document.documentElement.classList.contains('holding'));
+  assert(!experimental.window.document.documentElement.classList.contains('experiment-new'), 'Cached test replies cannot reactivate the retired onboarding');
+  assert.strictEqual(experimental.window.document.querySelector('#s3 .opt').dataset.m, '360');
+  assert.deepStrictEqual([...doc.querySelectorAll('#s3 .opt[data-m]')].map(e => e.dataset.m), ['360','270','210','150','90','45','150'], 'Instagram ranges descend, with unknown last');
 
   // 4. The whole walk with the sheet's own example numbers (2 h 30 m total,
   //    10-20 messaging): 7 years lost, 6 back. Every wait sits past the tap
@@ -218,7 +242,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   await settle(1100);
   tap('#s8c [data-next]');                      // Continue
   //     The social-proof screen (Sep 1): laurels around the count, real
-  //     quotes verbatim with first names, no stars, then privacy. The
+  //     quotes verbatim with first names, no stars, then direct login. The
   //     "Where did you hear about Konvo" screen that used to sit here is
   //     gone (Sep 1, Matthew's call: nobody dropped there, he did not want
   //     to ask it).
@@ -229,7 +253,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   assert(!doc.getElementById('s8d') && !doc.getElementById('s8e'),
     'the studies and founder pages are gone (Aug 21)');
   assert(doc.querySelector('#quotes .laurel img[src="proof.png"]'), 'the laurel block is the proof image');
-  assert(doc.querySelector('#s9t .foot > .btn[data-next="s10"]') && !doc.querySelector('#s9t .next'),
+  assert(doc.querySelector('#s9t .foot > #signin') && !doc.querySelector('#s9t .next'),
     'the proof screen ends on the standard full-width button like every other screen');
   assert(/@keyframes proof-bloom/.test(HTML) && /prefers-reduced-motion: no-preference/.test(HTML) &&
     /#s9t\.on \.b4 \{ animation-name: proof-drop-r; animation-delay: 1\.2s \}/.test(HTML),
@@ -242,37 +266,33 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'quotes are verbatim excerpts with a first name and an emphasised phrase');
   assert(!/[★⭐]|\d\.\d ?\//.test(doc.getElementById('s9t').textContent),
     'no rating figures in the text');
-  tap('#s9t [data-next]');
-  assert(!doc.getElementById('s10').classList.contains('on'),
-    'a tap during the reveal must not skip it (1.5s dwell)');
+  assert(!doc.getElementById('s10') && !doc.getElementById('s10b'),
+    'both standalone privacy steps are removed');
+  assert.strictEqual(doc.getElementById('signin').textContent, 'Continue with Instagram');
+  tap('#signin');
+  assert.strictEqual(d.nav.length, 0, 'a tap during the proof reveal must not start login');
+  assert(!d.window.localStorage.konvoOnboarded, 'the early tap must not mark onboarding complete');
+  const policy = doc.getElementById('onboarding-privacy');
+  assert.strictEqual(policy.href, 'https://konvoinstall.com/privacy');
+  tap('#onboarding-privacy');
+  assert.deepStrictEqual(d.opened, [policy.href], 'privacy opens in the native browser sheet');
+  assert(doc.getElementById('s9t').classList.contains('on') && !d.window.localStorage.konvoOnboarded,
+    'reading privacy must preserve the onboarding screen and completion flag');
+  assert(!d.events.includes('login_started'), 'reading privacy must not count as a login start');
+  // Browser fallback retains the real link; it must not replace the quiz.
+  const native = d.window.webkit;
+  delete d.window.webkit;
+  const policyClick = new d.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  policy.dispatchEvent(policyClick);
+  assert(!policyClick.defaultPrevented && policy.target === '_blank',
+    'without native, privacy uses a separate browser tab');
+  d.window.webkit = native;
+  assert.strictEqual(d.reviews || 0, 0, 'no rating request during onboarding');
   await settle(1600);
-  tap('#s9t [data-next]');
-  await settle(400);
-  assert(doc.getElementById('s10').classList.contains('on'),
-    'the proof screen hands to privacy');
-  assert(d.tracked.some(m => m.cmd === 'haptic') || true, 'haptic rides the bridge when present');
-  assert(!doc.getElementById('s8f'), 'the finale page is gone from the document');
-  assert.strictEqual(d.reviews || 0, 0,
-    'no rating ask anywhere in onboarding (App Review 5.6.3): it waits for the third day of use');
-  assert(!d.window.localStorage.konvoOnboarded,
-    'the flag must not exist before the login handoff');
-  await settle(1100);
-  //     Two privacy pages since Sep 1: the first as it always was, then
-  //     the caps lines (Matthew's words) right before the sign-in.
-  tap('#s10 [data-next]');
-  await settle(400);
-  assert(doc.getElementById('s10b').classList.contains('on'), 'privacy hands to the caps page');
-  assert(/Have your Instagram password ready/.test(doc.getElementById('s10b').textContent),
-    'the caps page tells people to have their Instagram password ready (Sep 2, Matthew)');
-  assert(/WE NEVER SEE YOUR DMS/.test(doc.getElementById('s10b').textContent) &&
-    /YOUR DATA STAYS ON INSTAGRAM'S SERVERS/.test(doc.getElementById('s10b').textContent),
-    'the caps page carries the three lines');
-  assert(/Your session stays on this phone/.test(doc.getElementById('s10').textContent),
-    'the first privacy page keeps its own rows');
-  await settle(1100);
-  tap('#signin');                               // Got it, sign in
+  tap('#signin');
+  tap('#signin');
   assert.strictEqual(d.window.localStorage.konvoOnboarded, '1',
-    'S10 must set the once-per-install flag at the handoff, not at the paywall');
+    'Sign-in must set the once-per-install flag at the handoff, not at the paywall');
   assert(d.nav.length === 1 && d.nav[0].startsWith(INBOX + '#konvo='),
     'the handoff must go through NATIVE navigation and carry the weekly hours');
   assert(Number(d.nav[0].split('=')[1].split(',')[0]) >= 1,
@@ -283,8 +303,14 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'the page must not navigate itself: that is the universal link that opens Instagram');
   assert(doc.getElementById('s11').classList.contains('on'),
     'the handoff spinner must be the last thing shown');
-  assert(d.events.includes('login_started'),
-    'the handoff must track login_started');
+  assert.strictEqual(d.events.filter(e => e === 'login_started').length, 1,
+    'repeated taps must not duplicate login starts');
+  assert.strictEqual(d.tracked.find(m => m.event === 'login_started').props.screen_id, 's9t',
+    'login attribution points to the actual screen, not the removed privacy step');
+  assert.strictEqual(d.answers.instagramMinutes, 150);
+  assert.strictEqual(d.answers.messagingMinutes, 20);
+  assert.strictEqual(d.answers.instagramUnknown, false);
+  assert.strictEqual(d.answers.messagingUnknown, false);
   const quiz = d.tracked.filter(m => m.event === 'quiz_answered');
   assert(quiz.length === 3, 'all three quiz answers must be tracked (screen time, messaging, why)');
   assert(quiz.every(m => m.props.answer && m.props.answer.length),
@@ -335,10 +361,6 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   await settle(1100);
   otap('#s8c [data-next]');
   await settle(1600);                            // the proof reveal's dwell
-  otap('#s9t [data-next]');
-  await settle(1100);
-  otap('#s10 [data-next]');
-  await settle(1100);
   otap('#signin');
   assert(one.nav[0].startsWith(INBOX + '#konvo=') && one.nav[0].endsWith(',present'),
     'the handoff carries the hours and the why even from the minimum answers');

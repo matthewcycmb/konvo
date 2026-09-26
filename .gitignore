@@ -51,3 +51,24 @@ extension/_metadata/
 .claude/
 
 docs/shipaton/ruvector.db
+
+# Local agent memory databases (not application data)
+ruvector.db
+ruvector.db-*
+
+# Apple signing material and generated distribution packages
+*.p8
+*.mobileprovision
+*.ipa
+*.xcarchive/
+*.dSYM/
+*.app/
+
+# Local device installations, release receipts, logs, and analytics exports
+wrapper/scripts/store*/
+wrapper/scripts/build*.id
+wrapper/experiments/device*/
+wrapper/experiments/store*/
+wrapper/experiments/build*.json
+wrapper/experiments/posthog-*.json
+wrapper/experiments/**/*.log

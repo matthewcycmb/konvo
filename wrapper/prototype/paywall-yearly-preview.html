@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Konvo · Yearly paywall</title>
+<style>
+:root{color-scheme:light;--blue:#0a5cf0;--ink:#141d33;--muted:#5d6478;--line:#d9d9de;--soft-blue:#eef3ff}
+*{box-sizing:border-box}body{margin:0;background:#e9edf5;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #183a71;outline-offset:4px}
+.preview-label{margin:20px auto 16px;width:402px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#69758a}.preview-label strong{color:var(--ink);font-size:14px}
+.phone{width:390px;height:844px;margin:0 auto 28px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 8px #172032,0 20px 65px #15244226;background:linear-gradient(180deg,#1a6bf2 0%,#0a5cf0 100%);position:relative;display:flex;flex-direction:column}
+.status{height:39px;padding:13px 27px 0;display:flex;justify-content:space-between;align-items:center;flex:none;font-size:14px;font-weight:700}.status svg{width:64px;height:15px}.topbar{height:33px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;flex:none}.back{border:0;background:transparent;color:var(--ink);width:32px;height:32px;display:grid;place-items:center;padding:3px}.back svg{width:21px;height:21px}.wordmark{font-size:13px;font-weight:750;letter-spacing:-.3px;padding-right:6px}
+.hero{flex:1 1 215px;min-height:160px;max-height:242px;display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:9px 17px 15px;position:relative}.scene{position:relative;border-radius:20px;overflow:hidden;min-width:0;background:#fff;box-shadow:0 3px 14px #263c6810}.tag{position:absolute;top:10px;left:9px;z-index:2;padding:5px 8px;border-radius:8px;color:white;background:#263044b8;font-size:10px;line-height:1;font-weight:800;letter-spacing:.5px}.after .tag{left:auto;right:9px;background:var(--blue)}
+.feed{padding:43px 9px 8px;background:#fbfafc;height:100%}.stories{display:flex;gap:8px;margin-bottom:10px}.story{width:30px;height:30px;padding:2px;border:1.5px solid #d695b1;border-radius:50%}.avatar{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;font-size:10px;font-weight:700;background:#e4eaf6;color:#4e6894}.peach{background:#f7e1d6;color:#ae7161}.sage{background:#dce9e1;color:#688571}.lilac{background:#e9e0f4;color:#8d75a5}
+.post{position:relative;height:99px;border-radius:8px;overflow:hidden;background:linear-gradient(170deg,#aabac8,#d5c9b8 53%,#738e7c)}.post:before{content:'';position:absolute;width:110px;height:110px;border-radius:30px;transform:rotate(35deg);background:#76907f;top:60px;left:-20px;box-shadow:85px -4px 0 #8b9b7b}.post:after{content:'';position:absolute;width:25px;height:25px;border-radius:50%;background:#f9e3ac;right:24px;top:14px}.feed-lines{margin-top:9px;height:4px;width:72%;background:#d8dce4;border-radius:3px;box-shadow:0 8px 0 #e6e8ed}.distraction{position:absolute;bottom:13px;left:9px;right:9px;border:1px solid #ffffffb3;padding:7px 4px;border-radius:9px;background:#fffffff0;color:#727b8d;text-align:center;font-size:10px;font-weight:600}
+.inbox{padding:43px 11px 9px;height:100%;background:linear-gradient(150deg,#fff,#f4f8ff)}.inbox-title{font-size:15px;font-weight:800;margin-bottom:11px;letter-spacing:-.4px}.chat{display:flex;align-items:center;gap:7px;margin-bottom:12px}.chat .avatar{width:29px;height:29px;flex:none}.chat-copy{min-width:0;flex:1}.chat b{display:block;font-size:10px;font-weight:700;margin-bottom:3px}.chat small{display:block;font-size:8px;color:#8792a3;white-space:nowrap}.unread{width:5px;height:5px;border-radius:50%;background:var(--blue)}.after .distraction{color:var(--blue);border-color:#e0e9f6;background:#edf3fc}
+.transition{position:absolute;left:50%;top:49%;transform:translate(-50%,-50%);z-index:3;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:var(--blue);border:3px solid white;color:white;box-shadow:0 3px 10px #25457520}.transition svg{width:25px;height:25px}
+.sheet{background:white;border-radius:30px 30px 0 0;flex:0 0 auto;padding:17px 23px 0;display:flex;flex-direction:column;gap:13px}.eyebrow{display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:700}.eyebrow svg{width:18px;height:18px;color:var(--blue)}h1{font-size:27px;line-height:1.14;font-weight:800;letter-spacing:-.9px;margin:0;text-align:center}
+.benefits{list-style:none;padding:2px 0 0;margin:0;display:grid;gap:10px}.benefits li{display:flex;gap:11px;align-items:center;color:#414e62;font-size:14px;line-height:1.3;letter-spacing:-.15px}.check{flex:none;width:20px;height:20px;color:var(--blue)}
+.unlock{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid #d7e0ed;background:#f3f6f9;border-radius:15px}.unlock-icon{display:grid;place-items:center;flex:none;width:35px;height:35px;background:var(--blue);color:white;border-radius:50%}.unlock-icon svg{width:21px;height:21px}.unlock b{display:block;font-size:14px;line-height:1.3;letter-spacing:-.2px}.unlock p{font-size:12px;line-height:1.4;margin:1px 0 0;color:#536176}
+.plan{border:2px solid var(--blue);border-radius:17px;background:#f7f9fb;padding:12px 14px;position:relative;color:var(--blue)}.plan-name{font-size:18px;font-weight:750;line-height:1.3;margin:0 0 5px}.selected{position:absolute;top:12px;right:12px;width:23px;height:23px;background:var(--blue);color:white;border-radius:50%;display:grid;place-items:center}.selected svg{width:17px;height:17px}.price{font-size:28px;font-weight:800;letter-spacing:-.7px;line-height:1.15;margin:0}.price span{font-size:14px;font-weight:650;letter-spacing:-.2px;margin-left:3px}.billing{font-size:12px;color:var(--muted);margin:5px 0 0;line-height:1.25}.cancel{display:flex;gap:5px;align-items:center;font-size:12px;color:#6d809a;margin:6px 0 0;font-weight:550}.cancel svg{width:13px;height:13px}
+.reassurance{display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px;font-weight:650;color:#3c495c;margin:-1px 0}.reassurance svg{width:18px;height:20px;color:var(--blue)}.bottom{display:grid;gap:7px}.cta{border:0;border-radius:16px;width:100%;height:49px;background:var(--blue);color:white;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px}.cta svg{width:18px;height:18px}.cta:hover{background:#3d659e}.cta:active{transform:scale(.99)}.renewal{font-size:10px;text-align:center;color:#8c97a7;line-height:1.25;margin:0}.legal{display:flex;justify-content:center;gap:22px}.legal a,.legal button{font:inherit;font-size:10px;line-height:1.4;color:#8b95a5;border:0;padding:0;background:none;text-decoration:none}.legal a:hover,.legal button:hover{text-decoration:underline}.home{width:125px;height:4px;border-radius:4px;background:#182030;margin:8px auto 8px;flex:none}.icons{position:absolute;width:0;height:0;overflow:hidden}
+dialog{border:0;border-radius:22px;padding:25px;width:min(340px,90vw);box-shadow:0 15px 60px #17203230;color:var(--ink);font-size:15px;line-height:1.5}dialog::backdrop{background:#18223866}dialog h2{font-size:20px;margin:0}dialog p{margin:12px 0 20px}dialog button{width:100%;padding:11px;border:0;border-radius:11px;background:var(--blue);color:white;font-weight:600}
+@media(max-width:460px){body{background:#fff}.preview-label{display:none}.phone{width:100%;height:100svh;min-height:600px;margin:0;border-radius:0;box-shadow:none}.status{height:max(32px,env(safe-area-inset-top));padding-top:8px}.hero{max-height:none}.home{margin-bottom:max(7px,env(safe-area-inset-bottom))}}
+@media(max-width:460px) and (max-height:780px){.topbar{height:27px}.hero{min-height:136px;padding-top:5px;padding-bottom:11px}.sheet{gap:10px;padding-top:13px;padding-left:22px;padding-right:22px}h1{font-size:25px}.benefits{gap:8px}.benefits li{font-size:13px}.unlock{padding:9px 12px}.plan{padding-top:10px;padding-bottom:10px}.eyebrow{font-size:11px}.home{margin-top:5px}}
+@media(max-width:460px) and (max-height:700px){.status{height:25px;font-size:12px}.topbar{height:24px}.hero{min-height:112px}.sheet{gap:8px;padding-top:11px}h1{font-size:23px}.benefits{gap:6px}.benefits li{font-size:12px}.check{width:17px;height:17px}.eyebrow{font-size:10px}.unlock{padding:7px 11px}.unlock b{font-size:12px}.unlock p{font-size:11px}.unlock-icon{width:30px;height:30px}.cta{height:44px;font-size:16px}.reassurance{font-size:12px}.bottom{gap:5px}.feed,.inbox{padding-top:36px}.chat{margin-bottom:8px}.chat:nth-of-type(3){display:none}.inbox-title{margin-bottom:7px}.distraction{display:none}.tag{top:8px}.post{height:65px}.stories{margin-bottom:7px}}
+.hero{container-type:size;min-height:150px}
+@container(max-height:195px){.feed,.inbox{padding-top:35px}.stories{gap:7px;margin-bottom:6px}.story{width:23px;height:23px}.post{height:72px}.inbox-title{font-size:12px;margin-bottom:5px}.chat{gap:6px;margin-bottom:5px}.chat .avatar{width:21px;height:21px;font-size:8px}.chat b{font-size:9px;margin-bottom:2px}.chat small{font-size:7px}.chat:last-child{display:none}.distraction{bottom:8px;font-size:9px;padding:5px 2px}.tag{font-size:9px;top:8px}}
+@media(max-width:460px) and (max-height:700px){.hero{min-height:104px}.sheet{gap:7px}}
+@container(max-height:120px){.inbox,.feed{padding-top:31px}.inbox-title{font-size:11px;margin-bottom:5px}.chat:not(:nth-child(2)){display:none}.distraction{display:none}.stories{margin-bottom:5px}.post{height:50px}}
+/* Original Konvo paywall palette from cage.js, applied to this standalone layout. */
+.status,.topbar{background:#fff}.back{color:var(--ink)}
+.benefits li,.unlock p,.cancel,.billing,.renewal,.legal a,.legal button{color:var(--muted)}
+.unlock{background:var(--soft-blue);border-color:var(--line)}
+.plan{background:#f6f9ff;color:var(--ink)}
+.reassurance{color:var(--ink)}
+.cta{box-shadow:0 8px 18px rgba(10,92,240,.24)}.cta:hover{background:#0853d8}
+.after .distraction{background:var(--soft-blue);border-color:#dce6ff}
+.inbox{background:linear-gradient(150deg,#fff,#f6f9ff)}
+button:focus-visible,a:focus-visible{outline-color:var(--blue)}
+.social-proof{gap:8px;white-space:nowrap}.social-proof svg{width:24px;height:20px;flex:none}
+</style>
+</head>
+<body>
+<svg class="icons" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M8 10V6a4 4 0 0 1 7.6-1.7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+<symbol id="bubble" viewBox="0 0 24 24"><path d="M20 11c0 4.5-4.1 8-9 7.4L6 21v-4.2C-1 11 4 3 11.5 3 16.2 3 20 6.5 20 11Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="shield" viewBox="0 0 24 24"><path d="m12 2 8 4v7c0 4-4 7-8 9-4-2-8-5-8-9V6l8-4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m8 12 3 3 5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="people" viewBox="0 0 28 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="7" r="3.5"/><path d="M4 21v-2a7 7 0 0 1 14 0v2M19 4a3.5 3.5 0 0 1 0 7m3 2a6 6 0 0 1 3 5v3"/></g></symbol>
+</defs></svg>
+<header class="preview-label"><strong>Konvo · Paywall preview</strong><span title="The social-proof count is draft copy, not a verified customer count.">1,000+ count: draft</span></header>
+<main class="phone" aria-label="Konvo yearly subscription">
+<div class="status" aria-hidden="true"><span>9:41</span><svg viewBox="0 0 64 16" fill="currentColor"><rect x="0" y="10" width="3" height="5" rx="1"/><rect x="5" y="7" width="3" height="8" rx="1"/><rect x="10" y="4" width="3" height="11" rx="1"/><rect x="15" y="1" width="3" height="14" rx="1"/><path d="M23 5q7-7 14 0l-2 2q-5-5-10 0zm3 4q4-4 8 0l-4 5z"/><rect x="42" y="3" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="44" y="5" width="15" height="7" rx="1"/><rect x="62" y="6" width="2" height="5" rx="1"/></svg></div>
+<nav class="topbar" aria-label="Paywall navigation"><button class="back" aria-label="Go back" data-preview="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="m15 4-8 8 8 8"/></svg></button></nav>
+<section class="hero" aria-label="Before: distracting feeds. After: conversations only. Illustrative app previews.">
+<div class="scene before" aria-hidden="true"><span class="tag">BEFORE</span><div class="feed"><div class="stories"><div class="story"><span class="avatar peach">J</span></div><div class="story"><span class="avatar lilac">S</span></div><div class="story"><span class="avatar sage">A</span></div><div class="story"><span class="avatar">M</span></div></div><div class="post"></div><div class="feed-lines"></div></div><div class="distraction">The endless scroll</div></div>
+<div class="scene after" aria-hidden="true"><span class="tag">AFTER</span><div class="inbox"><div class="inbox-title">Your people.</div><div class="chat"><span class="avatar peach">J</span><div class="chat-copy"><b>Jamie</b><small>Coffee this weekend? ☕</small></div><span class="unread"></span></div><div class="chat"><span class="avatar sage">A</span><div class="chat-copy"><b>Alex</b><small>That sounds like a plan</small></div></div><div class="chat"><span class="avatar lilac">S</span><div class="chat-copy"><b>Sam</b><small>Sent you a message</small></div></div></div><div class="distraction">Just the conversations</div></div>
+<span class="transition" aria-hidden="true"><svg><use href="#arrow"/></svg></span>
+</section>
+<section class="sheet" aria-labelledby="headline">
+<!-- Draft social proof requested for design review. Verify unique real users before publishing. -->
+<div class="eyebrow social-proof" data-proof-status="unverified-draft"><svg aria-hidden="true"><use href="#people"/></svg>Join 1,000+ people on Konvo</div>
+<h1 id="headline">Keep the connection.<br>Lose the distraction.</h1>
+<ul class="benefits">
+<li><svg class="check" aria-hidden="true"><use href="#check"/></svg>All your Instagram DMs in one place.</li>
+<li><svg class="check" aria-hidden="true"><use href="#check"/></svg>No Feed, Reels, or Explore to pull you in.</li>
+<li><svg class="check" aria-hidden="true"><use href="#check"/></svg>Stay close to the people who matter.</li>
+<li><svg class="check" aria-hidden="true"><use href="#check"/></svg>Reply, catch up, and get on with your day.</li>
+</ul>
+<div class="unlock"><span class="unlock-icon"><svg aria-hidden="true"><use href="#lock"/></svg></span><div><b>Your distraction-free inbox awaits</b><p>Unlock Konvo when you subscribe.</p></div></div>
+<div class="plan" aria-label="Yearly plan. Approximately 48 cents per week. 24 dollars and 99 cents billed annually.">
+<p class="plan-name">Yearly</p><span class="selected" aria-hidden="true"><svg><use href="#check"/></svg></span>
+<p class="price">$0.48<span>/week</span></p><p class="billing">$24.99 billed annually</p><p class="cancel"><svg aria-hidden="true"><use href="#check"/></svg>Cancel anytime</p>
+</div>
+<p class="reassurance"><svg aria-hidden="true"><use href="#shield"/></svg>You’re in control. Cancel anytime.</p>
+<div class="bottom"><button class="cta" data-preview="purchase">Unlock Konvo<svg aria-hidden="true"><use href="#arrow"/></svg></button><p class="renewal">$24.99 charged today. Renews annually unless cancelled.</p><div class="legal"><a href="https://konvoinstall.com/terms" target="_blank" rel="noopener">Terms of Use</a><a href="https://konvoinstall.com/privacy" target="_blank" rel="noopener">Privacy Policy</a><button data-preview="restore">Restore</button></div></div>
+<div class="home" aria-hidden="true"></div>
+</section>
+</main>
+<dialog id="preview-dialog" aria-labelledby="dialog-title"><h2 id="dialog-title">Paywall preview</h2><p id="preview-message"></p><button id="close-dialog">Close</button></dialog>
+<script>
+const modal=document.getElementById('preview-dialog');
+const messages={purchase:'This design previews a US$24.99 annual subscription, charged immediately. No purchase has been made.',restore:'This is a standalone design preview. Purchases can be restored in the Konvo app.',back:'This is a standalone preview of the paywall. In the app, this returns to the previous screen.'};
+document.querySelectorAll('[data-preview]').forEach(button=>button.addEventListener('click',()=>{document.getElementById('preview-message').textContent=messages[button.dataset.preview];modal.showModal()}));
+document.getElementById('close-dialog').addEventListener('click',()=>modal.close());
+modal.addEventListener('click',event=>{if(event.target===modal){const r=modal.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)modal.close()}});
+</script>
+<script src="preview-device.js"></script>
+</body></html>

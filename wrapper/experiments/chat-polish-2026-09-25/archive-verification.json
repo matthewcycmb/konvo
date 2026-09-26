@@ -1,0 +1,36 @@
+{
+  "bundles": {
+    "Konvo.app": {
+      "version": "1.8.0",
+      "build": "129"
+    },
+    "KonvoShieldConfig.appex": {
+      "version": "1.8.0",
+      "build": "129"
+    },
+    "KonvoActivityMonitor.appex": {
+      "version": "1.8.0",
+      "build": "129"
+    },
+    "KonvoShieldAction.appex": {
+      "version": "1.8.0",
+      "build": "129"
+    }
+  },
+  "embedded_cage_matches": true,
+  "source_hashes_match": true,
+  "binary_sha256": "81fc10b7063d8c1b88a257969bf4bdb7bbc0a6f27c05f05eb48e484d84892475",
+  "codesign_deep_strict_verified": true,
+  "device_install": {
+    "device": "iPhone 16e",
+    "version": "1.8.0",
+    "build": "129",
+    "installed": true,
+    "launched": true,
+    "app_data_preserved": true
+  },
+  "installed_build_live_smoke": {
+    "status": "pending_usb_reconnection",
+    "note": "Installation and launch verified with devicectl. USB inspector disconnected before the post-install smoke test."
+  }
+}

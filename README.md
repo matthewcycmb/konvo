@@ -1,5 +1,15 @@
 # Konvo: DMs Only
 
+## Shipaton 2026 Next Gen: v1.9.0 (build 130)
+
+This is the source snapshot for **Konvo 1.9.0, build 130**, submitted for App Store review on September 25, 2026. Submission for review does not mean the update is approved or publicly available yet; the live App Store listing showed 1.8.0 when this snapshot was prepared.
+
+- [Pinned judging source: `shipaton-2026-v1.9.0`](https://github.com/matthewcycmb/konvo/tree/shipaton-2026-v1.9.0)
+- [Version notes, review guide, and verification](docs/SHIPATON_2026_V1_9_0.md)
+- [MIT license](LICENSE)
+
+The app source is based on commit `dc3871a4942f46afa303bcba073ac15c21716ea5`; the judging snapshot adds documentation only. The older `main` application tree is a separate desktop-release baseline. Use the pinned snapshot above to review or build this iPhone submission.
+
 Instagram with only the messages. Konvo is an iPhone app (also on the Mac App Store) that opens straight to your Instagram inbox. The feed, Reels and Explore never load. You sign in on Instagram's own login page inside the app; Konvo never sees your password or your messages, because it is Instagram's website in a caged web view, not a client that talks to Instagram on your behalf.
 
 App Store: https://apps.apple.com/app/id6794756261. Site: https://konvoinstall.com. Built by Matthew Chan, a high school student, July to September 2026. MIT licensed.
@@ -13,7 +23,7 @@ I deleted Instagram for two weeks and the urge to scroll went away. Then I reins
 One WKWebView on instagram.com, hosted by Tauri 2, with a script injected at document start on every page. There is no Konvo backend for anything you read or write.
 
 - `wrapper/src-tauri/src/cage.js` is the product. It runs before Instagram's own code and does four jobs: the cage (below), the onboarding wall drawn over the inbox, the paywall, and analytics through the native bridge.
-- `wrapper/src-tauri/src/lib.rs` embeds the script (`CAGE_SCRIPT`), sets a Safari user agent so Instagram's login accepts the web view, and allows all web navigation so Meta's login, two-factor and challenge pages are never cut off (`allowed()`).
+- `wrapper/src-tauri/src/lib.rs` combines `onboarding-views.js`, `onboarding-experiment.js`, and `cage.js` into the injected script (`CAGE_SCRIPT`), sets a Safari user agent so Instagram's login accepts the web view, and allows all web navigation so Meta's login, two-factor and challenge pages are never cut off (`allowed()`). The original onboarding is selected for everyone in this snapshot; the personalized experiment is retired.
 - `wrapper/src-tauri/gen/apple/Sources/instamessages-wrapper/KonvoStore.swift` is the native side of the bridge (`window.webkit.messageHandlers.konvoStore`): RevenueCat purchases and entitlements, Screen Time, the cookie snapshot, notifications, the share sheet.
 - `wrapper/src-tauri/gen/apple/{ShieldConfig,ShieldAction,ActivityMonitor}` are the Screen Time extensions behind the optional lock button.
 - `wrapper/dist/index.html` is the pre-login onboarding (quiz, privacy pages), in English, French, Traditional Chinese and Korean.
@@ -32,7 +42,7 @@ Blocking is a URL block-list, not an allow-list: an allow-list stranded people o
 /^\/[A-Za-z0-9._]+\/(reels|tagged|saved)(\/|$)/   a profile's scrolling tabs
 ```
 
-Anything matching is sent to `/direct/inbox/`. Thirty-nine CSS selectors hide doorways that Instagram draws inside allowed pages (the inbox back chevron, Message Requests, the New post and Create entries, and language-proof variants verified on a French phone). Deliberately open, because they are conversation material and not a feed: stories viewing, profiles, a single post (`/p/<code>`), the single-reel permalink (`/reel/<code>/`), and the notifications heart. In-app copy says exactly this: "Feed, Reels and Explore are now hidden. Stories, profiles and notifications still work."
+Anything matching is sent to `/direct/inbox/`. CSS selectors hide doorways that Instagram draws inside allowed pages. The shared bottom navigation provides Messages, Notifications, Profile, and the Instagram lock/pass control, and hides inside conversations so it does not cover the composer. Deliberately open, because they are conversation material and not a feed: stories viewing, profiles, a single post (`/p/<code>`), the single-reel permalink (`/reel/<code>/`), and notifications. Konvo removes scrolling feed surfaces; it does not block every individual piece of content shared in a conversation.
 
 When Instagram changes its markup, `public/cage-patch.json` on the site is the repair channel: the app fetches it at every document start, caches the last good copy, and accepts three keys, `hide` (selectors), `css` (a raw string) and `block` (regex sources appended to the list). Data only; remote JavaScript is not supported. A fix is live within about a minute, with no app release. One Instagram A/B variant ships a Content Security Policy that blocks this fetch; those users get the baked-in rules until the next release.
 
@@ -44,17 +54,18 @@ The second lesson came from data. The Screen Time block used to arm at the momen
 
 ### RevenueCat
 
-- `Purchases.configure` with the public SDK key, anonymous app user id, entitlement `Pro`, offering `current`, packages `konvo.pro.yearly` (7-day trial) and `konvo.pro.monthly`.
+- `Purchases.configure` with the public SDK key, anonymous app user id, entitlement `Pro`, offering **`konvo_ab_control_v1`**, and products `konvo.pro.yearly` (7-day trial for eligible users) and `konvo.pro.monthly`. The native bridge explicitly selects this offering; setting only RevenueCat's default/current offering is insufficient.
 - `products`: localized prices, per-week and per-month framing, the honest saving against twelve months of monthly, and `trialDays` only when `checkTrialOrIntroDiscountEligibility` says the person is eligible.
 - `purchase`: cancelled, pending (Ask to Buy) and error branches; `restore`; `entitlements` from cached customer info so an offline launch keeps working.
 - RevenueCat Paywalls (`RevenueCatUI`) can be switched on remotely through the patch file for a test, with no release.
-- The invite loop: every buyer can send a link; a friend who pastes it at their paywall gets three free days through a RevenueCat promotional entitlement granted by the site (`app/api/invite`), three friends per link, then the paywall. The RevenueCat secret key lives only on the server.
+- Earlier versions included a sender referral screen. **That screen is removed from the v1.9.0 onboarding flow.** Existing invite-claim support and the server-side promotional-entitlement implementation remain in the source; they should not be confused with a current onboarding step. The RevenueCat secret key lives only on the server.
 - Webhooks go to PostHog and share the person with the app's events, which is how the decisions above were made.
 
 ## Data that leaves the phone
 
 - Never: your Instagram password (the code only checks that the field is non-empty before counting a login attempt), your messages, your contacts.
 - To PostHog: named events with the build number, network type, platform, phone language and onboarding variant; a random RevenueCat anonymous id as the person; and, once, your Instagram account's numeric id so returning devices can be told apart. The username is not sent.
+- To ActivationPal: allowlisted onboarding, paywall, and product events through `KonvoActivationAnalytics.swift`, with the SDK's device/session context. Arbitrary bridge properties and message text are not forwarded by this adapter.
 - To RevenueCat: what its SDK needs to sell and restore a subscription.
 - To UserJot: feedback you type into the feedback board, under the same anonymous id.
 - To the site: your Instagram username only if you send an invite link (it is the invite code) and a device push token if you allow notifications, both keyed to the anonymous id.
@@ -64,17 +75,15 @@ Full policy: https://konvoinstall.com/privacy.
 
 ## Build and run
 
-Use Node 24 and Python 3.10 or newer (the verification script is tested with Python 3.12). Native builds also need macOS, the full Xcode installation with iOS support, and stable Rust installed through rustup. Follow [Tauri's prerequisites](https://v2.tauri.app/start/prerequisites/) to finish the Xcode and Rust setup.
+Use Node 24 and Python 3.10 or newer for the contributor-setup checks. Native builds also need macOS, the full Xcode installation with iOS support, and stable Rust installed through rustup. Follow [Tauri's prerequisites](https://v2.tauri.app/start/prerequisites/) to finish the Xcode and Rust setup.
 
-Install dependencies from the repository root. The site and native wrapper have separate npm lockfiles; both need their own install. The Python environment is only for the IPA verification tool.
+Clone the pinned judging snapshot and install dependencies from the repository root. The site and native wrapper have separate npm lockfiles; both need their own install.
 
 ```sh
-git clone https://github.com/matthewcycmb/konvo.git
+git clone --branch shipaton-2026-v1.9.0 --single-branch https://github.com/matthewcycmb/konvo.git
 cd konvo
 npm ci
 npm --prefix wrapper ci
-python3 -m venv .venv
-.venv/bin/python -m pip install -r wrapper/scripts/requirements.txt
 ```
 
 RevenueCat, RevenueCatUI, Superwall, and UserJot are declared in the committed Xcode project and resolved through Swift Package Manager. Cargo resolves the Rust dependencies. `node_modules`, downloaded SDKs, signing credentials, and generated build output do not belong in the repository.
@@ -98,7 +107,7 @@ The committed signing values belong to the original app. To build under your own
 1. In `wrapper/src-tauri/tauri.conf.json`, set `identifier` and `bundle.iOS.developmentTeam` to your app identifier and team.
 2. Open the committed `wrapper/src-tauri/gen/apple/instamessages-wrapper.xcodeproj` in Xcode. Update Signing & Capabilities for the iOS app and its three extensions, using unique bundle identifiers under your team. Keep the matching values in `project.yml` and each target's `Info.plist` and entitlements file in sync. Editing `project.yml` alone does not change the existing Xcode project.
 3. Register an App Group for your team and replace `group.com.matthewchan.konvo` in the entitlements, `project.yml`, and `Shared/KonvoShared.swift`. Keep the background refresh identifier in the app's `Info.plist`, `project.yml`, and `KonvoStore.swift` consistent if you rename it.
-4. Configure your own RevenueCat app, `Pro` entitlement, and current offering with `konvo.pro.yearly` and `konvo.pro.monthly`. Update the public SDK key in `KonvoStore.swift`. The product identifiers must match your store configuration. Real sandbox purchases require matching products and a sandbox tester in your App Store Connect account.
+4. Configure your own RevenueCat app, `Pro` entitlement, and an offering named **`konvo_ab_control_v1`** containing `konvo.pro.yearly` and `konvo.pro.monthly`. Update the public SDK key in `KonvoStore.swift`. The product identifiers must match your store configuration. Configure the annual introductory trial in the store; the app displays trial eligibility supplied through RevenueCat. Real sandbox purchases require matching products and a sandbox tester in your App Store Connect account.
 
 Build from `wrapper` after installing dependencies above:
 
@@ -106,11 +115,10 @@ Build from `wrapper` after installing dependencies above:
 cd wrapper
 rustup target add aarch64-apple-ios
 PATH="$HOME/.cargo/bin:$PATH" npm run tauri -- ios build --export-method debugging --ci
-../.venv/bin/python scripts/verify-ipa.py 0 src-tauri/gen/apple/build/arm64/Konvo.ipa
 scripts/install-dev.sh YOUR_DEVICE_UDID --keep
 ```
 
-The scripts locate this checkout from their own file paths, so the clone can have any name or location. The verifier checks a release IPA against this checkout's version, UI, and local Rust build artifacts; run it after building in the same checkout. It does not download or build the app. Use `--help` for its arguments. The installer reads the bundle identifier from the IPA, preserves app data with `--keep`, and can install another export with `KONVO_IPA=/path/to/Konvo.ipa`. Omitting `--keep` uninstalls the existing app first and resets its data.
+The installer locates this checkout from its own file path, reads the bundle identifier from the IPA, preserves app data with `--keep`, and can install another export with `KONVO_IPA=/path/to/Konvo.ipa`. Omitting `--keep` uninstalls the existing app first and resets its data. The older `scripts/verify-ipa.py` contains historical UI assertions, including the removed referral screen; it is not the v1.9.0 acceptance check. See the version guide for the checks performed on this snapshot.
 
 Launching from Xcode with the committed scheme uses the local `Konvo.storekit` test products. An exported development IPA uses Apple's sandbox instead; the StoreKit file does not set production prices. The App Store upload scripts are maintainer release tools, not part of contributor setup.
 
@@ -132,6 +140,8 @@ After dependency installation, run these from the repository root:
 python3 -m unittest discover -s wrapper/test -p 'test_setup.py'  # setup scripts, no device needed
 cd wrapper
 node test/test_bridge.js        # the bridge protocol, seconds
+node test/test_release_stability.js # bottom controls, media viewport and composer clearance
+node test/test_original_only.js # original onboarding and explicit RC offering; requires Xcode/Swift
 node test/test_onboarding.js    # screen order, language tables, no em dashes, seconds
 node test/test_cage.js          # the cage in jsdom, about ten minutes
 ```

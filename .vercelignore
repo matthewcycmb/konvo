@@ -1,0 +1,25 @@
+# Only the Next.js website is deployed to Vercel.
+wrapper/
+extension/
+marketing/
+docs/
+research/
+
+# Local tooling, caches, credentials and native build artifacts.
+.claude/
+.claude-flow/
+.codex/
+.agents/
+.gstack/
+.venv/
+**/__pycache__/
+ruvector.db*
+*.tsbuildinfo
+.env*
+*.pem
+*.p8
+*.mobileprovision
+*.ipa
+*.xcarchive/
+*.dSYM/
+*.app/

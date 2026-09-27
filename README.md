@@ -4,6 +4,28 @@ Instagram with only the messages. Konvo is an iPhone app (also on the Mac App St
 
 App Store: https://apps.apple.com/app/id6794756261. Site: https://konvoinstall.com. Built by Matthew Chan, a high school student, July to September 2026. MIT licensed.
 
+## Shipaton 2026 Next Gen: review v1.9.0 (build 130)
+
+**The submitted iPhone app is Konvo 1.9.0, build 130**, submitted for App Store review on September 25, 2026. The public store listing showed 1.8.0 when these notes were prepared; submission for review does not establish approval or public availability.
+
+- **[Browse the pinned v1.9.0 source](https://github.com/matthewcycmb/konvo/tree/shipaton-2026-v1.9.0)**
+- [Version differences, implementation map, and verification](https://github.com/matthewcycmb/konvo/blob/shipaton-2026-v1.9.0/docs/SHIPATON_2026_V1_9_0.md)
+- [Current README and build instructions](https://github.com/matthewcycmb/konvo/blob/shipaton-2026-v1.9.0/README.md#build-and-run)
+- [MIT license](https://github.com/matthewcycmb/konvo/blob/shipaton-2026-v1.9.0/LICENSE)
+
+The app source is commit `dc3871a4942f46afa303bcba073ac15c21716ea5`; the `shipaton-2026-v1.9.0` tag adds review documentation and source checksums. To check out the submission:
+
+```sh
+git clone --branch shipaton-2026-v1.9.0 --single-branch https://github.com/matthewcycmb/konvo.git
+```
+
+This repository's default `main` application tree still identifies itself as v1.6.0 and serves the existing automatic desktop-release workflows. **Use the tagged source above for the iPhone submission.** Its guide describes the current navigation, original onboarding, explicit RevenueCat offering, and differences from earlier demo screens.
+
+<details>
+<summary>Historical main-branch documentation (v1.6.0 desktop-release baseline)</summary>
+
+The material below describes the older `main` tree. Follow the tagged v1.9.0 documentation above for the submitted iPhone app.
+
 ## Why it exists
 
 I deleted Instagram for two weeks and the urge to scroll went away. Then I reinstalled it to answer friends and found fifteen unread messages. Deleting was no longer an option, and every screen time app I had tried failed the same way: a fifteen-minute unlock opens the whole app, so the fifteen minutes went to Reels. Konvo removes the surfaces instead of rationing them. The messages stay; the feed does not exist.
@@ -155,3 +177,5 @@ extension/                      Chrome extension, static redirect rules
 wrapper/                        the app: Tauri 2 host, cage.js, Swift bridge, Screen Time extensions, tests, scripts
 docs/agents/                    notes for coding agents working in this repo
 ```
+
+</details>

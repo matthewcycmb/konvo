@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { track } from "@/lib/analytics";
 import { APP_STORE_URL } from "@/lib/links";
+import { DownloadModal } from "./download-modal";
+import styles from "./mobile-landing.module.css";
 
 /**
- * Mobile landing, styled after smashspeed.ca: sky photo background, sticky
- * translucent nav with a download pill and a hamburger menu, big left-aligned
- * hero, star rating row, Apple badge. It only renders for phone/tablet UAs
- * (plus ?mobile=1 for QA), so it owns its whole look inline with no media
- * queries.
+ * The mobile sky landing is also the desktop homepage. The scoped stylesheet
+ * widens the hero on larger screens while preserving the phone layout.
  */
 
 const INK = "#171d2e";
@@ -29,11 +28,18 @@ const PILL: React.CSSProperties = {
   boxShadow: "0 6px 16px rgba(20,60,150,0.25), inset 0 1px 0 rgba(255,255,255,0.3)",
 };
 
-export function MobileLanding() {
+export function MobileLanding({ mobilePreview = false }: { mobilePreview?: boolean }) {
   const [menu, setMenu] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
+
+  function openMacDownload() {
+    track("beta_cta_clicked");
+    setDownloadOpen(true);
+  }
 
   return (
     <div
+      className={`${styles.page}${mobilePreview ? ` ${styles.mobilePreview}` : ""}`}
       style={{
         minHeight: "100dvh",
         display: "flex",
@@ -49,8 +55,9 @@ export function MobileLanding() {
       <style>{`html,body{background:#b4d0ea}`}</style>
 
       {/* nav: transparent, the sky runs to the very top */}
-      <div style={{ position: "relative", zIndex: 10 }}>
+      <header className={styles.header}>
         <div
+          className={styles.nav}
           style={{
             display: "flex",
             alignItems: "center",
@@ -60,15 +67,26 @@ export function MobileLanding() {
           }}
         >
           <Wordmark />
+          <nav aria-label="Main navigation" className={styles.desktopLinks}>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="mailto:jchanh@gmail.com">Contact</a>
+          </nav>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <a href={APP_STORE_URL} onClick={() => track("app_store_opened")} style={PILL}>
+            <a className={styles.mobileDownload} href={APP_STORE_URL} onClick={() => track("app_store_opened")} style={PILL}>
               Download
             </a>
+            <button className={styles.desktopDownload} onClick={openMacDownload} style={{ ...PILL, display: undefined, border: 0, cursor: "pointer" }}>
+              Download for Mac
+            </button>
             <button
+              className={styles.menuButton}
               aria-label="Menu"
               aria-expanded={menu}
+              aria-controls="landing-menu"
               onClick={() => setMenu(!menu)}
-              style={{ background: "none", border: 0, padding: 10, display: "flex", cursor: "pointer" }}
+              onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
+              style={{ background: "none", border: 0, padding: 10, cursor: "pointer" }}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2" strokeLinecap="round">
                 <path d="M4 6h16" />
@@ -80,6 +98,8 @@ export function MobileLanding() {
         </div>
         {menu && (
           <div
+            id="landing-menu"
+            className={styles.menu}
             onClick={() => setMenu(false)}
             style={{
               position: "absolute",
@@ -99,49 +119,52 @@ export function MobileLanding() {
             <MenuLink href="mailto:jchanh@gmail.com" label="Contact Us" last />
           </div>
         )}
-      </div>
+      </header>
 
-      {/* hero: the extra top padding drops the title to where smashspeed's
-          sits on a phone screen, per Matthew's side-by-side. */}
-      <div style={{ padding: "104px 26px 0", textAlign: "center" }}>
-        {/* nowrap + vw sizing keeps the title on one line on any phone. */}
-        <h1 style={{ margin: 0, fontSize: "clamp(28px, 9.6vw, 46px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.06, whiteSpace: "nowrap" }}>
+      <main className={styles.hero}>
+      <div className={styles.copy}>
+        <h1 className={styles.title}>
           <span style={{ color: "#0a5cf0" }}>Konvo:</span>
           {" "}DM&rsquo;s Only
         </h1>
-        <p style={{ margin: "14px 0 0", fontSize: 17, lineHeight: 1.45, color: "#252b38" }}>
+        <p className={styles.subtitle}>
           Message on Instagram without
           <br />
           the feed, explore and reels.
         </p>
 
         <div
-          aria-label="5 star rating"
-          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 9, marginTop: 10, fontSize: 15 }}
+          className={styles.proof}
         >
-          <span style={{ display: "inline-flex", gap: 3 }}>
+          <span role="img" aria-label="5 stars" style={{ display: "inline-flex", gap: 3 }}>
             {[0, 1, 2, 3, 4].map((i) => (
               <svg key={i} width="17" height="17" viewBox="0 0 24 24" fill="#f7b31d" aria-hidden="true">
                 <path d="M12 2l2.9 6.26 6.6.72-4.9 4.55 1.34 6.47L12 16.77 6.06 20l1.34-6.47L2.5 8.98l6.6-.72z" />
               </svg>
             ))}
           </span>
-          <span style={{ color: INK, fontWeight: 600 }}>Loved by 100+ users</span>
+          <span style={{ color: INK, fontWeight: 600 }}>Loved by 1,500+ users</span>
         </div>
 
+        <div className={styles.downloads}>
         <a
           href={APP_STORE_URL}
           onClick={() => track("app_store_opened")}
           aria-label="Download on the App Store"
-          style={{ display: "inline-block", marginTop: 10, lineHeight: 0 }}
+          style={{ display: "inline-block", lineHeight: 0 }}
         >
-          <img src="/app-store-badge.webp" alt="Download on the App Store" style={{ height: 56, width: "auto", display: "block" }} />
+          <img src="/app-store-badge.webp" alt="Download on the App Store" width={499} height={168} style={{ height: 56, width: "auto", display: "block" }} />
         </a>
+        <button className={styles.macLink} onClick={openMacDownload}>
+          Also available on Mac <span aria-hidden="true">↗</span>
+        </button>
+        </div>
 
         <a
           href="https://www.instagram.com/matthewasherelol/"
           onClick={() => track("dm_link_clicked")}
-          style={{ display: "block", marginTop: 14, fontSize: 15, lineHeight: 1.5, color: SLATE, textDecoration: "none" }}
+          className={styles.support}
+          style={{ color: SLATE, textDecoration: "none" }}
         >
           Have questions? DM <span style={{ color: "#0a5cf0", fontWeight: 600 }}>@matthewasherelol</span>
           <br />
@@ -150,16 +173,19 @@ export function MobileLanding() {
       </div>
 
       {/* app shot */}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 42 }}>
+      <div className={styles.phone}>
         <img
           src="/mock-inbox.png"
           alt="Konvo inbox on iPhone"
-          style={{ width: "min(78%, 320px)", height: "auto", filter: "drop-shadow(0 26px 50px rgba(23,29,46,0.35))" }}
+          width={342}
+          height={640}
+          fetchPriority="high"
         />
       </div>
+      </main>
 
       {/* fine print */}
-      <div style={{ marginTop: "auto", padding: "46px 26px 34px", fontSize: 12.5, color: "#4c5870", textAlign: "center" }}>
+      <footer className={styles.footer}>
         © 2026 Konvo{" · "}
         <a href="/privacy" style={{ color: "inherit" }}>
           Privacy
@@ -169,7 +195,8 @@ export function MobileLanding() {
           Terms
         </a>
         <div style={{ marginTop: 6, color: "#5f6b84" }}>Not affiliated with Instagram.</div>
-      </div>
+      </footer>
+      {downloadOpen && <DownloadModal onClose={() => setDownloadOpen(false)} />}
     </div>
   );
 }

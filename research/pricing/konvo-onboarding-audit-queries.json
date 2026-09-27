@@ -1,0 +1,26 @@
+[
+  {
+    "name": "events",
+    "query": "SELECT person_id,timestamp,event,properties.build,properties.experiment_variant,properties.onboarding_version,properties.is_test_build,properties.onboarding_preview,properties.screen_id,properties.result,properties.plan,properties.product_id,properties.offering_id,properties.onboarding_experiment_retired, NOT (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US' AND (properties.$geoip_city_name = 'Cupertino' OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))) AS passes_project_filter FROM events WHERE timestamp >= toDateTime('2026-09-18 00:00:00') AND timestamp < toDateTime('2026-09-27 02:29:00') AND event IN ('$experiment_exposure','onboarding_screen_viewed','login_started','login_succeeded','paywall_viewed','purchase_result','purchase_started','onboarding_completed','inbox_reveal_viewed','perks_viewed','try_viewed','offer_viewed','reminder_viewed') ORDER BY timestamp LIMIT 50000"
+  },
+  {
+    "name": "rc",
+    "query": "SELECT person_id,timestamp,event,properties.insert_id,properties.product_id,properties.revenue,properties.currency,properties.period_type,properties.presented_offering_id,properties.purchased_at,properties.expiration_at,properties.cancel_reason,properties.expiration_reason,properties.store,properties.environment FROM events WHERE timestamp >= toDateTime('2026-08-01 00:00:00') AND timestamp < toDateTime('2026-09-27 02:29:00') AND startsWith(event,'rc_') ORDER BY timestamp LIMIT 10000"
+  },
+  {
+    "name": "prior_starts",
+    "query": "SELECT person_id,min(timestamp) AS first_welcome FROM events WHERE timestamp < toDateTime('2026-09-27 02:29:00') AND event='onboarding_screen_viewed' AND properties.screen_id='s1' GROUP BY person_id LIMIT 10000"
+  },
+  {
+    "name": "excluded",
+    "query": "SELECT DISTINCT person_id FROM events WHERE timestamp >= toDateTime('2026-09-18 00:00:00') AND timestamp < toDateTime('2026-09-27 02:29:00') AND ((timestamp < toDateTime('2026-09-21 04:11:22') AND toInt(properties.build) >= 109 AND toInt(properties.build) <= 116) OR properties.is_test_build = true OR properties.onboarding_preview = true) LIMIT 10000"
+  },
+  {
+    "name": "weekly_interest",
+    "query": "SELECT event,properties.experiment_variant,properties.plan,properties.weekly_available,properties.weekly_product_id,count(),uniqExact(person_id) FROM events WHERE timestamp >= toDateTime('2026-09-21 04:13:48') AND timestamp < toDateTime('2026-09-27 02:29:00') AND person_id NOT IN (SELECT DISTINCT person_id FROM events WHERE timestamp >= toDateTime('2026-09-18 00:00:00') AND ((timestamp < toDateTime('2026-09-21 04:11:22') AND toInt(properties.build)>=109 AND toInt(properties.build)<=116) OR properties.is_test_build=true OR properties.onboarding_preview=true)) AND NOT (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US' AND (properties.$geoip_city_name='Cupertino' OR empty(toString(coalesce(properties.$geoip_subdivision_1_code,''))))) AND event IN ('plan_selected','purchase_started','paywall_viewed','store_products_ready') GROUP BY 1,2,3,4,5 ORDER BY 1,2 LIMIT 100"
+  },
+  {
+    "name": "price_seen",
+    "query": "SELECT properties.experiment_variant,properties.currency,properties.price,properties.product_id,properties.trial_days,uniqExact(person_id) FROM events WHERE timestamp >= toDateTime('2026-09-21 04:13:48') AND timestamp < toDateTime('2026-09-27 02:29:00') AND person_id NOT IN (SELECT DISTINCT person_id FROM events WHERE timestamp >= toDateTime('2026-09-18 00:00:00') AND ((timestamp < toDateTime('2026-09-21 04:11:22') AND toInt(properties.build)>=109 AND toInt(properties.build)<=116) OR properties.is_test_build=true OR properties.onboarding_preview=true)) AND NOT (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US' AND (properties.$geoip_city_name='Cupertino' OR empty(toString(coalesce(properties.$geoip_subdivision_1_code,''))))) AND event='paywall_viewed' GROUP BY 1,2,3,4,5 ORDER BY 1,2 LIMIT 100"
+  }
+]

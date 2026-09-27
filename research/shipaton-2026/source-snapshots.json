@@ -1,0 +1,55 @@
+[
+  {
+    "repository": "safwansyntropixs-bit/shipathon-app",
+    "commit": "002b2267c86225f47f4b1ad0e8edd27c1a90dfc1",
+    "branch": "main",
+    "review": "Static source/documentation spot check; not run"
+  },
+  {
+    "repository": "sangamgautam1111/guru",
+    "commit": "21206440ebd00e59b924f135c23ecc08b8cfaa0b",
+    "branch": "master",
+    "review": "Static source/documentation spot check; not run"
+  },
+  {
+    "repository": "matthewcycmb/konvo",
+    "commit": "2574b181f42699b3018925a7cc91159891d474e5",
+    "branch": "main",
+    "review": "Static source/documentation spot check; not run"
+  },
+  {
+    "repository": "sikunXchan/Sikurepi",
+    "commit": "1266dd1434177850d8c61cd98bc6848ad00b4238",
+    "branch": "main",
+    "review": "Static source/documentation spot check; not run"
+  },
+  {
+    "repository": "DominiqueAndrew/fitwitness",
+    "commit": "69abbb0ea5ac8a4a4f7416c427ef35c9aab9eab8",
+    "branch": "main",
+    "review": "Static source/documentation spot check; not run"
+  },
+  {
+    "repository": "impacnari/Veta",
+    "commit": "b347fbaac17f41819c04c748126a04a826a9f4ca",
+    "branch": "main",
+    "review": "Static source/documentation spot check; not run"
+  },
+  {
+    "repository": "Zzy-min/studyloop",
+    "commit": "9dab9daa2186e38210a5d5b69ca8e2d0ebfb4464",
+    "branch": "main",
+    "review": "Static source/documentation spot check; not run"
+  },
+  {
+    "repository": "PHONGUIT22/CareBridge",
+    "commit": "8261b246e7dcbf245ffb6c06305b3f638d858472",
+    "branch": "main",
+    "review": "Static source/documentation spot check; not run"
+  },
+  {
+    "repository": "demidgost-sys/tenderverdict",
+    "branch": "hackathon/revenuecat-next-gen-2026",
+    "review": "Competition branch README inspected through web tool; commit not pinned"
+  }
+]

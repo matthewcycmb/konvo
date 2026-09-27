@@ -1,0 +1,1139 @@
+{
+  "native_specs": [
+    {
+      "key": "ordered_quiz",
+      "name": "130 | 01 Every quiz page → Your Instagram inbox",
+      "description": "Ordered 7-day native funnel from the exact first Welcome after public release. Every quiz screen is required; the last step is the real inbox reveal, which also confirms connection. No optional steps can inflate conversion. Same saved release cutoff and test/reviewer exclusions as the dashboard.",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s1"
+                  ],
+                  "operator": "exact"
+                },
+                {
+                  "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), ''))\n      AND started >= toDateTime(if(empty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')), '2100-01-01 00:00:00', coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\nSELECT person_id, started FROM cohort\n)",
+                  "type": "hogql"
+                }
+              ],
+              "custom_name": "01 · Welcome"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s2c"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "02 · Why stop scrolling?"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s3"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "03 · Instagram time"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s4"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "04 · Messaging time"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s4b"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "05 · Adding it up"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s5"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "06 · Years lost"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s6"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "07 · Instagram vs DMs"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s7"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "08 · Years back"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s8a"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "09 · No Feed, Reels or Explore"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s8b"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "10 · Your messages stay"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s8c"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "11 · Lock Instagram"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s9t"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "12 · Connect Instagram"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s11"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "13 · Opening Instagram sign-in"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "inbox_reveal_viewed",
+              "custom_name": "14 · Instagram connected: your inbox"
+            }
+          ],
+          "version": 2,
+          "dateRange": {
+            "date_from": "2026-09-25T00:00:00Z",
+            "explicitDate": false,
+            "excludeIncompletePeriods": false
+          },
+          "properties": [
+            {
+              "key": "build",
+              "type": "event",
+              "value": [
+                "130"
+              ],
+              "operator": "exact"
+            }
+          ],
+          "funnelsFilter": {
+            "layout": "vertical",
+            "exclusions": [],
+            "showLegend": false,
+            "funnelVizType": "steps",
+            "legendPosition": "bottom",
+            "funnelOrderType": "ordered",
+            "showAnnotations": true,
+            "showValuesOnSeries": false,
+            "funnelStepReference": "previous",
+            "funnelWindowInterval": 7,
+            "breakdownAttributionType": "first_touch",
+            "funnelWindowIntervalUnit": "day",
+            "hideIncompleteConversionWindowPeriods": false
+          },
+          "filterTestAccounts": true
+        }
+      }
+    },
+    {
+      "key": "postlogin_funnel",
+      "name": "130 | 02 Inbox → Rendered paywall → Finish",
+      "description": "Main ordered 7-day path from first Welcome. Shows inbox, perks, rendered prices and final Continue. Trial-eligible screens have their own funnel so legitimate skips cannot produce over-100% conversion or negative drop-off. Final step is an action; Apple acceptance and confirmed payments remain separate metrics.",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s1"
+                  ],
+                  "operator": "exact"
+                },
+                {
+                  "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), ''))\n      AND started >= toDateTime(if(empty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')), '2100-01-01 00:00:00', coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\nSELECT person_id, started FROM cohort\n)",
+                  "type": "hogql"
+                }
+              ],
+              "custom_name": "01 · Welcome"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "inbox_reveal_viewed",
+              "custom_name": "02 · Your real inbox"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "perks_viewed",
+              "custom_name": "03 · Same account. Different app."
+            },
+            {
+              "kind": "EventsNode",
+              "event": "paywall_presented",
+              "properties": [
+                {
+                  "key": "paywall_id",
+                  "type": "event",
+                  "value": [
+                    "original"
+                  ],
+                  "operator": "exact"
+                },
+                {
+                  "key": "placement",
+                  "type": "event",
+                  "value": [
+                    "onboarding"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "04 · Paywall with prices"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_completed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s14_success"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "05 · You're in: Continue (action)"
+            }
+          ],
+          "version": 2,
+          "dateRange": {
+            "date_from": "2026-09-25T00:00:00Z",
+            "explicitDate": false,
+            "excludeIncompletePeriods": false
+          },
+          "properties": [
+            {
+              "key": "build",
+              "type": "event",
+              "value": [
+                "130"
+              ],
+              "operator": "exact"
+            }
+          ],
+          "funnelsFilter": {
+            "layout": "vertical",
+            "exclusions": [],
+            "showLegend": false,
+            "funnelVizType": "steps",
+            "legendPosition": "bottom",
+            "funnelOrderType": "ordered",
+            "showAnnotations": true,
+            "showValuesOnSeries": false,
+            "funnelStepReference": "previous",
+            "funnelWindowInterval": 7,
+            "breakdownAttributionType": "first_touch",
+            "funnelWindowIntervalUnit": "day",
+            "hideIncompleteConversionWindowPeriods": false
+          },
+          "filterTestAccounts": true
+        }
+      }
+    },
+    {
+      "key": "trial_offer_funnel",
+      "name": "130 | 03 Trial-eligible screens → Paywall",
+      "description": "Only the branch that begins with Try Konvo free. Counts unique people who reach each eligible-offer screen in order, then the rendered paywall, within 7 days of their first Welcome. This is offer-screen progression, not confirmed trial starts or trial-to-paid conversion.",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "try_viewed",
+              "custom_name": "01 · Try Konvo free"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "offer_viewed",
+              "custom_name": "02 · Free-trial offer"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "reminder_viewed",
+              "custom_name": "03 · Trial reminder"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "paywall_presented",
+              "properties": [
+                {
+                  "key": "paywall_id",
+                  "type": "event",
+                  "value": [
+                    "original"
+                  ],
+                  "operator": "exact"
+                },
+                {
+                  "key": "placement",
+                  "type": "event",
+                  "value": [
+                    "onboarding"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "04 · Paywall with prices"
+            }
+          ],
+          "version": 2,
+          "dateRange": {
+            "date_from": "2026-09-25T00:00:00Z",
+            "explicitDate": false,
+            "excludeIncompletePeriods": false
+          },
+          "properties": [
+            {
+              "key": "build",
+              "type": "event",
+              "value": [
+                "130"
+              ],
+              "operator": "exact"
+            },
+            {
+              "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), ''))\n      AND started >= toDateTime(if(empty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')), '2100-01-01 00:00:00', coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\n\nSELECT e.person_id, e.timestamp\nFROM events e JOIN cohort c ON e.person_id = c.person_id\nWHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n  AND e.timestamp >= c.started AND e.timestamp < c.started + INTERVAL 7 DAY\n  AND toString(e.properties.build) = '130'\n)",
+              "type": "hogql"
+            }
+          ],
+          "funnelsFilter": {
+            "layout": "vertical",
+            "exclusions": [],
+            "showLegend": false,
+            "funnelVizType": "steps",
+            "legendPosition": "bottom",
+            "funnelOrderType": "ordered",
+            "showAnnotations": true,
+            "showValuesOnSeries": false,
+            "funnelStepReference": "previous",
+            "funnelWindowInterval": 7,
+            "breakdownAttributionType": "first_touch",
+            "funnelWindowIntervalUnit": "day",
+            "hideIncompleteConversionWindowPeriods": false
+          },
+          "filterTestAccounts": true
+        }
+      }
+    }
+  ],
+  "preview": {
+    "key": "native_qa_preview",
+    "name": "QA PREVIEW | Build130 · Every quiz page → Inbox",
+    "description": "Pre-release TEST activity so you can preview the native blue-bar funnel before launch. These are not customer conversions. Same known QA/reviewer exclusions, with the release cutoff temporarily replaced by Sep25 in this standalone preview only. The customer dashboard stays gated.",
+    "query": {
+      "kind": "InsightVizNode",
+      "source": {
+        "kind": "FunnelsQuery",
+        "dateRange": {
+          "date_from": "2026-09-25T00:00:00Z"
+        },
+        "filterTestAccounts": true,
+        "properties": [
+          {
+            "key": "build",
+            "type": "event",
+            "operator": "exact",
+            "value": [
+              "130"
+            ]
+          }
+        ],
+        "funnelsFilter": {
+          "funnelOrderType": "ordered",
+          "funnelWindowInterval": 7,
+          "funnelWindowIntervalUnit": "day",
+          "funnelVizType": "steps",
+          "funnelStepReference": "previous",
+          "layout": "vertical"
+        },
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "01 · Welcome",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s1"
+                ]
+              },
+              {
+                "type": "hogql",
+                "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty('2026-09-25 00:00:00')\n      AND started >= toDateTime(if(empty('2026-09-25 00:00:00'), '2100-01-01 00:00:00', '2026-09-25 00:00:00'))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\nSELECT person_id, started FROM cohort\n)"
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "02 · Why stop scrolling?",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s2c"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "03 · Instagram time",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s3"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "04 · Messaging time",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s4"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "05 · Adding it up",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s4b"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "06 · Years lost",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s5"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "07 · Instagram vs DMs",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s6"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "08 · Years back",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s7"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "09 · No Feed, Reels or Explore",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s8a"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "10 · Your messages stay",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s8b"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "11 · Lock Instagram",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s8c"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "12 · Connect Instagram",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s9t"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "onboarding_screen_viewed",
+            "custom_name": "13 · Opening Instagram sign-in",
+            "properties": [
+              {
+                "key": "screen_id",
+                "type": "event",
+                "operator": "exact",
+                "value": [
+                  "s11"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "EventsNode",
+            "event": "login_succeeded",
+            "custom_name": "14 · Instagram connected (proxy)",
+            "optionalInFunnel": true
+          },
+          {
+            "kind": "EventsNode",
+            "event": "inbox_reveal_viewed",
+            "custom_name": "15 · Your real inbox"
+          }
+        ]
+      }
+    },
+    "id": 12258757,
+    "short_id": "1XX0DzR4"
+  },
+  "production_checks": {
+    "quiz": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No data recorded for this time period."
+        }
+      ]
+    },
+    "postlogin": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No data recorded for this time period."
+        }
+      ]
+    }
+  },
+  "test_preview_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Date range: 2026-09-25 00:00:00 to 2026-09-27 23:59:59 (UTC)\n\nMetric|onboarding_screen_viewed 01 · Welcome|onboarding_screen_viewed 02 · Why stop scrolling?|onboarding_screen_viewed 03 · Instagram time|onboarding_screen_viewed 04 · Messaging time|onboarding_screen_viewed 05 · Adding it up|onboarding_screen_viewed 06 · Years lost|onboarding_screen_viewed 07 · Instagram vs DMs|onboarding_screen_viewed 08 · Years back|onboarding_screen_viewed 09 · No Feed, Reels or Explore|onboarding_screen_viewed 10 · Your messages stay|onboarding_screen_viewed 11 · Lock Instagram|onboarding_screen_viewed 12 · Connect Instagram|onboarding_screen_viewed 13 · Opening Instagram sign-in|login_succeeded 14 · Instagram connected (proxy)|inbox_reveal_viewed 15 · Your real inbox\nTotal person count|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1\nConversion rate|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%\nDropoff rate|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%\nAverage conversion time|-|911ms|1s|2s|1s|3s|2s|974ms|1s|1s|1s|1s|2s|17h 3m 43s|-\nMedian conversion time|-|911ms|1s|2s|1s|3s|2s|974ms|1s|1s|1s|1s|2s|17h 3m 43s|-\n\nConversion and drop-off rates are relative to the previous steps. For example, 'Conversion rate: 90%' means that 90% of users from the previous step completed the funnel."
+      }
+    ]
+  },
+  "prelaunch_native_specs": [
+    {
+      "key": "ordered_quiz",
+      "name": "130 | 01 Every quiz page → Your Instagram inbox",
+      "description": "Native ordered 7-day funnel for first Welcome on build130 after saved public launch. Shows people, conversion/drop-off from the previous step and time between steps. Connected is an optional login-success proxy. QA/reviewer cohort excluded. Launch setting must be saved on dashboard 2140017.",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "dateRange": {
+            "date_from": "2026-09-25T00:00:00Z"
+          },
+          "filterTestAccounts": true,
+          "properties": [
+            {
+              "key": "build",
+              "type": "event",
+              "operator": "exact",
+              "value": [
+                "130"
+              ]
+            }
+          ],
+          "funnelsFilter": {
+            "funnelOrderType": "ordered",
+            "funnelWindowInterval": 7,
+            "funnelWindowIntervalUnit": "day",
+            "funnelVizType": "steps",
+            "funnelStepReference": "previous",
+            "layout": "vertical"
+          },
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "01 · Welcome",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s1"
+                  ]
+                },
+                {
+                  "type": "hogql",
+                  "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), ''))\n      AND started >= toDateTime(if(empty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')), '2100-01-01 00:00:00', coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\nSELECT person_id, started FROM cohort\n)"
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "02 · Why stop scrolling?",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s2c"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "03 · Instagram time",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s3"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "04 · Messaging time",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s4"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "05 · Adding it up",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s4b"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "06 · Years lost",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s5"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "07 · Instagram vs DMs",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s6"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "08 · Years back",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s7"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "09 · No Feed, Reels or Explore",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s8a"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "10 · Your messages stay",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s8b"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "11 · Lock Instagram",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s8c"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "12 · Connect Instagram",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s9t"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "13 · Opening Instagram sign-in",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s11"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "login_succeeded",
+              "custom_name": "14 · Instagram connected (proxy)",
+              "optionalInFunnel": true
+            },
+            {
+              "kind": "EventsNode",
+              "event": "inbox_reveal_viewed",
+              "custom_name": "15 · Your real inbox"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "postlogin_funnel",
+      "name": "130 | 02 Inbox → Trial offer → Paywall → Finish",
+      "description": "Native ordered 7-day funnel from first Welcome. Trial pages, purchase/restore path and notifications can be skipped. Paywall = prices rendered. Accepted includes trials; notifications/final step measure actions. Same saved launch gate and QA exclusions as the quiz. Paid conversion remains in the mature-trial charts.",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "dateRange": {
+            "date_from": "2026-09-25T00:00:00Z"
+          },
+          "filterTestAccounts": true,
+          "properties": [
+            {
+              "key": "build",
+              "type": "event",
+              "operator": "exact",
+              "value": [
+                "130"
+              ]
+            }
+          ],
+          "funnelsFilter": {
+            "funnelOrderType": "ordered",
+            "funnelWindowInterval": 7,
+            "funnelWindowIntervalUnit": "day",
+            "funnelVizType": "steps",
+            "funnelStepReference": "previous",
+            "layout": "vertical"
+          },
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "custom_name": "01 · Welcome",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s1"
+                  ]
+                },
+                {
+                  "type": "hogql",
+                  "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), ''))\n      AND started >= toDateTime(if(empty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')), '2100-01-01 00:00:00', coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\nSELECT person_id, started FROM cohort\n)"
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "inbox_reveal_viewed",
+              "custom_name": "02 · Your real inbox"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "perks_viewed",
+              "custom_name": "03 · Same account. Different app."
+            },
+            {
+              "kind": "EventsNode",
+              "event": "try_viewed",
+              "custom_name": "04 · Try Konvo free (if eligible)",
+              "optionalInFunnel": true
+            },
+            {
+              "kind": "EventsNode",
+              "event": "offer_viewed",
+              "custom_name": "05 · Free-trial offer (if eligible)",
+              "optionalInFunnel": true
+            },
+            {
+              "kind": "EventsNode",
+              "event": "reminder_viewed",
+              "custom_name": "06 · Trial reminder (if eligible)",
+              "optionalInFunnel": true
+            },
+            {
+              "kind": "EventsNode",
+              "event": "paywall_viewed",
+              "custom_name": "07 · Loading the paywall",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s13_paywall"
+                  ]
+                }
+              ],
+              "optionalInFunnel": true
+            },
+            {
+              "kind": "EventsNode",
+              "event": "paywall_presented",
+              "custom_name": "08 · Paywall with prices",
+              "properties": [
+                {
+                  "key": "paywall_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "original"
+                  ]
+                },
+                {
+                  "key": "placement",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "onboarding"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "purchase_result",
+              "custom_name": "09 · Purchase/trial accepted (action)",
+              "properties": [
+                {
+                  "key": "result",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "purchased"
+                  ]
+                }
+              ],
+              "optionalInFunnel": true
+            },
+            {
+              "kind": "EventsNode",
+              "event": "notify_answered",
+              "custom_name": "10 · Notifications answered (action)",
+              "optionalInFunnel": true
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_completed",
+              "custom_name": "11 · You're in: Continue (action)",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "s14_success"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "release_utc": "2026-09-27 14:22:15",
+  "live_production_checks": {
+    "content": [
+      {
+        "type": "text",
+        "text": "results[5]:\n  - id: 12703707\n    insight:\n      id: 12256999\n      short_id: rjOobIJ8\n      name: \"130 | START HERE: launch date and cohort status\"\n      derived_name: null\n      result: \"[[\\\"PUBLIC COHORT ENABLED\\\", \\\"2026-09-27 14:22:15\\\", \\\"2026-09-27 16:50:04.817205+00:00\\\"]]\"\n    order: 0\n    last_refresh: null\n    is_cached: false\n  - id: 12703760\n    insight:\n      id: 12257028\n      short_id: MxRHWhMw\n      name: 130 | 01 Every quiz page → Your Instagram inbox\n      derived_name: null\n      result: \"Date range: 2026-09-25 00:00:00 to 2026-09-27 23:59:59 (UTC)\\n\\nMetric|onboarding_screen_viewed 01 · Welcome|onboarding_screen_viewed 02 · Why stop scrolling?|onboarding_screen_viewed 03 · Instagram time|onboarding_screen_viewed 04 · Messaging time|onboarding_screen_viewed 05 · Adding it up|onboarding_screen_viewed 06 · Years lost|onboarding_screen_viewed 07 · Instagram vs DMs|onboarding_screen_viewed 08 · Years back|onboarding_screen_viewed 09 · No Feed, Reels or Explore|onboarding_screen_viewed 10 · Your messages stay|onboarding_screen_viewed 11 · Lock Instagram|onboarding_screen_viewed 12 · Connect Instagram|onboarding_screen_viewed 13 · Opening Instagram sign-in|inbox_reveal_viewed 14 · Instagram connected: your inbox\\nTotal person count|18|18|18|18|18|18|18|18|18|18|18|18|18|15\\nConversion rate|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|83.33%\\nDropoff rate|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|16.67%\\nAverage conversion time|-|4s|5s|11s|4s|3s|4s|3s|2s|1s|2s|3s|3s|7m 22s\\nMedian conversion time|-|2s|3s|3s|4s|3s|4s|3s|2s|1s|1s|1s|3s|39s\\n\\nConversion and drop-off rates are relative to the previous steps. For example, 'Conversion rate: 90%' means that 90% of users from the previous step completed the funnel.\"\n    order: 1\n    last_refresh: null\n    is_cached: false\n  - id: 12706314\n    insight:\n      id: 12258716\n      short_id: ZZvLIhi4\n      name: 130 | 02 Inbox → Rendered paywall → Finish\n      derived_name: null\n      result: \"Date range: 2026-09-25 00:00:00 to 2026-09-27 23:59:59 (UTC)\\n\\nMetric|onboarding_screen_viewed 01 · Welcome|inbox_reveal_viewed 02 · Your real inbox|perks_viewed 03 · Same account. Different app.|paywall_presented 04 · Paywall with prices|onboarding_completed 05 · You're in: Continue (action)\\nTotal person count|18|15|15|13|3\\nConversion rate|100%|83.33%|100%|86.67%|23.08%\\nDropoff rate|0%|16.67%|0%|13.33%|76.92%\\nAverage conversion time|-|8m 10s|5s|12s|46s\\nMedian conversion time|-|1m 43s|4s|11s|53s\\n\\nConversion and drop-off rates are relative to the previous steps. For example, 'Conversion rate: 90%' means that 90% of users from the previous step completed the funnel.\"\n    order: 2\n    last_refresh: null\n    is_cached: false\n  - id: 12703757\n    insight:\n      id: 12257025\n      short_id: 86YY5aez\n      name: \"130 | Overview: counts and conversion percentages\"\n      derived_name: null\n      result: \"[[\\\"New onboarding starters\\\", 18, null, null], [\\\"Paywall rate: rendered / starters\\\", 13, 18, 72.2], [\\\"Trial starts / onboarding starters\\\", 0, 18, 0.0], [\\\"Trials after rendered paywall / paywall viewers\\\", 0, 13, 0.0], [\\\"Apple accepted purchase / rendered paywall\\\", 3, 13, 23.1], [\\\"Final onboarding CTA / starters\\\", 3, 18, 16.7], [\\\"Confirmed paying people so far\\\", 2, null, null], [\\\"Trials with any renewal cancellation\\\", 0, 0, null], [\\\"Trials converted to paid so far\\\", 0, null, null], [\\\"Trials still before scheduled expiry\\\", 0, null, null], [\\\"Trial-to-paid at expiry + 24h: mature only\\\", 0, 0, null], [\\\"Trial-to-paid at expiry + 14d: mature only\\\", 0, 0, null]]\"\n    order: 3\n    last_refresh: null\n    is_cached: false\n  - id: 12722334\n    insight:\n      id: 12268784\n      short_id: u3y9wS2h\n      name: 130 | 03 Trial-eligible screens → Paywall\n      derived_name: null\n      result: \"Date range: 2026-09-25 00:00:00 to 2026-09-27 23:59:59 (UTC)\\n\\nMetric|try_viewed 01 · Try Konvo free|offer_viewed 02 · Free-trial offer|reminder_viewed 03 · Trial reminder|paywall_presented 04 · Paywall with prices\\nTotal person count|13|13|11|11\\nConversion rate|100%|100%|84.62%|100%\\nDropoff rate|0%|0%|15.38%|0%\\nAverage conversion time|-|3s|3s|2s\\nMedian conversion time|-|3s|2s|3s\\n\\nConversion and drop-off rates are relative to the previous steps. For example, 'Conversion rate: 90%' means that 90% of users from the previous step completed the funnel.\"\n    order: 17\n    last_refresh: null\n    is_cached: false\n_posthogUrl: \"https://us.posthog.com/project/569146/dashboard/2140017\""
+      }
+    ]
+  }
+}

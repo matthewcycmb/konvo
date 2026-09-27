@@ -1,0 +1,268 @@
+{
+  "dashboard_url": "https://us.posthog.com/project/569146/dashboard/2140017",
+  "release_status": "App Store review; launch variable intentionally blank",
+  "saved_insights": [
+    {
+      "key": "status",
+      "id": 12256999,
+      "short_id": "rjOobIJ8",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "status|public_launch_utc|refreshed_utc\nPRE-LAUNCH: customer metrics intentionally empty||2026-09-27 05:06:14.298766+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "key": "overview",
+      "id": 12257025,
+      "short_id": "86YY5aez",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "metric|people|denominator|percent\nNew onboarding starters|0|(null)|(null)\nPaywall rate: rendered / starters|0|0|(null)\nTrial starts / onboarding starters|0|0|(null)\nTrials after rendered paywall / paywall viewers|0|0|(null)\nApple accepted purchase / rendered paywall|0|0|(null)\nFinal onboarding CTA / starters|0|0|(null)\nConfirmed paying people so far|0|(null)|(null)\nTrials with any renewal cancellation|0|0|(null)\nTrials converted to paid so far|0|(null)|(null)\nTrials still before scheduled expiry|0|(null)|(null)\nTrial-to-paid at expiry + 24h: mature only|0|0|(null)\nTrial-to-paid at expiry + 14d: mature only|0|0|(null)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "daily_chart",
+      "id": 12257026,
+      "short_id": "6JKNRIlw",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "cohort_date|starters|rendered_paywall|trial_starts|paywall_percent|starter_to_trial_percent|still_in_7day_window"
+          }
+        ]
+      }
+    },
+    {
+      "key": "pages",
+      "id": 12257027,
+      "short_id": "cKBLaP5h",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "step|page_or_action|tracking|people|percent_of_starters|previous_checkpoint|previous_people|progressed_people|percent_from_checkpoint\n1|Welcome: Instagram without Feed, Reels or Explore|Screen view|0|(null)||(null)|(null)|(null)\n2|Why do you want to stop scrolling?|Screen view|0|(null)|s1|0|0|(null)\n3|Daily Instagram screen time|Screen view|0|(null)|s2c|0|0|(null)\n4|Daily messaging time|Screen view|0|(null)|s3|0|0|(null)\n5|Adding it up|Screen view|0|(null)|s4|0|0|(null)\n6|Years distracted on your phone|Screen view|0|(null)|s4b|0|0|(null)\n7|Instagram time vs messaging time|Screen view|0|(null)|s5|0|0|(null)\n8|Years Konvo could help you get back|Screen view|0|(null)|s6|0|0|(null)\n9|No Feed. No Reels. No Explore.|Screen view|0|(null)|s7|0|0|(null)\n10|Your messages stay|Screen view|0|(null)|s8a|0|0|(null)\n11|Lock the app when you are ready|Screen view|0|(null)|s8b|0|0|(null)\n12|Social proof / Connect Instagram|Screen view|0|(null)|s8c|0|0|(null)\n13|Opening Instagram sign-in|Screen view|0|(null)|s9t|0|0|(null)\n14|Instagram login / verification pages|Third-party form detected; not every challenge page|0|(null)|s11|0|0|(null)\n15|Connected / preparing inbox|Login-success proxy; can be missing on resumed sessions|0|(null)|s11|0|0|(null)\n16|Your real Instagram inbox reveal|Screen view|0|(null)|s11|0|0|(null)\n17|Same account. Different app.|Screen view|0|(null)|reveal|0|0|(null)\n18|Try Konvo free|Conditional: trial eligible|0|(null)|perks|0|0|(null)\n19|Free-trial offer|Conditional: trial eligible|0|(null)|trial_intro|0|0|(null)\n20|Trial reminder|Conditional: trial eligible|0|(null)|offer|0|0|(null)\n21|Paywall requested / loading prices|Request, not rendered prices|0|(null)|perks|0|0|(null)\n22|Annual / monthly paywall with prices|Rendered paywall|0|(null)|attempt|0|0|(null)\n23|Apple purchase accepted|Includes free trials; NOT a paid conversion|0|(null)|paywall|0|0|(null)\n24|Notifications choice answered|Optional action; screen view is not tracked|0|(null)|accepted|0|0|(null)\n25|You are in: final Continue tapped|Final CTA; success screen view is not tracked|0|(null)|paywall|0|0|(null)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "ordered_quiz",
+      "id": 12257028,
+      "short_id": "MxRHWhMw",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "No data recorded for this time period."
+          }
+        ]
+      }
+    },
+    {
+      "key": "daily",
+      "id": 12257029,
+      "short_id": "kPtkWXk9",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "cohort_date|starters|rendered_paywall|trial_starts|paywall_percent|starter_to_trial_percent|still_in_7day_window"
+          }
+        ]
+      }
+    },
+    {
+      "key": "trials",
+      "id": 12257030,
+      "short_id": "xE8qcpZL",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "state|trials|percent_of_trials"
+          }
+        ]
+      }
+    },
+    {
+      "key": "maturity",
+      "id": 12258381,
+      "short_id": "kez1jCCF",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "observation_window|mature_trials|converted_by_deadline|conversion_percent|not_yet_mature\nScheduled expiry + 24 hours|0|0|(null)|0\nScheduled expiry + 14 days|0|0|(null)|0"
+          }
+        ]
+      }
+    },
+    {
+      "key": "cancel",
+      "id": 12258392,
+      "short_id": "E9q488CZ",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "measure|people|eligible|percent\nCanceled within 1 hour of trial start|0|0|(null)\nRendered chat before cancellation|0|0|(null)\nRendered chat 1-24h after cancellation; mature only|0|0|(null)\nRendered chat 24-48h after cancellation; mature only|0|0|(null)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "retention",
+      "id": 12258393,
+      "short_id": "8OBTg153",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "measure|people|eligible_trials|percent\nRendered chat in first 24h|0|0|(null)\nD1 rendered-chat return: hours 24-48|0|0|(null)\nD7 rendered-chat return: days 7-8|0|0|(null)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "checkout",
+      "id": 12258394,
+      "short_id": "daH8GYxn",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "event|plan|result|people|events"
+          }
+        ]
+      }
+    },
+    {
+      "key": "revenue",
+      "id": 12258395,
+      "short_id": "XOI9ZxEw",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "product|paying_people|trial_start_events|trial_conversion_events|direct_purchase_events|gross_usd|negative_adjustments_usd|recorded_revenue_after_adjustments_usd"
+          }
+        ]
+      }
+    },
+    {
+      "key": "health",
+      "id": 12258396,
+      "short_id": "AZmMm0n0",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "measure|people|samples|median_ms|p95_ms\nLogin error|0|0|(null)|(null)\nSlow Instagram login hint|0|0|(null)|(null)\nChat stalled|0|0|(null)|(null)\nChat rendered with rows|0|0|(null)|(null)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "quality",
+      "id": 12258397,
+      "short_id": "A7LCzfZo",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "diagnostic|people\nNotifications page impressions: NOT INSTRUMENTED|(null)\nSuccess page impressions: NOT INSTRUMENTED|(null)\nAccepted >24h ago, no matched RC trial/purchase after onboarding|0\nAccepted purchases older than 24h|0\nInbox reveal without login-success event|0\nPaywall requested but no rendered paywall|0"
+          }
+        ]
+      }
+    },
+    {
+      "key": "benchmark",
+      "id": 12258398,
+      "short_id": "GBgf4Zhl",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "age_days|mature_starters|paying_people|starter_to_paid_percent|gross_usd|gross_usd_per_starter\n35|0|0|(null)|0.0|(null)\n60|0|0|(null)|0.0|(null)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prelaunch",
+      "id": 12258399,
+      "short_id": "qo38DIZJ",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "event|screen_id|people|events|first_seen_utc|latest_seen_utc\npush_hooks|(null)|10|24|2026-09-25T22:17:39.388000Z|2026-09-27T04:06:45.151000Z\nonboarding_screen_viewed|s1|6|8|2026-09-25T22:17:41.456000Z|2026-09-26T22:18:02.793000Z\nonboarding_screen_viewed|s2c|5|14|2026-09-25T22:17:42.367000Z|2026-09-26T22:19:01.107000Z\nquiz_answered|s2c|5|12|2026-09-25T22:17:43.510000Z|2026-09-26T22:19:05.574000Z\nonboarding_screen_viewed|s3|5|14|2026-09-25T22:17:43.758000Z|2026-09-26T22:19:14.220000Z\nquiz_answered|s3|5|7|2026-09-25T22:17:45.075000Z|2026-09-26T22:19:16.250000Z\nonboarding_screen_viewed|s4|5|7|2026-09-25T22:17:45.326000Z|2026-09-26T22:19:16.501000Z\nquiz_answered|s4|5|5|2026-09-25T22:17:46.359000Z|2026-09-26T22:19:18.243000Z\nonboarding_screen_viewed|s4b|5|5|2026-09-25T22:17:46.610000Z|2026-09-26T22:19:18.497000Z\nonboarding_screen_viewed|s5|5|5|2026-09-25T22:17:50.026000Z|2026-09-26T22:19:21.900000Z\nonboarding_screen_viewed|s6|5|5|2026-09-25T22:17:51.730000Z|2026-09-26T22:19:26.352000Z\nonboarding_screen_viewed|s7|5|5|2026-09-25T22:17:52.704000Z|2026-09-26T22:19:28.282000Z\nonboarding_screen_viewed|s8a|5|5|2026-09-25T22:17:53.963000Z|2026-09-26T22:19:30.335000Z\nonboarding_screen_viewed|s8b|5|5|2026-09-25T22:17:55.009000Z|2026-09-26T22:19:34.386000Z\nonboarding_screen_viewed|s8c|5|5|2026-09-25T22:17:56.095000Z|2026-09-26T22:19:38.315000Z\nonboarding_screen_viewed|s9t|5|5|2026-09-25T22:17:57.181000Z|2026-09-26T22:19:50.469000Z\nlogin_started|s9t|4|4|2026-09-25T22:17:59.111000Z|2026-09-26T22:20:14.564000Z\nonboarding_screen_viewed|s11|4|4|2026-09-25T22:17:59.115000Z|2026-09-26T22:20:14.563000Z\nlogin_handoff_started|(null)|4|4|2026-09-25T22:17:59.116000Z|2026-09-26T22:20:14.563000Z\nlogin_navigation_started|(null)|4|33|2026-09-25T22:17:59.191000Z|2026-09-26T22:21:36.616000Z\napp_opened|(null)|7|15|2026-09-25T22:17:59.501000Z|2026-09-27T03:48:00.832000Z\nlogin_step|(null)|4|42|2026-09-25T22:17:59.830000Z|2026-09-26T22:22:18.570000Z\nlogin_navigation_finished|(null)|4|32|2026-09-25T22:17:59.871000Z|2026-09-26T22:21:36.861000Z\nlogin_overlay_cleared|(null)|4|4|2026-09-25T22:17:59.871000Z|2026-09-26T22:20:15.251000Z\nlogin_form_detected|(null)|4|25|2026-09-25T22:18:00.195000Z|2026-09-26T22:22:19.338000Z\nlogin_keytip_shown|(null)|4|25|2026-09-25T22:18:00.196000Z|2026-09-26T22:22:19.338000Z\nlogin_form_ready|(null)|4|25|2026-09-25T22:18:00.197000Z|2026-09-26T22:22:19.338000Z\nlogin_submitted|(null)|1|1|2026-09-25T22:18:08.976000Z|2026-09-25T22:18:08.976000Z\nlogin_tap|(null)|4|29|2026-09-25T22:18:08.977000Z|2026-09-26T22:21:34.658000Z\nlogin_error|(null)|1|1|2026-09-25T22:18:09.111000Z|2026-09-25T22:18:09.111000Z\nlogin_left|(null)|4|18|2026-09-25T22:18:12.689000Z|2026-09-26T22:21:22.625000Z\nsequence_skipped|(null)|4|37|2026-09-25T22:18:12.706000Z|2026-09-27T04:54:33.700000Z\nlogin_succeeded|s12_connected|1|1|2026-09-25T22:18:12.706000Z|2026-09-25T22:18:12.706000Z\ninbox_ready|(null)|4|92|2026-09-25T22:18:13.265000Z|2026-09-27T05:05:05.562000Z\nthread_opened|(null)|4|57|2026-09-25T22:18:15.323000Z|2026-09-27T05:04:56.995000Z\nthread_ready|(null)|4|57|2026-09-25T22:18:15.982000Z|2026-09-27T05:04:58.446000Z\nreview_asked|(null)|1|1|2026-09-25T22:18:16.935000Z|2026-09-25T22:18:16.935000Z\nbg_check|(null)|6|59|2026-09-25T22:19:09.560000Z|2026-09-27T05:01:42.004000Z\nlogin_sheet|(null)|3|18|2026-09-26T05:00:14.385000Z|2026-09-26T22:21:36.614000Z\nlogin_loading_slow|(null)|2|2|2026-09-26T05:01:07.020000Z|2026-09-26T20:13:04.699000Z\ninbox_reveal_viewed|s12d_reveal|1|1|2026-09-26T15:21:42.256000Z|2026-09-26T15:21:42.256000Z\nperks_viewed|s12d_perks|1|1|2026-09-26T15:21:43.730000Z|2026-09-26T15:21:43.730000Z\ntry_viewed|s12e_try|1|1|2026-09-26T15:21:44.876000Z|2026-09-26T15:21:44.876000Z\noffer_viewed|s12f_offer|1|1|2026-09-26T15:21:46.313000Z|2026-09-26T15:21:46.313000Z\nreminder_viewed|s12g_reminder|1|1|2026-09-26T15:21:47.627000Z|2026-09-26T15:21:47.627000Z\npaywall_viewed|s13_paywall|1|1|2026-09-26T15:21:48.763000Z|2026-09-26T15:21:48.763000Z\npaywall_presented|(null)|1|1|2026-09-26T15:21:49.067000Z|2026-09-26T15:21:49.067000Z\npurchase_result|s13_paywall|1|1|2026-09-26T15:22:00.595000Z|2026-09-26T15:22:00.595000Z\nonboarding_completed|s13_paywall|1|1|2026-09-26T15:22:00.595000Z|2026-09-26T15:22:00.595000Z\npaywall_exited|(null)|1|1|2026-09-26T15:22:00.902000Z|2026-09-26T15:22:00.902000Z\nnotify_answered|(null)|1|1|2026-09-26T15:22:01.807000Z|2026-09-26T15:22:01.807000Z\nonboarding_completed|s14_success|1|1|2026-09-26T15:22:02.811000Z|2026-09-26T15:22:02.811000Z\nblock_button_tapped|(null)|3|41|2026-09-26T15:27:39.173000Z|2026-09-27T04:54:26.838000Z\ncage_pitch_viewed|s12f_cage|3|10|2026-09-26T15:27:41.897000Z|2026-09-27T04:13:56.453000Z\ncage_setup_closed|(null)|3|6|2026-09-26T15:27:43Z|2026-09-27T04:16:35.173000Z\nblock_nudge_shown|(null)|2|2|2026-09-26T15:29:03.731000Z|2026-09-27T03:05:22.030000Z\nblock_nudge|(null)|2|2|2026-09-26T15:29:03.909000Z|2026-09-27T03:05:26.731000Z\ncage_authorized|(null)|2|3|2026-09-26T15:30:31.002000Z|2026-09-27T03:03:35.310000Z\npush_registered|(null)|2|2|2026-09-27T02:56:14.508000Z|2026-09-27T03:03:16.655000Z\ntrial_bar_shown|(null)|1|1|2026-09-27T02:56:16.346000Z|2026-09-27T02:56:16.346000Z\ncage_picked|(null)|1|2|2026-09-27T03:03:14.835000Z|2026-09-27T03:03:38.151000Z\ncage_enabled|(null)|1|2|2026-09-27T03:03:16.136000Z|2026-09-27T03:03:38.170000Z\ncage_paused_for_web_conflict|(null)|1|2|2026-09-27T03:03:16.247000Z|2026-09-27T03:03:38.187000Z"
+          }
+        ]
+      }
+    },
+    {
+      "key": "postlogin_funnel",
+      "id": 12258716,
+      "short_id": "ZZvLIhi4",
+      "query_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "No data recorded for this time period."
+          }
+        ]
+      }
+    }
+  ],
+  "historical_checks": {
+    "purpose": "Read-only validation; these are not build130 customer metrics",
+    "cancellation": {
+      "content": [
+        {
+          "type": "text",
+          "text": "measure|people|eligible|percent\nCanceled within 1 hour of trial start|62|98|63.3\nRendered chat before cancellation|63|98|64.3\nRendered chat 1-24h after cancellation; mature only|24|96|25.0\nRendered chat 24-48h after cancellation; mature only|12|93|12.9"
+        }
+      ]
+    },
+    "revenue": {
+      "content": [
+        {
+          "type": "text",
+          "text": "product|paying_people|trial_start_events|trial_conversion_events|direct_purchase_events|gross_usd|negative_adjustments_usd|recorded_revenue_after_adjustments_usd\nkonvo.pro.yearly|52|173|52|0|968.17|(null)|968.17\nkonvo.pro.monthly|10|0|0|10|77.79|-5.04|72.75\nkonvo.pro.yearly.notrial|1|0|0|1|21.64|(null)|21.64\nrc_promo_Pro_three_day|0|0|0|0|(null)|(null)|0.0\nrc_promo_Pro_weekly|0|0|0|0|(null)|(null)|0.0"
+        }
+      ]
+    },
+    "mature_conversion": {
+      "content": [
+        {
+          "type": "text",
+          "text": "observation_window|mature_trials|converted_by_deadline|conversion_percent|not_yet_mature\nScheduled expiry + 14 days|75|26|34.7|93\nScheduled expiry + 24 hours|144|50|34.7|24"
+        }
+      ]
+    }
+  },
+  "prelaunch_health_validation": {
+    "content": [
+      {
+        "type": "text",
+        "text": "measure|people|samples|median_ms|p95_ms\nLogin error|1|1|(null)|(null)\nSlow Instagram login hint|0|0|(null)|(null)\nChat stalled|0|0|(null)|(null)\nChat rendered with rows|1|19|270.0|587.0"
+      }
+    ]
+  },
+  "visual_check": "Inspected the live dashboard and screenshots; moved key onboarding percentages ahead of diagnostic columns. Browser session closed.",
+  "native_funnel_visual_check": {
+    "preview_url": "https://us.posthog.com/project/569146/insights/1XX0DzR4",
+    "layout": "vertical native funnel bars, Royal Blue, previous-step conversion and dropoff, user counts and timing",
+    "production_gated": true
+  }
+}

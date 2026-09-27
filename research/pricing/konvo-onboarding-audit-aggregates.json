@@ -1,0 +1,306 @@
+{
+  "excluded_people": 14,
+  "mixed_exposure_people": 0,
+  "cohorts": {
+    "OG_unenrolled": {
+      "users": 89,
+      "previous_welcome": 22,
+      "events": {
+        "onboarding_screen_viewed": 89,
+        "offer_viewed": 45,
+        "reminder_viewed": 43,
+        "onboarding_completed": 8,
+        "perks_viewed": 47,
+        "inbox_reveal_viewed": 47,
+        "try_viewed": 46,
+        "paywall_viewed": 43,
+        "login_succeeded": 47,
+        "purchase_result": 18,
+        "$experiment_exposure": 2,
+        "login_started": 61
+      },
+      "accepted_plans": {
+        "annual": 7,
+        "monthly": 1
+      },
+      "rc": {
+        "rc_trial_started_event": 5,
+        "rc_initial_purchase_event": 1,
+        "rc_trial_cancelled_event": 2
+      },
+      "payers": 1,
+      "rc_revenue": 9.052,
+      "trial_cancelled": 2,
+      "trial_start_range": [
+        "2026-09-21 06:03:45+00:00",
+        "2026-09-27 00:17:56+00:00"
+      ]
+    },
+    "OG_unenrolled_before_stop": {
+      "users": 61,
+      "previous_welcome": 20,
+      "events": {
+        "onboarding_screen_viewed": 61,
+        "offer_viewed": 28,
+        "reminder_viewed": 28,
+        "onboarding_completed": 6,
+        "perks_viewed": 30,
+        "inbox_reveal_viewed": 30,
+        "try_viewed": 29,
+        "paywall_viewed": 28,
+        "login_succeeded": 29,
+        "purchase_result": 13,
+        "$experiment_exposure": 2,
+        "login_started": 37
+      },
+      "accepted_plans": {
+        "annual": 5,
+        "monthly": 1
+      },
+      "rc": {
+        "rc_trial_started_event": 4,
+        "rc_initial_purchase_event": 1,
+        "rc_trial_cancelled_event": 2
+      },
+      "payers": 1,
+      "rc_revenue": 9.052,
+      "trial_cancelled": 2,
+      "trial_start_range": [
+        "2026-09-21 06:03:45+00:00",
+        "2026-09-23 09:14:08+00:00"
+      ]
+    },
+    "OG_unenrolled_old_build": {
+      "users": 34,
+      "previous_welcome": 17,
+      "events": {
+        "onboarding_screen_viewed": 34,
+        "offer_viewed": 12,
+        "reminder_viewed": 12,
+        "onboarding_completed": 4,
+        "perks_viewed": 13,
+        "inbox_reveal_viewed": 13,
+        "try_viewed": 12,
+        "paywall_viewed": 12,
+        "login_succeeded": 12,
+        "purchase_result": 7,
+        "$experiment_exposure": 2,
+        "login_started": 16
+      },
+      "accepted_plans": {
+        "annual": 4
+      },
+      "rc": {
+        "rc_trial_started_event": 3,
+        "rc_trial_cancelled_event": 1
+      },
+      "payers": 0,
+      "rc_revenue": 0,
+      "trial_cancelled": 1,
+      "trial_start_range": [
+        "2026-09-21 06:03:45+00:00",
+        "2026-09-23 09:14:08+00:00"
+      ]
+    },
+    "random_control": {
+      "users": 33,
+      "previous_welcome": 1,
+      "events": {
+        "onboarding_screen_viewed": 33,
+        "login_started": 33,
+        "$experiment_exposure": 33,
+        "inbox_reveal_viewed": 23,
+        "offer_viewed": 22,
+        "reminder_viewed": 20,
+        "perks_viewed": 22,
+        "try_viewed": 22,
+        "paywall_viewed": 20,
+        "login_succeeded": 22,
+        "onboarding_completed": 12,
+        "purchase_result": 15
+      },
+      "accepted_plans": {
+        "annual": 12
+      },
+      "rc": {
+        "rc_trial_started_event": 11,
+        "rc_trial_cancelled_event": 7
+      },
+      "payers": 0,
+      "rc_revenue": 0,
+      "trial_cancelled": 7,
+      "trial_start_range": [
+        "2026-09-23 00:48:01+00:00",
+        "2026-09-25 18:03:57+00:00"
+      ]
+    },
+    "welcome_control": {
+      "users": 33,
+      "previous_welcome": 1,
+      "events": {
+        "onboarding_screen_viewed": 33,
+        "login_started": 33,
+        "$experiment_exposure": 33,
+        "inbox_reveal_viewed": 23,
+        "offer_viewed": 22,
+        "reminder_viewed": 20,
+        "perks_viewed": 22,
+        "try_viewed": 22,
+        "paywall_viewed": 20,
+        "login_succeeded": 22,
+        "onboarding_completed": 12,
+        "purchase_result": 15
+      },
+      "accepted_plans": {
+        "annual": 12
+      },
+      "rc": {
+        "rc_trial_started_event": 11,
+        "rc_trial_cancelled_event": 7
+      },
+      "payers": 0,
+      "rc_revenue": 0,
+      "trial_cancelled": 7,
+      "trial_start_range": [
+        "2026-09-23 00:48:01+00:00",
+        "2026-09-25 18:03:57+00:00"
+      ]
+    },
+    "OG_unenrolled_build116plus": {
+      "users": 55,
+      "previous_welcome": 5,
+      "events": {
+        "onboarding_screen_viewed": 55,
+        "offer_viewed": 33,
+        "reminder_viewed": 31,
+        "login_started": 45,
+        "perks_viewed": 34,
+        "inbox_reveal_viewed": 34,
+        "try_viewed": 34,
+        "paywall_viewed": 31,
+        "login_succeeded": 35,
+        "purchase_result": 11,
+        "onboarding_completed": 4
+      },
+      "accepted_plans": {
+        "monthly": 1,
+        "annual": 3
+      },
+      "rc": {
+        "rc_initial_purchase_event": 1,
+        "rc_trial_started_event": 2,
+        "rc_trial_cancelled_event": 1
+      },
+      "payers": 1,
+      "rc_revenue": 9.052,
+      "trial_cancelled": 1,
+      "trial_start_range": [
+        "2026-09-22 07:29:49+00:00",
+        "2026-09-27 00:17:56+00:00"
+      ]
+    },
+    "random_test": {
+      "users": 44,
+      "previous_welcome": 4,
+      "events": {
+        "onboarding_screen_viewed": 44,
+        "$experiment_exposure": 44,
+        "login_started": 34,
+        "inbox_reveal_viewed": 22,
+        "purchase_started": 9,
+        "paywall_viewed": 22,
+        "login_succeeded": 22,
+        "purchase_result": 9,
+        "onboarding_completed": 3
+      },
+      "accepted_plans": {
+        "annual": 3
+      },
+      "rc": {
+        "rc_initial_purchase_event": 2,
+        "rc_cancellation_event": 1
+      },
+      "payers": 2,
+      "rc_revenue": 42.981,
+      "trial_cancelled": 0,
+      "trial_start_range": null
+    },
+    "welcome_test": {
+      "users": 42,
+      "previous_welcome": 2,
+      "events": {
+        "onboarding_screen_viewed": 42,
+        "$experiment_exposure": 42,
+        "login_started": 34,
+        "inbox_reveal_viewed": 22,
+        "purchase_started": 9,
+        "paywall_viewed": 22,
+        "login_succeeded": 22,
+        "purchase_result": 9,
+        "onboarding_completed": 3
+      },
+      "accepted_plans": {
+        "annual": 3
+      },
+      "rc": {
+        "rc_initial_purchase_event": 2,
+        "rc_cancellation_event": 1
+      },
+      "payers": 2,
+      "rc_revenue": 42.981,
+      "trial_cancelled": 0,
+      "trial_start_range": null
+    },
+    "OG_unenrolled_after_stop": {
+      "users": 28,
+      "previous_welcome": 2,
+      "events": {
+        "onboarding_screen_viewed": 28,
+        "offer_viewed": 17,
+        "reminder_viewed": 15,
+        "login_started": 24,
+        "perks_viewed": 17,
+        "inbox_reveal_viewed": 17,
+        "try_viewed": 17,
+        "paywall_viewed": 15,
+        "login_succeeded": 18,
+        "onboarding_completed": 2,
+        "purchase_result": 5
+      },
+      "accepted_plans": {
+        "annual": 2
+      },
+      "rc": {
+        "rc_trial_started_event": 1
+      },
+      "payers": 0,
+      "rc_revenue": 0,
+      "trial_cancelled": 0,
+      "trial_start_range": [
+        "2026-09-27 00:17:56+00:00",
+        "2026-09-27 00:17:56+00:00"
+      ]
+    }
+  },
+  "cutoff_utc": "2026-09-27T02:29:00Z",
+  "broader_first_welcome_OG": {
+    "people": 99,
+    "login_succeeded": 68,
+    "paywall_viewers": 62,
+    "confirmed_annual_trial_starters": 15,
+    "confirmed_monthly_payers": 1,
+    "trial_cancelled": 9,
+    "accepted_app_transactions_people": 19
+  },
+  "historical_september_trial_cohort": {
+    "maturity_days": 8,
+    "people": 113,
+    "converted_within_8_days": 38,
+    "converted_by_cutoff": 39
+  },
+  "weekly_treatment_interest": {
+    "people_with_weekly_available": 22,
+    "people_selecting_weekly": 4,
+    "confirmed_weekly_payers": 0
+  }
+}

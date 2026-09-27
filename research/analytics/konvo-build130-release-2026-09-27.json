@@ -1,0 +1,246 @@
+{
+  "release_utc": "2026-09-27 14:22:15",
+  "release_vancouver": "2026-09-27 07:22:15 PDT",
+  "source": "https://itunes.apple.com/lookup?id=6794756261&country=ca&entity=software",
+  "source_fields": {
+    "trackId": 6794756261,
+    "bundleId": "com.matthewchan.konvo",
+    "version": "1.9.0",
+    "currentVersionReleaseDate": "2026-09-27T14:22:15Z"
+  },
+  "build_number_source": "User confirmation and wrapper/experiments/store130/verification.json; the public lookup API does not expose the build number.",
+  "dashboard_url": "https://us.posthog.com/project/569146/dashboard/2140017",
+  "saved_variable": {
+    "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+      "value": "2026-09-27 14:22:15",
+      "isNull": false,
+      "code_name": "konvo_130_public_launch_utc",
+      "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754"
+    }
+  },
+  "final_layout": [
+    {
+      "id": 12703707,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 2
+        }
+      }
+    },
+    {
+      "id": 12703760,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 2,
+          "w": 12,
+          "h": 8
+        }
+      }
+    },
+    {
+      "id": 12706314,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 10,
+          "w": 12,
+          "h": 8
+        }
+      }
+    },
+    {
+      "id": 12722334,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 18,
+          "w": 12,
+          "h": 7
+        }
+      }
+    },
+    {
+      "id": 12703757,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 25,
+          "w": 12,
+          "h": 6
+        }
+      }
+    },
+    {
+      "id": 12703758,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 31,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12703759,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 35,
+          "w": 12,
+          "h": 12
+        }
+      }
+    },
+    {
+      "id": 12703761,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 47,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12703762,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 51,
+          "w": 6,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705803,
+      "layouts": {
+        "sm": {
+          "x": 6,
+          "y": 51,
+          "w": 6,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705804,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 56,
+          "w": 12,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705805,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 61,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12705806,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 65,
+          "w": 6,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705809,
+      "layouts": {
+        "sm": {
+          "x": 6,
+          "y": 65,
+          "w": 6,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705807,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 70,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12705808,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 74,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12705810,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 78,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12705812,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 82,
+          "w": 12,
+          "h": 7
+        }
+      }
+    }
+  ],
+  "new_branch": {
+    "key": "trial_offer_funnel",
+    "id": 12268784,
+    "short_id": "u3y9wS2h",
+    "tile_id": 12722334
+  },
+  "checks": {
+    "content": [
+      {
+        "type": "text",
+        "text": "results[5]:\n  - id: 12703707\n    insight:\n      id: 12256999\n      short_id: rjOobIJ8\n      name: \"130 | START HERE: launch date and cohort status\"\n      derived_name: null\n      result: \"[[\\\"PUBLIC COHORT ENABLED\\\", \\\"2026-09-27 14:22:15\\\", \\\"2026-09-27 16:50:04.817205+00:00\\\"]]\"\n    order: 0\n    last_refresh: null\n    is_cached: false\n  - id: 12703760\n    insight:\n      id: 12257028\n      short_id: MxRHWhMw\n      name: 130 | 01 Every quiz page → Your Instagram inbox\n      derived_name: null\n      result: \"Date range: 2026-09-25 00:00:00 to 2026-09-27 23:59:59 (UTC)\\n\\nMetric|onboarding_screen_viewed 01 · Welcome|onboarding_screen_viewed 02 · Why stop scrolling?|onboarding_screen_viewed 03 · Instagram time|onboarding_screen_viewed 04 · Messaging time|onboarding_screen_viewed 05 · Adding it up|onboarding_screen_viewed 06 · Years lost|onboarding_screen_viewed 07 · Instagram vs DMs|onboarding_screen_viewed 08 · Years back|onboarding_screen_viewed 09 · No Feed, Reels or Explore|onboarding_screen_viewed 10 · Your messages stay|onboarding_screen_viewed 11 · Lock Instagram|onboarding_screen_viewed 12 · Connect Instagram|onboarding_screen_viewed 13 · Opening Instagram sign-in|inbox_reveal_viewed 14 · Instagram connected: your inbox\\nTotal person count|18|18|18|18|18|18|18|18|18|18|18|18|18|15\\nConversion rate|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|100%|83.33%\\nDropoff rate|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|0%|16.67%\\nAverage conversion time|-|4s|5s|11s|4s|3s|4s|3s|2s|1s|2s|3s|3s|7m 22s\\nMedian conversion time|-|2s|3s|3s|4s|3s|4s|3s|2s|1s|1s|1s|3s|39s\\n\\nConversion and drop-off rates are relative to the previous steps. For example, 'Conversion rate: 90%' means that 90% of users from the previous step completed the funnel.\"\n    order: 1\n    last_refresh: null\n    is_cached: false\n  - id: 12706314\n    insight:\n      id: 12258716\n      short_id: ZZvLIhi4\n      name: 130 | 02 Inbox → Rendered paywall → Finish\n      derived_name: null\n      result: \"Date range: 2026-09-25 00:00:00 to 2026-09-27 23:59:59 (UTC)\\n\\nMetric|onboarding_screen_viewed 01 · Welcome|inbox_reveal_viewed 02 · Your real inbox|perks_viewed 03 · Same account. Different app.|paywall_presented 04 · Paywall with prices|onboarding_completed 05 · You're in: Continue (action)\\nTotal person count|18|15|15|13|3\\nConversion rate|100%|83.33%|100%|86.67%|23.08%\\nDropoff rate|0%|16.67%|0%|13.33%|76.92%\\nAverage conversion time|-|8m 10s|5s|12s|46s\\nMedian conversion time|-|1m 43s|4s|11s|53s\\n\\nConversion and drop-off rates are relative to the previous steps. For example, 'Conversion rate: 90%' means that 90% of users from the previous step completed the funnel.\"\n    order: 2\n    last_refresh: null\n    is_cached: false\n  - id: 12703757\n    insight:\n      id: 12257025\n      short_id: 86YY5aez\n      name: \"130 | Overview: counts and conversion percentages\"\n      derived_name: null\n      result: \"[[\\\"New onboarding starters\\\", 18, null, null], [\\\"Paywall rate: rendered / starters\\\", 13, 18, 72.2], [\\\"Trial starts / onboarding starters\\\", 0, 18, 0.0], [\\\"Trials after rendered paywall / paywall viewers\\\", 0, 13, 0.0], [\\\"Apple accepted purchase / rendered paywall\\\", 3, 13, 23.1], [\\\"Final onboarding CTA / starters\\\", 3, 18, 16.7], [\\\"Confirmed paying people so far\\\", 2, null, null], [\\\"Trials with any renewal cancellation\\\", 0, 0, null], [\\\"Trials converted to paid so far\\\", 0, null, null], [\\\"Trials still before scheduled expiry\\\", 0, null, null], [\\\"Trial-to-paid at expiry + 24h: mature only\\\", 0, 0, null], [\\\"Trial-to-paid at expiry + 14d: mature only\\\", 0, 0, null]]\"\n    order: 3\n    last_refresh: null\n    is_cached: false\n  - id: 12722334\n    insight:\n      id: 12268784\n      short_id: u3y9wS2h\n      name: 130 | 03 Trial-eligible screens → Paywall\n      derived_name: null\n      result: \"Date range: 2026-09-25 00:00:00 to 2026-09-27 23:59:59 (UTC)\\n\\nMetric|try_viewed 01 · Try Konvo free|offer_viewed 02 · Free-trial offer|reminder_viewed 03 · Trial reminder|paywall_presented 04 · Paywall with prices\\nTotal person count|13|13|11|11\\nConversion rate|100%|100%|84.62%|100%\\nDropoff rate|0%|0%|15.38%|0%\\nAverage conversion time|-|3s|3s|2s\\nMedian conversion time|-|3s|2s|3s\\n\\nConversion and drop-off rates are relative to the previous steps. For example, 'Conversion rate: 90%' means that 90% of users from the previous step completed the funnel.\"\n    order: 17\n    last_refresh: null\n    is_cached: false\n_posthogUrl: \"https://us.posthog.com/project/569146/dashboard/2140017\""
+      }
+    ]
+  },
+  "checked_at_utc": "2026-09-27 16:50:04",
+  "limitations": [
+    "Tracked first-Welcome cohort, not App Store downloads or guaranteed first-time purchasers.",
+    "Known test/reviewer traffic and prerelease starters excluded; reviewer heuristic is imperfect.",
+    "Native Apple acceptance is not confirmed paid conversion.",
+    "Trial-to-paid percentages require completed follow-up windows.",
+    "The US lookup still showed 1.8.0 during the release check; Canadian public metadata provided the release timestamp."
+  ],
+  "persisted_layout_verified": true,
+  "saved_query_variable_values_verified": 15,
+  "native_required_step_charts_verified": 3
+}

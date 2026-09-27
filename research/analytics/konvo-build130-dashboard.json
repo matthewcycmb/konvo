@@ -1,0 +1,1519 @@
+{
+  "project_id": 569146,
+  "dashboard_id": 2140017,
+  "dashboard_url": "https://us.posthog.com/project/569146/dashboard/2140017",
+  "launch_variable": {
+    "id": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+    "code_name": "konvo_130_public_launch_utc",
+    "default_value": "2026-09-27 14:22:15"
+  },
+  "dashboard": {
+    "name": "Konvo | Build 130 | Onboarding & subscriptions",
+    "description": "LIVE: Konvo 1.9.0 / build130 publicly released 2026-09-27 14:22:15 UTC (07:22:15 Vancouver), verified using Apple's Canadian store metadata. Customer cohort = first tracked Welcome on build130 since that release. Prerelease starters, upgrades and known test/reviewer traffic are excluded. Keep No date range override when comparing native funnels and SQL lifetime-cohort charts. Trials are separate from paid subscribers; mature-trial rates wait for their full follow-up. The bottom QA inventory includes test/review activity.",
+    "pinned": true,
+    "tags": [
+      "konvo",
+      "build-130",
+      "onboarding",
+      "subscriptions"
+    ],
+    "grid_spacing": "standard",
+    "layout_compaction": "stable"
+  },
+  "insights": [
+    {
+      "key": "status",
+      "name": "130 | START HERE: launch date and cohort status",
+      "description": "LIVE since September 27, 2026 at 07:22:15 Vancouver (14:22:15 UTC), verified from Apple's Canadian store metadata for v1.9.0. Saved launch setting defines the first-Welcome build130 cohort. Keep No date range override for consistent native and SQL charts. Trial conversion stays blank until its observation window is complete.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "SELECT if(empty({variables.konvo_130_public_launch_utc}), 'PRE-LAUNCH: customer metrics intentionally empty', 'PUBLIC COHORT ENABLED') AS status, {variables.konvo_130_public_launch_utc} AS public_launch_utc, now() AS refreshed_utc",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable"
+      },
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 2
+      }
+    },
+    {
+      "key": "ordered_quiz",
+      "name": "130 | 01 Every quiz page → Your Instagram inbox",
+      "description": "Ordered 7-day native funnel from the exact first Welcome after public release. Every quiz screen is required; the last step is the real inbox reveal, which also confirms connection. No optional steps can inflate conversion. Same saved release cutoff and test/reviewer exclusions as the dashboard.",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s1"
+                  ],
+                  "operator": "exact"
+                },
+                {
+                  "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), ''))\n      AND started >= toDateTime(if(empty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')), '2100-01-01 00:00:00', coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\nSELECT person_id, started FROM cohort\n)",
+                  "type": "hogql"
+                }
+              ],
+              "custom_name": "01 · Welcome"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s2c"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "02 · Why stop scrolling?"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s3"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "03 · Instagram time"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s4"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "04 · Messaging time"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s4b"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "05 · Adding it up"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s5"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "06 · Years lost"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s6"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "07 · Instagram vs DMs"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s7"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "08 · Years back"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s8a"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "09 · No Feed, Reels or Explore"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s8b"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "10 · Your messages stay"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s8c"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "11 · Lock Instagram"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s9t"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "12 · Connect Instagram"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s11"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "13 · Opening Instagram sign-in"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "inbox_reveal_viewed",
+              "custom_name": "14 · Instagram connected: your inbox"
+            }
+          ],
+          "version": 2,
+          "dateRange": {
+            "date_from": "2026-09-25T00:00:00Z",
+            "explicitDate": false,
+            "excludeIncompletePeriods": false
+          },
+          "properties": [
+            {
+              "key": "build",
+              "type": "event",
+              "value": [
+                "130"
+              ],
+              "operator": "exact"
+            }
+          ],
+          "funnelsFilter": {
+            "layout": "vertical",
+            "exclusions": [],
+            "showLegend": false,
+            "funnelVizType": "steps",
+            "legendPosition": "bottom",
+            "funnelOrderType": "ordered",
+            "showAnnotations": true,
+            "showValuesOnSeries": false,
+            "funnelStepReference": "previous",
+            "funnelWindowInterval": 7,
+            "breakdownAttributionType": "first_touch",
+            "funnelWindowIntervalUnit": "day",
+            "hideIncompleteConversionWindowPeriods": false
+          },
+          "filterTestAccounts": true
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 2,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "key": "postlogin_funnel",
+      "name": "130 | 02 Inbox → Rendered paywall → Finish",
+      "description": "Main ordered 7-day path from first Welcome. Shows inbox, perks, rendered prices and final Continue. Trial-eligible screens have their own funnel so legitimate skips cannot produce over-100% conversion or negative drop-off. Final step is an action; Apple acceptance and confirmed payments remain separate metrics.",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_screen_viewed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s1"
+                  ],
+                  "operator": "exact"
+                },
+                {
+                  "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), ''))\n      AND started >= toDateTime(if(empty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')), '2100-01-01 00:00:00', coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\nSELECT person_id, started FROM cohort\n)",
+                  "type": "hogql"
+                }
+              ],
+              "custom_name": "01 · Welcome"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "inbox_reveal_viewed",
+              "custom_name": "02 · Your real inbox"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "perks_viewed",
+              "custom_name": "03 · Same account. Different app."
+            },
+            {
+              "kind": "EventsNode",
+              "event": "paywall_presented",
+              "properties": [
+                {
+                  "key": "paywall_id",
+                  "type": "event",
+                  "value": [
+                    "original"
+                  ],
+                  "operator": "exact"
+                },
+                {
+                  "key": "placement",
+                  "type": "event",
+                  "value": [
+                    "onboarding"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "04 · Paywall with prices"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "onboarding_completed",
+              "properties": [
+                {
+                  "key": "screen_id",
+                  "type": "event",
+                  "value": [
+                    "s14_success"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "05 · You're in: Continue (action)"
+            }
+          ],
+          "version": 2,
+          "dateRange": {
+            "date_from": "2026-09-25T00:00:00Z",
+            "explicitDate": false,
+            "excludeIncompletePeriods": false
+          },
+          "properties": [
+            {
+              "key": "build",
+              "type": "event",
+              "value": [
+                "130"
+              ],
+              "operator": "exact"
+            }
+          ],
+          "funnelsFilter": {
+            "layout": "vertical",
+            "exclusions": [],
+            "showLegend": false,
+            "funnelVizType": "steps",
+            "legendPosition": "bottom",
+            "funnelOrderType": "ordered",
+            "showAnnotations": true,
+            "showValuesOnSeries": false,
+            "funnelStepReference": "previous",
+            "funnelWindowInterval": 7,
+            "breakdownAttributionType": "first_touch",
+            "funnelWindowIntervalUnit": "day",
+            "hideIncompleteConversionWindowPeriods": false
+          },
+          "filterTestAccounts": true
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 10,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "key": "trial_offer_funnel",
+      "name": "130 | 03 Trial-eligible screens → Paywall",
+      "description": "Only the branch that begins with Try Konvo free. Counts unique people who reach each eligible-offer screen in order, then the rendered paywall, within 7 days of their first Welcome. This is offer-screen progression, not confirmed trial starts or trial-to-paid conversion.",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "try_viewed",
+              "custom_name": "01 · Try Konvo free"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "offer_viewed",
+              "custom_name": "02 · Free-trial offer"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "reminder_viewed",
+              "custom_name": "03 · Trial reminder"
+            },
+            {
+              "kind": "EventsNode",
+              "event": "paywall_presented",
+              "properties": [
+                {
+                  "key": "paywall_id",
+                  "type": "event",
+                  "value": [
+                    "original"
+                  ],
+                  "operator": "exact"
+                },
+                {
+                  "key": "placement",
+                  "type": "event",
+                  "value": [
+                    "onboarding"
+                  ],
+                  "operator": "exact"
+                }
+              ],
+              "custom_name": "04 · Paywall with prices"
+            }
+          ],
+          "version": 2,
+          "dateRange": {
+            "date_from": "2026-09-25T00:00:00Z",
+            "explicitDate": false,
+            "excludeIncompletePeriods": false
+          },
+          "properties": [
+            {
+              "key": "build",
+              "type": "event",
+              "value": [
+                "130"
+              ],
+              "operator": "exact"
+            },
+            {
+              "key": "(person_id, timestamp) IN (\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), ''))\n      AND started >= toDateTime(if(empty(coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')), '2100-01-01 00:00:00', coalesce((SELECT toString(variables.`01a0e0dc-d8fa-0000-8098-d0a7a7303754`.value) FROM system.dashboards WHERE id = 2140017), '')))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n)\n\nSELECT e.person_id, e.timestamp\nFROM events e JOIN cohort c ON e.person_id = c.person_id\nWHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n  AND e.timestamp >= c.started AND e.timestamp < c.started + INTERVAL 7 DAY\n  AND toString(e.properties.build) = '130'\n)",
+              "type": "hogql"
+            }
+          ],
+          "funnelsFilter": {
+            "layout": "vertical",
+            "exclusions": [],
+            "showLegend": false,
+            "funnelVizType": "steps",
+            "legendPosition": "bottom",
+            "funnelOrderType": "ordered",
+            "showAnnotations": true,
+            "showValuesOnSeries": false,
+            "funnelStepReference": "previous",
+            "funnelWindowInterval": 7,
+            "breakdownAttributionType": "first_touch",
+            "funnelWindowIntervalUnit": "day",
+            "hideIncompleteConversionWindowPeriods": false
+          },
+          "filterTestAccounts": true
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 18,
+        "w": 12,
+        "h": 7
+      }
+    },
+    {
+      "key": "overview",
+      "name": "130 | Overview: counts and conversion percentages",
+      "description": "Unique people. Entry = first tracked Welcome ever on build130 after public launch. Onboarding/trial starts have a 7-day window. Trial-to-paid excludes immature trials and uses the scheduled expiry plus the stated follow-up. Blank percentage means no eligible denominator. Trials are not paid subscribers.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n), page_times AS (\n    SELECT person_id,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's1'), toDateTime(0)) AS s1,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's2c'), toDateTime(0)) AS s2c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's3'), toDateTime(0)) AS s3,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4'), toDateTime(0)) AS s4,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4b'), toDateTime(0)) AS s4b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's5'), toDateTime(0)) AS s5,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's6'), toDateTime(0)) AS s6,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's7'), toDateTime(0)) AS s7,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8a'), toDateTime(0)) AS s8a,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8b'), toDateTime(0)) AS s8b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8c'), toDateTime(0)) AS s8c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's9t'), toDateTime(0)) AS s9t,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's11'), toDateTime(0)) AS s11,\n        nullIf(minIf(ts, event = 'login_form_detected'), toDateTime(0)) AS login_form,\n        nullIf(minIf(ts, event = 'login_succeeded'), toDateTime(0)) AS connected,\n        nullIf(minIf(ts, event = 'inbox_reveal_viewed'), toDateTime(0)) AS reveal,\n        nullIf(minIf(ts, event = 'perks_viewed'), toDateTime(0)) AS perks,\n        nullIf(minIf(ts, event = 'try_viewed'), toDateTime(0)) AS trial_intro,\n        nullIf(minIf(ts, event = 'offer_viewed'), toDateTime(0)) AS offer,\n        nullIf(minIf(ts, event = 'reminder_viewed'), toDateTime(0)) AS reminder,\n        nullIf(minIf(ts, event = 'paywall_viewed' AND p.screen_id = 's13_paywall'), toDateTime(0)) AS attempt,\n        nullIf(minIf(ts, event = 'paywall_presented' AND p.paywall_id = 'original' AND p.placement = 'onboarding'), toDateTime(0)) AS paywall,\n        nullIf(minIf(ts, event = 'purchase_result' AND p.result = 'purchased'), toDateTime(0)) AS accepted,\n        nullIf(minIf(ts, event = 'notify_answered'), toDateTime(0)) AS notify,\n        nullIf(minIf(ts, event = 'onboarding_completed' AND p.screen_id = 's14_success'), toDateTime(0)) AS complete\n    FROM onboarding GROUP BY person_id\n), payments AS (\n    SELECT person_id, countIf(usd > 0 AND event IN ('rc_trial_converted_event','rc_initial_purchase_event')) > 0 AS paid\n    FROM acquired_rc GROUP BY person_id\n), summary AS (\n    SELECT count() AS starters, countIf(p.paywall IS NOT NULL) AS paywalls,\n      countIf(t.trial_start > toDateTime('2026-09-25 00:00:00')) AS trials,\n      countIf(t.trial_start >= p.paywall AND p.paywall IS NOT NULL) AS trials_after_paywall,\n      countIf(p.accepted >= p.paywall AND p.paywall IS NOT NULL) AS accepted,\n      countIf(p.complete IS NOT NULL) AS completed, countIf(r.paid) AS paying,\n      countIf(t.cancelled_at IS NOT NULL) AS cancelled,\n      countIf(t.converted_at IS NOT NULL) AS converted,\n      countIf(t.trial_start > toDateTime('2026-09-25 00:00:00') AND now() < t.trial_end AND t.converted_at IS NULL AND t.expired_at IS NULL) AS active,\n      countIf(t.trial_start > toDateTime('2026-09-25 00:00:00') AND now() >= t.trial_end + INTERVAL 1 DAY) AS mature24,\n      countIf(t.trial_start > toDateTime('2026-09-25 00:00:00') AND now() >= t.trial_end + INTERVAL 14 DAY) AS mature14,\n      countIf(t.trial_start > toDateTime('2026-09-25 00:00:00') AND now() >= t.trial_end + INTERVAL 1 DAY AND t.converted_at <= t.trial_end + INTERVAL 1 DAY) AS converted24,\n      countIf(t.trial_start > toDateTime('2026-09-25 00:00:00') AND now() >= t.trial_end + INTERVAL 14 DAY AND t.converted_at <= t.trial_end + INTERVAL 14 DAY) AS converted14\n    FROM cohort c LEFT JOIN page_times p ON c.person_id = p.person_id\n    LEFT JOIN trial_outcomes t ON c.person_id = t.person_id\n    LEFT JOIN payments r ON c.person_id = r.person_id\n)\nSELECT r.2 AS metric, r.3 AS people, r.4 AS denominator, r.5 AS percent\nFROM (SELECT arrayJoin([\n(1, 'New onboarding starters', starters, NULL, NULL),\n(2, 'Paywall rate: rendered / starters', paywalls, starters, round(100.0 * (paywalls) / nullIf((starters), 0), 1)),\n(3, 'Trial starts / onboarding starters', trials, starters, round(100.0 * (trials) / nullIf((starters), 0), 1)),\n(4, 'Trials after rendered paywall / paywall viewers', trials_after_paywall, paywalls, round(100.0 * (trials_after_paywall) / nullIf((paywalls), 0), 1)),\n(5, 'Apple accepted purchase / rendered paywall', accepted, paywalls, round(100.0 * (accepted) / nullIf((paywalls), 0), 1)),\n(6, 'Final onboarding CTA / starters', completed, starters, round(100.0 * (completed) / nullIf((starters), 0), 1)),\n(7, 'Confirmed paying people so far', paying, NULL, NULL),\n(8, 'Trials with any renewal cancellation', cancelled, trials, round(100.0 * (cancelled) / nullIf((trials), 0), 1)),\n(9, 'Trials converted to paid so far', converted, NULL, NULL),\n(10, 'Trials still before scheduled expiry', active, NULL, NULL),\n(11, 'Trial-to-paid at expiry + 24h: mature only', converted24, mature24, round(100.0 * (converted24) / nullIf((mature24), 0), 1)),\n(12, 'Trial-to-paid at expiry + 14d: mature only', converted14, mature14, round(100.0 * (converted14) / nullIf((mature14), 0), 1))\n]) AS r FROM summary) ORDER BY r.1",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "metric"
+            },
+            {
+              "column": "people"
+            },
+            {
+              "column": "denominator"
+            },
+            {
+              "column": "percent",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 25,
+        "w": 12,
+        "h": 6
+      }
+    },
+    {
+      "key": "daily_chart",
+      "name": "130 | Daily acquisition: starters, paywall, trials",
+      "description": "Grouped by the first Welcome date in Vancouver. Follow-up remains open for 7 days, so recent cohorts are provisional. Counts unique people, not installs. RevenueCat trial starts are matched by person identity; its events do not have a build property.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n), page_times AS (\n    SELECT person_id,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's1'), toDateTime(0)) AS s1,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's2c'), toDateTime(0)) AS s2c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's3'), toDateTime(0)) AS s3,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4'), toDateTime(0)) AS s4,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4b'), toDateTime(0)) AS s4b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's5'), toDateTime(0)) AS s5,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's6'), toDateTime(0)) AS s6,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's7'), toDateTime(0)) AS s7,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8a'), toDateTime(0)) AS s8a,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8b'), toDateTime(0)) AS s8b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8c'), toDateTime(0)) AS s8c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's9t'), toDateTime(0)) AS s9t,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's11'), toDateTime(0)) AS s11,\n        nullIf(minIf(ts, event = 'login_form_detected'), toDateTime(0)) AS login_form,\n        nullIf(minIf(ts, event = 'login_succeeded'), toDateTime(0)) AS connected,\n        nullIf(minIf(ts, event = 'inbox_reveal_viewed'), toDateTime(0)) AS reveal,\n        nullIf(minIf(ts, event = 'perks_viewed'), toDateTime(0)) AS perks,\n        nullIf(minIf(ts, event = 'try_viewed'), toDateTime(0)) AS trial_intro,\n        nullIf(minIf(ts, event = 'offer_viewed'), toDateTime(0)) AS offer,\n        nullIf(minIf(ts, event = 'reminder_viewed'), toDateTime(0)) AS reminder,\n        nullIf(minIf(ts, event = 'paywall_viewed' AND p.screen_id = 's13_paywall'), toDateTime(0)) AS attempt,\n        nullIf(minIf(ts, event = 'paywall_presented' AND p.paywall_id = 'original' AND p.placement = 'onboarding'), toDateTime(0)) AS paywall,\n        nullIf(minIf(ts, event = 'purchase_result' AND p.result = 'purchased'), toDateTime(0)) AS accepted,\n        nullIf(minIf(ts, event = 'notify_answered'), toDateTime(0)) AS notify,\n        nullIf(minIf(ts, event = 'onboarding_completed' AND p.screen_id = 's14_success'), toDateTime(0)) AS complete\n    FROM onboarding GROUP BY person_id\n)\nSELECT toDate(toTimeZone(c.started, 'America/Vancouver')) AS cohort_date,\n       count() AS starters,\n       countIf(p.paywall IS NOT NULL) AS rendered_paywall,\n       countIf(t.trial_start > toDateTime('2026-09-25 00:00:00')) AS trial_starts,\n       round(100.0 * countIf(p.paywall IS NOT NULL) / count(), 1) AS paywall_percent,\n       round(100.0 * countIf(t.trial_start > toDateTime('2026-09-25 00:00:00')) / count(), 1) AS starter_to_trial_percent,\n       countIf(now() < c.started + INTERVAL 7 DAY) AS still_in_7day_window\nFROM cohort c LEFT JOIN page_times p ON c.person_id = p.person_id\nLEFT JOIN first_trials t ON c.person_id = t.person_id\nGROUP BY cohort_date ORDER BY cohort_date",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsLineGraph",
+        "chartSettings": {
+          "xAxis": {
+            "column": "cohort_date"
+          },
+          "yAxis": [
+            {
+              "column": "starters"
+            },
+            {
+              "column": "rendered_paywall"
+            },
+            {
+              "column": "trial_starts"
+            }
+          ],
+          "showLegend": true,
+          "showNullsAsZero": false
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 31,
+        "w": 12,
+        "h": 4
+      }
+    },
+    {
+      "key": "pages",
+      "name": "130 | Every onboarding page: reach and progression",
+      "description": "First 7 days on build130. Reach is independent page coverage. Progression counts people with both markers in time order / people at the named checkpoint, not a strict full-path funnel. Trial pages are conditional. Connected is a login proxy; notifications and success are actions, not page views. Blank = no denominator.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n), page_times AS (\n    SELECT person_id,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's1'), toDateTime(0)) AS s1,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's2c'), toDateTime(0)) AS s2c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's3'), toDateTime(0)) AS s3,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4'), toDateTime(0)) AS s4,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4b'), toDateTime(0)) AS s4b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's5'), toDateTime(0)) AS s5,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's6'), toDateTime(0)) AS s6,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's7'), toDateTime(0)) AS s7,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8a'), toDateTime(0)) AS s8a,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8b'), toDateTime(0)) AS s8b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8c'), toDateTime(0)) AS s8c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's9t'), toDateTime(0)) AS s9t,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's11'), toDateTime(0)) AS s11,\n        nullIf(minIf(ts, event = 'login_form_detected'), toDateTime(0)) AS login_form,\n        nullIf(minIf(ts, event = 'login_succeeded'), toDateTime(0)) AS connected,\n        nullIf(minIf(ts, event = 'inbox_reveal_viewed'), toDateTime(0)) AS reveal,\n        nullIf(minIf(ts, event = 'perks_viewed'), toDateTime(0)) AS perks,\n        nullIf(minIf(ts, event = 'try_viewed'), toDateTime(0)) AS trial_intro,\n        nullIf(minIf(ts, event = 'offer_viewed'), toDateTime(0)) AS offer,\n        nullIf(minIf(ts, event = 'reminder_viewed'), toDateTime(0)) AS reminder,\n        nullIf(minIf(ts, event = 'paywall_viewed' AND p.screen_id = 's13_paywall'), toDateTime(0)) AS attempt,\n        nullIf(minIf(ts, event = 'paywall_presented' AND p.paywall_id = 'original' AND p.placement = 'onboarding'), toDateTime(0)) AS paywall,\n        nullIf(minIf(ts, event = 'purchase_result' AND p.result = 'purchased'), toDateTime(0)) AS accepted,\n        nullIf(minIf(ts, event = 'notify_answered'), toDateTime(0)) AS notify,\n        nullIf(minIf(ts, event = 'onboarding_completed' AND p.screen_id = 's14_success'), toDateTime(0)) AS complete\n    FROM onboarding GROUP BY person_id\n)\nSELECT r.1 AS step, r.2 AS page_or_action, r.3 AS tracking,\n       r.4 AS people, r.5 AS percent_of_starters, r.6 AS previous_checkpoint,\n       r.7 AS previous_people, r.8 AS progressed_people, r.9 AS percent_from_checkpoint\nFROM (SELECT arrayJoin([\n(1, 'Welcome: Instagram without Feed, Reels or Explore', 'Screen view', countIf(s1 IS NOT NULL), round(100.0 * (countIf(s1 IS NOT NULL)) / nullIf((count()), 0), 1), '', NULL, NULL, NULL),\n(2, 'Why do you want to stop scrolling?', 'Screen view', countIf(s2c IS NOT NULL), round(100.0 * (countIf(s2c IS NOT NULL)) / nullIf((count()), 0), 1), 's1', countIf(s1 IS NOT NULL), countIf(s1 IS NOT NULL AND s2c IS NOT NULL AND s2c >= s1), round(100.0 * (countIf(s1 IS NOT NULL AND s2c IS NOT NULL AND s2c >= s1)) / nullIf((countIf(s1 IS NOT NULL)), 0), 1)),\n(3, 'Daily Instagram screen time', 'Screen view', countIf(s3 IS NOT NULL), round(100.0 * (countIf(s3 IS NOT NULL)) / nullIf((count()), 0), 1), 's2c', countIf(s2c IS NOT NULL), countIf(s2c IS NOT NULL AND s3 IS NOT NULL AND s3 >= s2c), round(100.0 * (countIf(s2c IS NOT NULL AND s3 IS NOT NULL AND s3 >= s2c)) / nullIf((countIf(s2c IS NOT NULL)), 0), 1)),\n(4, 'Daily messaging time', 'Screen view', countIf(s4 IS NOT NULL), round(100.0 * (countIf(s4 IS NOT NULL)) / nullIf((count()), 0), 1), 's3', countIf(s3 IS NOT NULL), countIf(s3 IS NOT NULL AND s4 IS NOT NULL AND s4 >= s3), round(100.0 * (countIf(s3 IS NOT NULL AND s4 IS NOT NULL AND s4 >= s3)) / nullIf((countIf(s3 IS NOT NULL)), 0), 1)),\n(5, 'Adding it up', 'Screen view', countIf(s4b IS NOT NULL), round(100.0 * (countIf(s4b IS NOT NULL)) / nullIf((count()), 0), 1), 's4', countIf(s4 IS NOT NULL), countIf(s4 IS NOT NULL AND s4b IS NOT NULL AND s4b >= s4), round(100.0 * (countIf(s4 IS NOT NULL AND s4b IS NOT NULL AND s4b >= s4)) / nullIf((countIf(s4 IS NOT NULL)), 0), 1)),\n(6, 'Years distracted on your phone', 'Screen view', countIf(s5 IS NOT NULL), round(100.0 * (countIf(s5 IS NOT NULL)) / nullIf((count()), 0), 1), 's4b', countIf(s4b IS NOT NULL), countIf(s4b IS NOT NULL AND s5 IS NOT NULL AND s5 >= s4b), round(100.0 * (countIf(s4b IS NOT NULL AND s5 IS NOT NULL AND s5 >= s4b)) / nullIf((countIf(s4b IS NOT NULL)), 0), 1)),\n(7, 'Instagram time vs messaging time', 'Screen view', countIf(s6 IS NOT NULL), round(100.0 * (countIf(s6 IS NOT NULL)) / nullIf((count()), 0), 1), 's5', countIf(s5 IS NOT NULL), countIf(s5 IS NOT NULL AND s6 IS NOT NULL AND s6 >= s5), round(100.0 * (countIf(s5 IS NOT NULL AND s6 IS NOT NULL AND s6 >= s5)) / nullIf((countIf(s5 IS NOT NULL)), 0), 1)),\n(8, 'Years Konvo could help you get back', 'Screen view', countIf(s7 IS NOT NULL), round(100.0 * (countIf(s7 IS NOT NULL)) / nullIf((count()), 0), 1), 's6', countIf(s6 IS NOT NULL), countIf(s6 IS NOT NULL AND s7 IS NOT NULL AND s7 >= s6), round(100.0 * (countIf(s6 IS NOT NULL AND s7 IS NOT NULL AND s7 >= s6)) / nullIf((countIf(s6 IS NOT NULL)), 0), 1)),\n(9, 'No Feed. No Reels. No Explore.', 'Screen view', countIf(s8a IS NOT NULL), round(100.0 * (countIf(s8a IS NOT NULL)) / nullIf((count()), 0), 1), 's7', countIf(s7 IS NOT NULL), countIf(s7 IS NOT NULL AND s8a IS NOT NULL AND s8a >= s7), round(100.0 * (countIf(s7 IS NOT NULL AND s8a IS NOT NULL AND s8a >= s7)) / nullIf((countIf(s7 IS NOT NULL)), 0), 1)),\n(10, 'Your messages stay', 'Screen view', countIf(s8b IS NOT NULL), round(100.0 * (countIf(s8b IS NOT NULL)) / nullIf((count()), 0), 1), 's8a', countIf(s8a IS NOT NULL), countIf(s8a IS NOT NULL AND s8b IS NOT NULL AND s8b >= s8a), round(100.0 * (countIf(s8a IS NOT NULL AND s8b IS NOT NULL AND s8b >= s8a)) / nullIf((countIf(s8a IS NOT NULL)), 0), 1)),\n(11, 'Lock the app when you are ready', 'Screen view', countIf(s8c IS NOT NULL), round(100.0 * (countIf(s8c IS NOT NULL)) / nullIf((count()), 0), 1), 's8b', countIf(s8b IS NOT NULL), countIf(s8b IS NOT NULL AND s8c IS NOT NULL AND s8c >= s8b), round(100.0 * (countIf(s8b IS NOT NULL AND s8c IS NOT NULL AND s8c >= s8b)) / nullIf((countIf(s8b IS NOT NULL)), 0), 1)),\n(12, 'Social proof / Connect Instagram', 'Screen view', countIf(s9t IS NOT NULL), round(100.0 * (countIf(s9t IS NOT NULL)) / nullIf((count()), 0), 1), 's8c', countIf(s8c IS NOT NULL), countIf(s8c IS NOT NULL AND s9t IS NOT NULL AND s9t >= s8c), round(100.0 * (countIf(s8c IS NOT NULL AND s9t IS NOT NULL AND s9t >= s8c)) / nullIf((countIf(s8c IS NOT NULL)), 0), 1)),\n(13, 'Opening Instagram sign-in', 'Screen view', countIf(s11 IS NOT NULL), round(100.0 * (countIf(s11 IS NOT NULL)) / nullIf((count()), 0), 1), 's9t', countIf(s9t IS NOT NULL), countIf(s9t IS NOT NULL AND s11 IS NOT NULL AND s11 >= s9t), round(100.0 * (countIf(s9t IS NOT NULL AND s11 IS NOT NULL AND s11 >= s9t)) / nullIf((countIf(s9t IS NOT NULL)), 0), 1)),\n(14, 'Instagram login / verification pages', 'Third-party form detected; not every challenge page', countIf(login_form IS NOT NULL), round(100.0 * (countIf(login_form IS NOT NULL)) / nullIf((count()), 0), 1), 's11', countIf(s11 IS NOT NULL), countIf(s11 IS NOT NULL AND login_form IS NOT NULL AND login_form >= s11), round(100.0 * (countIf(s11 IS NOT NULL AND login_form IS NOT NULL AND login_form >= s11)) / nullIf((countIf(s11 IS NOT NULL)), 0), 1)),\n(15, 'Connected / preparing inbox', 'Login-success proxy; can be missing on resumed sessions', countIf(connected IS NOT NULL), round(100.0 * (countIf(connected IS NOT NULL)) / nullIf((count()), 0), 1), 's11', countIf(s11 IS NOT NULL), countIf(s11 IS NOT NULL AND connected IS NOT NULL AND connected >= s11), round(100.0 * (countIf(s11 IS NOT NULL AND connected IS NOT NULL AND connected >= s11)) / nullIf((countIf(s11 IS NOT NULL)), 0), 1)),\n(16, 'Your real Instagram inbox reveal', 'Screen view', countIf(reveal IS NOT NULL), round(100.0 * (countIf(reveal IS NOT NULL)) / nullIf((count()), 0), 1), 's11', countIf(s11 IS NOT NULL), countIf(s11 IS NOT NULL AND reveal IS NOT NULL AND reveal >= s11), round(100.0 * (countIf(s11 IS NOT NULL AND reveal IS NOT NULL AND reveal >= s11)) / nullIf((countIf(s11 IS NOT NULL)), 0), 1)),\n(17, 'Same account. Different app.', 'Screen view', countIf(perks IS NOT NULL), round(100.0 * (countIf(perks IS NOT NULL)) / nullIf((count()), 0), 1), 'reveal', countIf(reveal IS NOT NULL), countIf(reveal IS NOT NULL AND perks IS NOT NULL AND perks >= reveal), round(100.0 * (countIf(reveal IS NOT NULL AND perks IS NOT NULL AND perks >= reveal)) / nullIf((countIf(reveal IS NOT NULL)), 0), 1)),\n(18, 'Try Konvo free', 'Conditional: trial eligible', countIf(trial_intro IS NOT NULL), round(100.0 * (countIf(trial_intro IS NOT NULL)) / nullIf((count()), 0), 1), 'perks', countIf(perks IS NOT NULL), countIf(perks IS NOT NULL AND trial_intro IS NOT NULL AND trial_intro >= perks), round(100.0 * (countIf(perks IS NOT NULL AND trial_intro IS NOT NULL AND trial_intro >= perks)) / nullIf((countIf(perks IS NOT NULL)), 0), 1)),\n(19, 'Free-trial offer', 'Conditional: trial eligible', countIf(offer IS NOT NULL), round(100.0 * (countIf(offer IS NOT NULL)) / nullIf((count()), 0), 1), 'trial_intro', countIf(trial_intro IS NOT NULL), countIf(trial_intro IS NOT NULL AND offer IS NOT NULL AND offer >= trial_intro), round(100.0 * (countIf(trial_intro IS NOT NULL AND offer IS NOT NULL AND offer >= trial_intro)) / nullIf((countIf(trial_intro IS NOT NULL)), 0), 1)),\n(20, 'Trial reminder', 'Conditional: trial eligible', countIf(reminder IS NOT NULL), round(100.0 * (countIf(reminder IS NOT NULL)) / nullIf((count()), 0), 1), 'offer', countIf(offer IS NOT NULL), countIf(offer IS NOT NULL AND reminder IS NOT NULL AND reminder >= offer), round(100.0 * (countIf(offer IS NOT NULL AND reminder IS NOT NULL AND reminder >= offer)) / nullIf((countIf(offer IS NOT NULL)), 0), 1)),\n(21, 'Paywall requested / loading prices', 'Request, not rendered prices', countIf(attempt IS NOT NULL), round(100.0 * (countIf(attempt IS NOT NULL)) / nullIf((count()), 0), 1), 'perks', countIf(perks IS NOT NULL), countIf(perks IS NOT NULL AND attempt IS NOT NULL AND attempt >= perks), round(100.0 * (countIf(perks IS NOT NULL AND attempt IS NOT NULL AND attempt >= perks)) / nullIf((countIf(perks IS NOT NULL)), 0), 1)),\n(22, 'Annual / monthly paywall with prices', 'Rendered paywall', countIf(paywall IS NOT NULL), round(100.0 * (countIf(paywall IS NOT NULL)) / nullIf((count()), 0), 1), 'attempt', countIf(attempt IS NOT NULL), countIf(attempt IS NOT NULL AND paywall IS NOT NULL AND paywall >= attempt), round(100.0 * (countIf(attempt IS NOT NULL AND paywall IS NOT NULL AND paywall >= attempt)) / nullIf((countIf(attempt IS NOT NULL)), 0), 1)),\n(23, 'Apple purchase accepted', 'Includes free trials; NOT a paid conversion', countIf(accepted IS NOT NULL), round(100.0 * (countIf(accepted IS NOT NULL)) / nullIf((count()), 0), 1), 'paywall', countIf(paywall IS NOT NULL), countIf(paywall IS NOT NULL AND accepted IS NOT NULL AND accepted >= paywall), round(100.0 * (countIf(paywall IS NOT NULL AND accepted IS NOT NULL AND accepted >= paywall)) / nullIf((countIf(paywall IS NOT NULL)), 0), 1)),\n(24, 'Notifications choice answered', 'Optional action; screen view is not tracked', countIf(notify IS NOT NULL), round(100.0 * (countIf(notify IS NOT NULL)) / nullIf((count()), 0), 1), 'accepted', countIf(accepted IS NOT NULL), countIf(accepted IS NOT NULL AND notify IS NOT NULL AND notify >= accepted), round(100.0 * (countIf(accepted IS NOT NULL AND notify IS NOT NULL AND notify >= accepted)) / nullIf((countIf(accepted IS NOT NULL)), 0), 1)),\n(25, 'You are in: final Continue tapped', 'Final CTA; success screen view is not tracked', countIf(complete IS NOT NULL), round(100.0 * (countIf(complete IS NOT NULL)) / nullIf((count()), 0), 1), 'paywall', countIf(paywall IS NOT NULL), countIf(paywall IS NOT NULL AND complete IS NOT NULL AND complete >= paywall), round(100.0 * (countIf(paywall IS NOT NULL AND complete IS NOT NULL AND complete >= paywall)) / nullIf((countIf(paywall IS NOT NULL)), 0), 1))\n]) AS r FROM page_times)\nORDER BY step",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "step"
+            },
+            {
+              "column": "page_or_action"
+            },
+            {
+              "column": "people"
+            },
+            {
+              "column": "percent_of_starters",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "percent_from_checkpoint",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "previous_checkpoint"
+            },
+            {
+              "column": "previous_people"
+            },
+            {
+              "column": "progressed_people"
+            },
+            {
+              "column": "tracking"
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 35,
+        "w": 12,
+        "h": 12
+      }
+    },
+    {
+      "key": "daily",
+      "name": "130 | Daily new-user funnel: Vancouver dates",
+      "description": "Grouped by the first Welcome date in Vancouver. Follow-up remains open for 7 days, so recent cohorts are provisional. Counts unique people, not installs. RevenueCat trial starts are matched by person identity; its events do not have a build property.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n), page_times AS (\n    SELECT person_id,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's1'), toDateTime(0)) AS s1,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's2c'), toDateTime(0)) AS s2c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's3'), toDateTime(0)) AS s3,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4'), toDateTime(0)) AS s4,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4b'), toDateTime(0)) AS s4b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's5'), toDateTime(0)) AS s5,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's6'), toDateTime(0)) AS s6,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's7'), toDateTime(0)) AS s7,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8a'), toDateTime(0)) AS s8a,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8b'), toDateTime(0)) AS s8b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8c'), toDateTime(0)) AS s8c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's9t'), toDateTime(0)) AS s9t,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's11'), toDateTime(0)) AS s11,\n        nullIf(minIf(ts, event = 'login_form_detected'), toDateTime(0)) AS login_form,\n        nullIf(minIf(ts, event = 'login_succeeded'), toDateTime(0)) AS connected,\n        nullIf(minIf(ts, event = 'inbox_reveal_viewed'), toDateTime(0)) AS reveal,\n        nullIf(minIf(ts, event = 'perks_viewed'), toDateTime(0)) AS perks,\n        nullIf(minIf(ts, event = 'try_viewed'), toDateTime(0)) AS trial_intro,\n        nullIf(minIf(ts, event = 'offer_viewed'), toDateTime(0)) AS offer,\n        nullIf(minIf(ts, event = 'reminder_viewed'), toDateTime(0)) AS reminder,\n        nullIf(minIf(ts, event = 'paywall_viewed' AND p.screen_id = 's13_paywall'), toDateTime(0)) AS attempt,\n        nullIf(minIf(ts, event = 'paywall_presented' AND p.paywall_id = 'original' AND p.placement = 'onboarding'), toDateTime(0)) AS paywall,\n        nullIf(minIf(ts, event = 'purchase_result' AND p.result = 'purchased'), toDateTime(0)) AS accepted,\n        nullIf(minIf(ts, event = 'notify_answered'), toDateTime(0)) AS notify,\n        nullIf(minIf(ts, event = 'onboarding_completed' AND p.screen_id = 's14_success'), toDateTime(0)) AS complete\n    FROM onboarding GROUP BY person_id\n)\nSELECT toDate(toTimeZone(c.started, 'America/Vancouver')) AS cohort_date,\n       count() AS starters,\n       countIf(p.paywall IS NOT NULL) AS rendered_paywall,\n       countIf(t.trial_start > toDateTime('2026-09-25 00:00:00')) AS trial_starts,\n       round(100.0 * countIf(p.paywall IS NOT NULL) / count(), 1) AS paywall_percent,\n       round(100.0 * countIf(t.trial_start > toDateTime('2026-09-25 00:00:00')) / count(), 1) AS starter_to_trial_percent,\n       countIf(now() < c.started + INTERVAL 7 DAY) AS still_in_7day_window\nFROM cohort c LEFT JOIN page_times p ON c.person_id = p.person_id\nLEFT JOIN first_trials t ON c.person_id = t.person_id\nGROUP BY cohort_date ORDER BY cohort_date",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "cohort_date"
+            },
+            {
+              "column": "starters"
+            },
+            {
+              "column": "rendered_paywall"
+            },
+            {
+              "column": "trial_starts"
+            },
+            {
+              "column": "paywall_percent",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "starter_to_trial_percent",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "still_in_7day_window"
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 47,
+        "w": 12,
+        "h": 4
+      }
+    },
+    {
+      "key": "trials",
+      "name": "130 | Trial lifecycle: canceled, active, expired, paid",
+      "description": "First trial acquired within 7 days of onboarding. Cancellation disables renewal; it does not immediately remove access. Trial events match person plus original transaction ID. State prioritizes conversion, then expiry. Cancellations can be reversed. Billing issues are shown separately, not assumed to be abandonment.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n)\nSELECT multiIf(converted_at IS NOT NULL, 'Converted to paid',\n               expired_at IS NOT NULL, 'Expired without recorded conversion',\n               now() < trial_end AND renewal_disabled, 'Trial still active; renewal off',\n               now() < trial_end, 'Trial still active; renewal on',\n               billing_issue, 'Past scheduled expiry; billing issue',\n               'Past scheduled expiry; awaiting final outcome') AS state,\n       count() AS trials,\n       round(100.0 * count() / nullIf((SELECT count() FROM first_trials), 0), 1) AS percent_of_trials\nFROM trial_outcomes GROUP BY state ORDER BY trials DESC",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "state"
+            },
+            {
+              "column": "trials"
+            },
+            {
+              "column": "percent_of_trials",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 51,
+        "w": 6,
+        "h": 5
+      }
+    },
+    {
+      "key": "maturity",
+      "name": "130 | Trial conversion: only finished observation windows",
+      "description": "Denominator = trials whose scheduled expiry plus 24h or 14d is in the past. Numerator = those converted by that same deadline. The longer window includes delayed recovery. Blank rates mean no mature trials; never treat an ongoing trial as a failed conversion.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n)\nSELECT 'Scheduled expiry + 24 hours' AS observation_window,\n       countIf(now() >= trial_end + INTERVAL 1 DAY) AS mature_trials,\n       countIf(now() >= trial_end + INTERVAL 1 DAY AND converted_at <= trial_end + INTERVAL 1 DAY) AS converted_by_deadline,\n       round(100.0 * converted_by_deadline / nullIf(mature_trials, 0), 1) AS conversion_percent,\n       countIf(now() < trial_end + INTERVAL 1 DAY) AS not_yet_mature\nFROM trial_outcomes\nUNION ALL\nSELECT 'Scheduled expiry + 14 days',\n       countIf(now() >= trial_end + INTERVAL 14 DAY),\n       countIf(now() >= trial_end + INTERVAL 14 DAY AND converted_at <= trial_end + INTERVAL 14 DAY),\n       round(100.0 * countIf(now() >= trial_end + INTERVAL 14 DAY AND converted_at <= trial_end + INTERVAL 14 DAY) / nullIf(countIf(now() >= trial_end + INTERVAL 14 DAY), 0), 1),\n       countIf(now() < trial_end + INTERVAL 14 DAY)\nFROM trial_outcomes",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "observation_window"
+            },
+            {
+              "column": "mature_trials"
+            },
+            {
+              "column": "converted_by_deadline"
+            },
+            {
+              "column": "conversion_percent",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "not_yet_mature"
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 6,
+        "y": 51,
+        "w": 6,
+        "h": 5
+      }
+    },
+    {
+      "key": "cancel",
+      "name": "130 | After canceling renewal: did they keep using Konvo?",
+      "description": "Content-free thread_ready with rows > 0 is a rendered-chat proxy, not message sending. Includes later app builds for this acquisition cohort. Return rates require complete 24h/48h follow-up. No observed return is not proof of abandonment; foreground/background telemetry is incomplete.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n), chat_times AS (\n    SELECT person_id, groupArray(timestamp) AS ready_times\n    FROM events\n    WHERE timestamp >= toDateTime('2026-09-25 00:00:00') AND timestamp <= now()\n      AND event = 'thread_ready' AND toInt(properties.rows) > 0\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id\n), cancelled_usage AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start, t.cancelled_at AS cancelled_at,\n      dateDiff('second', t.trial_start, t.cancelled_at) AS seconds_to_cancel,\n      arrayExists(x -> x >= t.trial_start AND x <= t.cancelled_at, c.ready_times) AS chat_before,\n      arrayExists(x -> x >= t.cancelled_at + INTERVAL 1 HOUR AND x < t.cancelled_at + INTERVAL 24 HOUR, c.ready_times) AS chat_after_1h,\n      arrayExists(x -> x >= t.cancelled_at + INTERVAL 24 HOUR AND x < t.cancelled_at + INTERVAL 48 HOUR, c.ready_times) AS chat_next_day\n    FROM trial_outcomes t LEFT JOIN chat_times c ON t.person_id = c.person_id\n    WHERE t.cancelled_at IS NOT NULL\n)\nSELECT r.1 AS measure, r.2 AS people, r.3 AS eligible, r.4 AS percent\nFROM (SELECT arrayJoin([\n('Canceled within 1 hour of trial start', countIf(seconds_to_cancel <= 3600), count(), round(100.0 * (countIf(seconds_to_cancel <= 3600)) / nullIf((count()), 0), 1)),\n('Rendered chat before cancellation', countIf(chat_before), count(), round(100.0 * (countIf(chat_before)) / nullIf((count()), 0), 1)),\n('Rendered chat 1-24h after cancellation; mature only', countIf(now() >= cancelled_at + INTERVAL 24 HOUR AND chat_after_1h), countIf(now() >= cancelled_at + INTERVAL 24 HOUR), round(100.0 * (countIf(now() >= cancelled_at + INTERVAL 24 HOUR AND chat_after_1h)) / nullIf((countIf(now() >= cancelled_at + INTERVAL 24 HOUR)), 0), 1)),\n('Rendered chat 24-48h after cancellation; mature only', countIf(now() >= cancelled_at + INTERVAL 48 HOUR AND chat_next_day), countIf(now() >= cancelled_at + INTERVAL 48 HOUR), round(100.0 * (countIf(now() >= cancelled_at + INTERVAL 48 HOUR AND chat_next_day)) / nullIf((countIf(now() >= cancelled_at + INTERVAL 48 HOUR)), 0), 1))\n]) AS r FROM cancelled_usage)",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "measure"
+            },
+            {
+              "column": "people"
+            },
+            {
+              "column": "eligible"
+            },
+            {
+              "column": "percent",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 56,
+        "w": 12,
+        "h": 5
+      }
+    },
+    {
+      "key": "retention",
+      "name": "130 | Trial activation and D1 / D7 chat return",
+      "description": "Rendered-chat events with rows > 0, not message content or conversations counted. Return windows are measured from trial start and include later app versions. Only fully observed windows enter each denominator. This is chat-return telemetry, not complete app-open retention.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n), chat_times AS (\n    SELECT person_id, groupArray(timestamp) AS ready_times\n    FROM events\n    WHERE timestamp >= toDateTime('2026-09-25 00:00:00') AND timestamp <= now()\n      AND event = 'thread_ready' AND toInt(properties.rows) > 0\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id\n), trial_usage AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n      arrayExists(x -> x >= t.trial_start AND x < t.trial_start + INTERVAL 24 HOUR, c.ready_times) AS d0,\n      arrayExists(x -> x >= t.trial_start + INTERVAL 24 HOUR AND x < t.trial_start + INTERVAL 48 HOUR, c.ready_times) AS d1,\n      arrayExists(x -> x >= t.trial_start + INTERVAL 7 DAY AND x < t.trial_start + INTERVAL 8 DAY, c.ready_times) AS d7\n    FROM first_trials t LEFT JOIN chat_times c ON t.person_id = c.person_id\n)\nSELECT r.1 AS measure, r.2 AS people, r.3 AS eligible_trials, r.4 AS percent\nFROM (SELECT arrayJoin([\n('Rendered chat in first 24h', countIf(now() >= trial_start + INTERVAL 24 HOUR AND d0), countIf(now() >= trial_start + INTERVAL 24 HOUR), round(100.0 * (countIf(now() >= trial_start + INTERVAL 24 HOUR AND d0)) / nullIf((countIf(now() >= trial_start + INTERVAL 24 HOUR)), 0), 1)),\n('D1 rendered-chat return: hours 24-48', countIf(now() >= trial_start + INTERVAL 48 HOUR AND d1), countIf(now() >= trial_start + INTERVAL 48 HOUR), round(100.0 * (countIf(now() >= trial_start + INTERVAL 48 HOUR AND d1)) / nullIf((countIf(now() >= trial_start + INTERVAL 48 HOUR)), 0), 1)),\n('D7 rendered-chat return: days 7-8', countIf(now() >= trial_start + INTERVAL 192 HOUR AND d7), countIf(now() >= trial_start + INTERVAL 192 HOUR), round(100.0 * (countIf(now() >= trial_start + INTERVAL 192 HOUR AND d7)) / nullIf((countIf(now() >= trial_start + INTERVAL 192 HOUR)), 0), 1))\n]) AS r FROM trial_usage)",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "measure"
+            },
+            {
+              "column": "people"
+            },
+            {
+              "column": "eligible_trials"
+            },
+            {
+              "column": "percent",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 61,
+        "w": 12,
+        "h": 4
+      }
+    },
+    {
+      "key": "checkout",
+      "name": "130 | Paywall rendering and Apple checkout results",
+      "description": "Build130 only, first 7 days. Actual paywall = paywall_presented, original, onboarding. purchase_result counts attempts, so a person can appear in multiple outcomes. Purchased includes trials. The OG flow has no purchase_started event, so checkout-start abandonment cannot be measured accurately.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n)\nSELECT event, toString(p.plan) AS plan, toString(p.result) AS result,\n       uniqExact(person_id) AS people, count() AS events\nFROM onboarding\nWHERE event IN ('paywall_viewed','paywall_presented','purchase_result','restore_result','plan_selected','paywall_load_failed')\nGROUP BY event, plan, result ORDER BY event, plan, result",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable"
+      },
+      "layout": {
+        "x": 0,
+        "y": 65,
+        "w": 6,
+        "h": 5
+      }
+    },
+    {
+      "key": "quality",
+      "name": "130 | Tracking gaps and revenue confirmation",
+      "description": "Compare native purchase acceptance with server confirmation only after 24h. Missing RevenueCat can mean restore, sandbox, identity mismatch or integration delay, not zero sales. Login-success misses resumed sessions. Notifications/success have action events but no separate screen-view events.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n), page_times AS (\n    SELECT person_id,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's1'), toDateTime(0)) AS s1,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's2c'), toDateTime(0)) AS s2c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's3'), toDateTime(0)) AS s3,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4'), toDateTime(0)) AS s4,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's4b'), toDateTime(0)) AS s4b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's5'), toDateTime(0)) AS s5,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's6'), toDateTime(0)) AS s6,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's7'), toDateTime(0)) AS s7,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8a'), toDateTime(0)) AS s8a,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8b'), toDateTime(0)) AS s8b,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's8c'), toDateTime(0)) AS s8c,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's9t'), toDateTime(0)) AS s9t,\n        nullIf(minIf(ts, event = 'onboarding_screen_viewed' AND p.screen_id = 's11'), toDateTime(0)) AS s11,\n        nullIf(minIf(ts, event = 'login_form_detected'), toDateTime(0)) AS login_form,\n        nullIf(minIf(ts, event = 'login_succeeded'), toDateTime(0)) AS connected,\n        nullIf(minIf(ts, event = 'inbox_reveal_viewed'), toDateTime(0)) AS reveal,\n        nullIf(minIf(ts, event = 'perks_viewed'), toDateTime(0)) AS perks,\n        nullIf(minIf(ts, event = 'try_viewed'), toDateTime(0)) AS trial_intro,\n        nullIf(minIf(ts, event = 'offer_viewed'), toDateTime(0)) AS offer,\n        nullIf(minIf(ts, event = 'reminder_viewed'), toDateTime(0)) AS reminder,\n        nullIf(minIf(ts, event = 'paywall_viewed' AND p.screen_id = 's13_paywall'), toDateTime(0)) AS attempt,\n        nullIf(minIf(ts, event = 'paywall_presented' AND p.paywall_id = 'original' AND p.placement = 'onboarding'), toDateTime(0)) AS paywall,\n        nullIf(minIf(ts, event = 'purchase_result' AND p.result = 'purchased'), toDateTime(0)) AS accepted,\n        nullIf(minIf(ts, event = 'notify_answered'), toDateTime(0)) AS notify,\n        nullIf(minIf(ts, event = 'onboarding_completed' AND p.screen_id = 's14_success'), toDateTime(0)) AS complete\n    FROM onboarding GROUP BY person_id\n)\nSELECT 'Accepted purchases older than 24h' AS diagnostic,\n       countIf(accepted IS NOT NULL AND now() >= accepted + INTERVAL 24 HOUR) AS people\nFROM page_times\nUNION ALL\nSELECT 'Accepted >24h ago, no matched RC trial/purchase after onboarding', count()\nFROM page_times p JOIN cohort c ON p.person_id = c.person_id\nWHERE p.accepted IS NOT NULL AND now() >= p.accepted + INTERVAL 24 HOUR\n  AND p.person_id NOT IN (SELECT person_id FROM acquired_rc WHERE event IN ('rc_trial_started_event','rc_initial_purchase_event','rc_trial_converted_event'))\nUNION ALL\nSELECT 'Paywall requested but no rendered paywall', countIf(attempt IS NOT NULL AND paywall IS NULL) FROM page_times\nUNION ALL\nSELECT 'Inbox reveal without login-success event', countIf(reveal IS NOT NULL AND connected IS NULL) FROM page_times\nUNION ALL\nSELECT 'Notifications page impressions: NOT INSTRUMENTED', NULL\nUNION ALL\nSELECT 'Success page impressions: NOT INSTRUMENTED', NULL",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable"
+      },
+      "layout": {
+        "x": 6,
+        "y": 65,
+        "w": 6,
+        "h": 5
+      }
+    },
+    {
+      "key": "revenue",
+      "name": "130 | RevenueCat: paying users and gross revenue by product",
+      "description": "USD gross from the verified RevenueCat integration; original purchase currency is not a conversion multiplier. Deduplicated deliveries. Revenue before refunds and negative adjustments are separate. Lifetime revenue for this acquisition cohort, not calendar-month revenue, profit, proceeds or MRR.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n)\nSELECT product, uniqExactIf(person_id, usd > 0) AS paying_people,\n       countIf(event = 'rc_trial_started_event') AS trial_start_events,\n       countIf(event = 'rc_trial_converted_event') AS trial_conversion_events,\n       countIf(event = 'rc_initial_purchase_event') AS direct_purchase_events,\n       round(coalesce(sumIf(usd, usd > 0), 0), 2) AS gross_usd,\n       round(coalesce(sumIf(usd, usd < 0), 0), 2) AS negative_adjustments_usd,\n       round(coalesce(sum(usd), 0), 2) AS recorded_revenue_after_adjustments_usd\nFROM acquired_rc GROUP BY product ORDER BY gross_usd DESC",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable"
+      },
+      "layout": {
+        "x": 0,
+        "y": 70,
+        "w": 12,
+        "h": 4
+      }
+    },
+    {
+      "key": "health",
+      "name": "130 | Friction: login problems and chat load time",
+      "description": "Build130 acquisition cohort. Login errors/slow-load hints are events, not confirmed root causes. thread_ready reports rendering, not message delivery. p50/p95 latency uses only samples with rows > 0. A zero denominator is blank. User content is never queried.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n)\nSELECT r.1 AS measure, r.2 AS people, r.3 AS samples, r.4 AS median_ms, r.5 AS p95_ms\nFROM (SELECT arrayJoin([\n('Login error', uniqExactIf(person_id, event = 'login_error' AND ts < started + INTERVAL 7 DAY), countIf(event = 'login_error' AND ts < started + INTERVAL 7 DAY), NULL, NULL),\n('Slow Instagram login hint', uniqExactIf(person_id, event = 'login_loading_slow' AND ts < started + INTERVAL 7 DAY), countIf(event = 'login_loading_slow' AND ts < started + INTERVAL 7 DAY), NULL, NULL),\n('Chat stalled', uniqExactIf(person_id, event = 'thread_stalled'), countIf(event = 'thread_stalled'), NULL, NULL),\n('Chat rendered with rows', uniqExactIf(person_id, event = 'thread_ready' AND toInt(p.rows) > 0), countIf(event = 'thread_ready' AND toInt(p.rows) > 0), if(countIf(event = 'thread_ready' AND toInt(p.rows) > 0) = 0, NULL, round(quantile(0.5)(if(event = 'thread_ready' AND toInt(p.rows) > 0, toFloatOrZero(p.ms), NULL)), 0)), if(countIf(event = 'thread_ready' AND toInt(p.rows) > 0) = 0, NULL, round(quantile(0.95)(if(event = 'thread_ready' AND toInt(p.rows) > 0, toFloatOrZero(p.ms), NULL)), 0)))\n]) AS r FROM native)",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable"
+      },
+      "layout": {
+        "x": 0,
+        "y": 74,
+        "w": 12,
+        "h": 4
+      }
+    },
+    {
+      "key": "benchmark",
+      "name": "130 | D35 / D60 cohort economics: wait for mature users",
+      "description": "Denominator is tracked onboarding starters, NOT App Store downloads. Do not compare directly with RevenueCat download-to-paid or revenue-per-install benchmarks without reconciling installs. Numerators use only each mature person’s first 35/60 days. Unfinished cohorts are excluded.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "-- Build 130 acquisition cohort, NOT all users who upgraded to build 130.\n-- Set the shared public-launch variable only after App Store release.\nWITH first_welcome AS (\n    SELECT person_id, min(timestamp) AS started,\n           argMin(toString(properties.build), timestamp) AS first_build\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND event = 'onboarding_screen_viewed' AND properties.screen_id = 's1'\n    GROUP BY person_id\n), excluded AS (\n    SELECT DISTINCT person_id\n    FROM events\n    WHERE timestamp >= toDateTime('2026-08-01 00:00:00')\n      AND (properties.is_test_build = true OR properties.onboarding_preview = true\n        OR (timestamp >= toDateTime('2026-09-18 00:00:00')\n            AND timestamp < toDateTime('2026-09-21 04:11:22')\n            AND toInt(properties.build) BETWEEN 109 AND 116)\n        -- Preserve the project's existing Apple-review traffic heuristic.\n        OR (properties.build IS NOT NULL AND properties.$geoip_country_code = 'US'\n            AND (properties.$geoip_city_name = 'Cupertino'\n              OR empty(toString(coalesce(properties.$geoip_subdivision_1_code, ''))))))\n), cohort AS (\n    SELECT person_id, started\n    FROM first_welcome\n    WHERE first_build = '130'\n      AND notEmpty({variables.konvo_130_public_launch_utc})\n      AND started >= toDateTime(if(empty({variables.konvo_130_public_launch_utc}), '2100-01-01 00:00:00', {variables.konvo_130_public_launch_utc}))\n      AND person_id NOT IN (SELECT person_id FROM excluded)\n), native AS (\n    SELECT e.person_id AS person_id, e.timestamp AS ts, e.event AS event,\n           e.properties AS p, c.started AS started\n    FROM events e JOIN cohort c ON e.person_id = c.person_id\n    WHERE e.timestamp >= toDateTime('2026-09-25 00:00:00')\n      AND e.timestamp >= c.started AND e.timestamp <= now()\n      AND toString(e.properties.build) = '130'\n), onboarding AS (\n    SELECT * FROM native WHERE ts < started + INTERVAL 7 DAY\n), rc AS (\n    -- Deduplicate RevenueCat deliveries by insert_id. Never filter these by build.\n    SELECT person_id,\n           coalesce(nullIf(toString(properties.insert_id), ''), toString(uuid)) AS delivery_id,\n           argMax(raw_rc.event, raw_rc.timestamp) AS event, min(raw_rc.timestamp) AS ts,\n           argMax(toString(properties.original_transaction_id), timestamp) AS subscription_id,\n           argMax(toString(properties.product_id), timestamp) AS product,\n           argMax(toString(properties.expiration_at), timestamp) AS expiry,\n           argMax(toFloatOrZero(properties.revenue), timestamp) AS usd\n    FROM events AS raw_rc\n    WHERE raw_rc.timestamp >= toDateTime('2026-09-25 00:00:00') AND raw_rc.timestamp <= now()\n      AND startsWith(raw_rc.event, 'rc_')\n      AND person_id IN (SELECT person_id FROM cohort)\n    GROUP BY person_id, delivery_id\n), acquired_rc AS (\n    SELECT r.*, c.started AS started\n    FROM rc r JOIN cohort c ON r.person_id = c.person_id\n    WHERE r.ts >= c.started\n), first_trials AS (\n    SELECT person_id, min(ts) AS trial_start,\n           argMin(subscription_id, ts) AS subscription_id,\n           toDateTime(coalesce(nullIf(argMin(expiry, ts), ''), '2100-01-01 00:00:00')) AS trial_end,\n           argMin(product, ts) AS product\n    FROM acquired_rc\n    WHERE event = 'rc_trial_started_event' AND ts < started + INTERVAL 7 DAY\n    GROUP BY person_id\n), trial_outcomes AS (\n    SELECT t.person_id AS person_id, t.trial_start AS trial_start,\n           t.trial_end AS trial_end, t.product AS product,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_cancelled_event'\n               AND r.ts <= t.trial_end), toDateTime(0)) AS cancelled_at,\n           nullIf(minIf(r.ts, r.event = 'rc_trial_converted_event'), toDateTime(0)) AS converted_at,\n           nullIf(minIf(r.ts, r.event = 'rc_expiration_event'), toDateTime(0)) AS expired_at,\n           countIf(r.event = 'rc_billing_issue_event'\n               AND r.ts <= t.trial_end + INTERVAL 14 DAY) > 0 AS billing_issue,\n           argMaxIf(r.event, r.ts,\n               r.event IN ('rc_trial_cancelled_event', 'rc_uncancellation_event')\n               AND r.ts <= t.trial_end) = 'rc_trial_cancelled_event' AS renewal_disabled\n    FROM first_trials t LEFT JOIN rc r ON t.person_id = r.person_id\n         AND t.subscription_id = r.subscription_id\n    WHERE r.ts >= t.trial_start\n    GROUP BY t.person_id, t.trial_start, t.trial_end, t.product\n)\nSELECT 35 AS age_days,\n       (SELECT count() FROM cohort WHERE now() >= started + INTERVAL 35 DAY) AS mature_starters,\n       (SELECT uniqExactIf(person_id, usd > 0) FROM acquired_rc WHERE now() >= started + INTERVAL 35 DAY AND ts < started + INTERVAL 35 DAY) AS paying_people,\n       round(100.0 * paying_people / nullIf(mature_starters, 0), 1) AS starter_to_paid_percent,\n       (SELECT round(coalesce(sumIf(usd, usd > 0), 0), 2) FROM acquired_rc WHERE now() >= started + INTERVAL 35 DAY AND ts < started + INTERVAL 35 DAY) AS gross_usd,\n       round(gross_usd / nullIf(mature_starters, 0), 3) AS gross_usd_per_starter\nUNION ALL\nSELECT 60 AS age_days,\n       (SELECT count() FROM cohort WHERE now() >= started + INTERVAL 60 DAY) AS mature_starters,\n       (SELECT uniqExactIf(person_id, usd > 0) FROM acquired_rc WHERE now() >= started + INTERVAL 60 DAY AND ts < started + INTERVAL 60 DAY) AS paying_people,\n       round(100.0 * paying_people / nullIf(mature_starters, 0), 1) AS starter_to_paid_percent,\n       (SELECT round(coalesce(sumIf(usd, usd > 0), 0), 2) FROM acquired_rc WHERE now() >= started + INTERVAL 60 DAY AND ts < started + INTERVAL 60 DAY) AS gross_usd,\n       round(gross_usd / nullIf(mature_starters, 0), 3) AS gross_usd_per_starter",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "age_days"
+            },
+            {
+              "column": "mature_starters"
+            },
+            {
+              "column": "paying_people"
+            },
+            {
+              "column": "starter_to_paid_percent",
+              "settings": {
+                "formatting": {
+                  "style": "number",
+                  "suffix": "%",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "gross_usd"
+            },
+            {
+              "column": "gross_usd_per_starter"
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 78,
+        "w": 12,
+        "h": 4
+      }
+    },
+    {
+      "key": "prelaunch",
+      "name": "130 | QA ONLY: all build130 activity, including review and tests",
+      "description": "Diagnostic inventory, deliberately unfiltered. These are NOT customer conversion counts. User confirmed build130 is still in App Store review. Production tiles stay empty until the launch date is set; existing test/review identities cannot become new customers in that cohort.",
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "SELECT event, toString(properties.screen_id) AS screen_id,\n       uniqExact(person_id) AS people, count() AS events,\n       min(timestamp) AS first_seen_utc, max(timestamp) AS latest_seen_utc\nFROM events WHERE timestamp >= toDateTime('2026-09-25 00:00:00')\n  AND toString(properties.build) = '130'\nGROUP BY event, screen_id ORDER BY first_seen_utc",
+          "variables": {
+            "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+              "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754",
+              "code_name": "konvo_130_public_launch_utc",
+              "value": "2026-09-27 14:22:15"
+            }
+          }
+        },
+        "display": "ActionsTable"
+      },
+      "layout": {
+        "x": 0,
+        "y": 82,
+        "w": 12,
+        "h": 7
+      }
+    }
+  ],
+  "flow_inventory": [
+    {
+      "key": "s1",
+      "label": "Welcome: Instagram without Feed, Reels or Explore",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's1'",
+      "kind": "Screen view",
+      "previous": null
+    },
+    {
+      "key": "s2c",
+      "label": "Why do you want to stop scrolling?",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's2c'",
+      "kind": "Screen view",
+      "previous": "s1"
+    },
+    {
+      "key": "s3",
+      "label": "Daily Instagram screen time",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's3'",
+      "kind": "Screen view",
+      "previous": "s2c"
+    },
+    {
+      "key": "s4",
+      "label": "Daily messaging time",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's4'",
+      "kind": "Screen view",
+      "previous": "s3"
+    },
+    {
+      "key": "s4b",
+      "label": "Adding it up",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's4b'",
+      "kind": "Screen view",
+      "previous": "s4"
+    },
+    {
+      "key": "s5",
+      "label": "Years distracted on your phone",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's5'",
+      "kind": "Screen view",
+      "previous": "s4b"
+    },
+    {
+      "key": "s6",
+      "label": "Instagram time vs messaging time",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's6'",
+      "kind": "Screen view",
+      "previous": "s5"
+    },
+    {
+      "key": "s7",
+      "label": "Years Konvo could help you get back",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's7'",
+      "kind": "Screen view",
+      "previous": "s6"
+    },
+    {
+      "key": "s8a",
+      "label": "No Feed. No Reels. No Explore.",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's8a'",
+      "kind": "Screen view",
+      "previous": "s7"
+    },
+    {
+      "key": "s8b",
+      "label": "Your messages stay",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's8b'",
+      "kind": "Screen view",
+      "previous": "s8a"
+    },
+    {
+      "key": "s8c",
+      "label": "Lock the app when you are ready",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's8c'",
+      "kind": "Screen view",
+      "previous": "s8b"
+    },
+    {
+      "key": "s9t",
+      "label": "Social proof / Connect Instagram",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's9t'",
+      "kind": "Screen view",
+      "previous": "s8c"
+    },
+    {
+      "key": "s11",
+      "label": "Opening Instagram sign-in",
+      "condition": "event = 'onboarding_screen_viewed' AND p.screen_id = 's11'",
+      "kind": "Screen view",
+      "previous": "s9t"
+    },
+    {
+      "key": "login_form",
+      "label": "Instagram login / verification pages",
+      "condition": "event = 'login_form_detected'",
+      "kind": "Third-party form detected; not every challenge page",
+      "previous": "s11"
+    },
+    {
+      "key": "connected",
+      "label": "Connected / preparing inbox",
+      "condition": "event = 'login_succeeded'",
+      "kind": "Login-success proxy; can be missing on resumed sessions",
+      "previous": "s11"
+    },
+    {
+      "key": "reveal",
+      "label": "Your real Instagram inbox reveal",
+      "condition": "event = 'inbox_reveal_viewed'",
+      "kind": "Screen view",
+      "previous": "s11"
+    },
+    {
+      "key": "perks",
+      "label": "Same account. Different app.",
+      "condition": "event = 'perks_viewed'",
+      "kind": "Screen view",
+      "previous": "reveal"
+    },
+    {
+      "key": "trial_intro",
+      "label": "Try Konvo free",
+      "condition": "event = 'try_viewed'",
+      "kind": "Conditional: trial eligible",
+      "previous": "perks"
+    },
+    {
+      "key": "offer",
+      "label": "Free-trial offer",
+      "condition": "event = 'offer_viewed'",
+      "kind": "Conditional: trial eligible",
+      "previous": "trial_intro"
+    },
+    {
+      "key": "reminder",
+      "label": "Trial reminder",
+      "condition": "event = 'reminder_viewed'",
+      "kind": "Conditional: trial eligible",
+      "previous": "offer"
+    },
+    {
+      "key": "attempt",
+      "label": "Paywall requested / loading prices",
+      "condition": "event = 'paywall_viewed' AND p.screen_id = 's13_paywall'",
+      "kind": "Request, not rendered prices",
+      "previous": "perks"
+    },
+    {
+      "key": "paywall",
+      "label": "Annual / monthly paywall with prices",
+      "condition": "event = 'paywall_presented' AND p.paywall_id = 'original' AND p.placement = 'onboarding'",
+      "kind": "Rendered paywall",
+      "previous": "attempt"
+    },
+    {
+      "key": "accepted",
+      "label": "Apple purchase accepted",
+      "condition": "event = 'purchase_result' AND p.result = 'purchased'",
+      "kind": "Includes free trials; NOT a paid conversion",
+      "previous": "paywall"
+    },
+    {
+      "key": "notify",
+      "label": "Notifications choice answered",
+      "condition": "event = 'notify_answered'",
+      "kind": "Optional action; screen view is not tracked",
+      "previous": "accepted"
+    },
+    {
+      "key": "complete",
+      "label": "You are in: final Continue tapped",
+      "condition": "event = 'onboarding_completed' AND p.screen_id = 's14_success'",
+      "kind": "Final CTA; success screen view is not tracked",
+      "previous": "paywall"
+    }
+  ],
+  "dashboard_layout": [
+    {
+      "id": 12703707,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 2
+        }
+      }
+    },
+    {
+      "id": 12703760,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 2,
+          "w": 12,
+          "h": 8
+        }
+      }
+    },
+    {
+      "id": 12706314,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 10,
+          "w": 12,
+          "h": 8
+        }
+      }
+    },
+    {
+      "id": 12722334,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 18,
+          "w": 12,
+          "h": 7
+        }
+      }
+    },
+    {
+      "id": 12703757,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 25,
+          "w": 12,
+          "h": 6
+        }
+      }
+    },
+    {
+      "id": 12703758,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 31,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12703759,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 35,
+          "w": 12,
+          "h": 12
+        }
+      }
+    },
+    {
+      "id": 12703761,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 47,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12703762,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 51,
+          "w": 6,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705803,
+      "layouts": {
+        "sm": {
+          "x": 6,
+          "y": 51,
+          "w": 6,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705804,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 56,
+          "w": 12,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705805,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 61,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12705806,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 65,
+          "w": 6,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705809,
+      "layouts": {
+        "sm": {
+          "x": 6,
+          "y": 65,
+          "w": 6,
+          "h": 5
+        }
+      }
+    },
+    {
+      "id": 12705807,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 70,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12705808,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 74,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12705810,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 78,
+          "w": 12,
+          "h": 4
+        }
+      }
+    },
+    {
+      "id": 12705812,
+      "layouts": {
+        "sm": {
+          "x": 0,
+          "y": 82,
+          "w": 12,
+          "h": 7
+        }
+      }
+    }
+  ],
+  "saved_dashboard_variables": {
+    "01a0e0dc-d8fa-0000-8098-d0a7a7303754": {
+      "value": "2026-09-27 14:22:15",
+      "isNull": false,
+      "code_name": "konvo_130_public_launch_utc",
+      "variableId": "01a0e0dc-d8fa-0000-8098-d0a7a7303754"
+    }
+  },
+  "release_source": {
+    "url": "https://itunes.apple.com/lookup?id=6794756261&country=ca&entity=software",
+    "trackId": 6794756261,
+    "bundleId": "com.matthewchan.konvo",
+    "version": "1.9.0",
+    "currentVersionReleaseDate": "2026-09-27T14:22:15Z"
+  }
+}

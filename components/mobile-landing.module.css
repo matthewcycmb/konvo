@@ -1,0 +1,64 @@
+.page {
+  width: 100%;
+  color-scheme: light;
+}
+
+.mobilePreview { max-width: 480px; margin-inline: auto; }
+.header { position: relative; z-index: 10; }
+.desktopLinks, .desktopDownload, .macLink { display: none; }
+.menuButton { display: flex; }
+.copy { padding: 104px 26px 0; text-align: center; }
+.title {
+  margin: 0;
+  font-size: clamp(28px, 9.6vw, 46px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  white-space: nowrap;
+}
+.subtitle { margin: 14px 0 0; font-size: 17px; line-height: 1.45; color: #252b38; }
+.proof { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 10px; font-size: 15px; }
+.downloads { margin-top: 10px; }
+.support { display: block; margin-top: 14px; font-size: 15px; line-height: 1.5; }
+.phone { display: flex; justify-content: center; margin-top: 42px; }
+.phone img { display: block; width: min(78%, 320px); height: auto; filter: drop-shadow(0 26px 50px rgba(23,29,46,0.35)); }
+.footer { margin-top: auto; padding: 46px 26px 34px; font-size: 12.5px; color: #4c5870; text-align: center; }
+.page a:focus-visible, .page button:focus-visible { outline: 3px solid #0a5cf0; outline-offset: 5px; }
+
+@media (min-width: 900px) {
+  .page:not(.mobilePreview) .header { width: min(100%, 1248px); margin-inline: auto; }
+  .page:not(.mobilePreview) .nav { padding: 28px 40px 0 !important; }
+  .page:not(.mobilePreview) .desktopLinks { display: flex; align-items: center; gap: 30px; font-size: 14px; font-weight: 500; color: #364156; }
+  .desktopLinks a { text-decoration: none; }
+  .desktopLinks a:hover { color: #0a5cf0; }
+  .page:not(.mobilePreview) .desktopDownload { display: inline-flex; min-height: 42px !important; }
+  .page:not(.mobilePreview) .mobileDownload,
+  .page:not(.mobilePreview) .menuButton,
+  .page:not(.mobilePreview) .menu { display: none !important; }
+  .page:not(.mobilePreview) .hero {
+    width: min(100%, 1040px);
+    margin: auto;
+    padding: 48px 40px 32px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 342px);
+    align-items: center;
+    gap: clamp(40px, 4vw, 56px);
+  }
+  .page:not(.mobilePreview) .copy { padding: 0; text-align: left; }
+  .page:not(.mobilePreview) .title { font-size: clamp(42px, 4.7vw, 64px); letter-spacing: -0.045em; white-space: nowrap; }
+  .page:not(.mobilePreview) .subtitle { margin-top: 24px; font-size: clamp(19px, 1.7vw, 23px); line-height: 1.5; }
+  .page:not(.mobilePreview) .proof { justify-content: flex-start; margin-top: 22px; font-size: 16px; gap: 12px; }
+  .page:not(.mobilePreview) .downloads { display: flex; align-items: center; flex-wrap: wrap; gap: 22px; margin-top: 26px; }
+  .page:not(.mobilePreview) .macLink { display: inline-flex; align-items: center; gap: 7px; padding: 12px 0; border: 0; background: transparent; color: #0a5cf0; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .macLink:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .page:not(.mobilePreview) .support { margin-top: 28px; font-size: 14px; line-height: 1.65; }
+  .page:not(.mobilePreview) .phone { margin: 0; }
+  .page:not(.mobilePreview) .phone img { width: min(100%, 342px, 43vh); }
+  .page:not(.mobilePreview) .footer { margin-top: 0; padding: 16px 32px 24px; }
+}
+
+@media (max-width: 359px) {
+  .copy { padding-inline: 16px; }
+  .title { font-size: 9.1vw; }
+  .proof { font-size: 14px; gap: 7px; }
+}

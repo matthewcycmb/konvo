@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 const CONTACT_EMAIL = "jchanh@gmail.com";
-const EFFECTIVE_DATE = "August 11, 2026";
+const EFFECTIVE_DATE = "September 28, 2026";
 
 // The landing page is hardcoded light (blue on white); this page follows it
 // rather than the app's dark-mode tokens, so tapping Privacy from the site
@@ -75,6 +75,14 @@ export default function PrivacyPage() {
             think of Konvo and to tell you about changes to it. We do not sell it, and you can
             have it deleted by emailing the address at the bottom of this page.
           </p>
+          <p className="mt-3">
+            <span className="text-ink">Android waitlist.</span> If you join on this website,
+            we store your email address, signup date, and consent to receive an email
+            about Android availability. Waitlist emails are stored in our server-side
+            database with Upstash, not included in the waitlist analytics events. We use
+            a temporary, keyed hash of your IP address to limit spam; it expires after
+            one hour. You can leave the list or request deletion by emailing the address below.
+          </p>
         </Section>
 
         <Section title="Purchases">
@@ -142,6 +150,10 @@ export default function PrivacyPage() {
             </li>
             <li>
               <span className="text-ink">Vercel</span>: hosts this website.
+            </li>
+            <li>
+              <span className="text-ink">Upstash</span>: stores Android waitlist signups
+              on our behalf.
             </li>
           </ul>
         </Section>

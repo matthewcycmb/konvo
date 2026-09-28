@@ -84,6 +84,116 @@ final class RCPurchaseController: PurchaseController {
     }
 }
 
+// CHECKOUT_ATTEMPT_BEGIN
+// A native outcome survives destruction of the JavaScript page/callback.
+// Only public catalog metadata and bounded enums enter the analytics payload.
+final class KonvoCheckoutAttempt {
+    private var properties: [String: Any]
+    private let started = Date()
+    private let emit: (String, [String: Any]) -> Void
+    private var finished = false
+    init(productId: String, context: [String: Any]?, emit: @escaping (String, [String: Any]) -> Void) {
+        self.emit = emit
+        let supplied = context?["checkout_attempt_id"] as? String ?? ""
+        let validID = !supplied.isEmpty && supplied.count <= 80 && supplied.unicodeScalars.allSatisfy {
+            CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-").contains($0)
+        }
+        properties = ["checkout_attempt_id": validID ? supplied : UUID().uuidString,
+            "checkout_tracking_version": 1, "product_id": productId, "store_requested": false]
+        for (key, allowed) in ["screen_id": ["s13_paywall", "new_paywall"],
+                               "paywall_id": ["original", "inbox_annual_weekly_v3", "inbox_special_annual_v3"],
+                               "placement": ["onboarding", "lapsed"],
+                               "plan": ["annual", "monthly", "weekly", "lifetime", "annual_special"]] {
+            if let value = context?[key] as? String, allowed.contains(value) { properties[key] = value }
+        }
+        // Preserve what the user saw separately from the package selected by RC.
+        for key in ["displayed_price", "currency", "offering_id"] {
+            if let value = context?[key] as? String, value.count <= 100 {
+                properties[key == "displayed_price" ? key : "displayed_" + key] = value
+            }
+        }
+        if let days = context?["trial_days"] as? Int, (0...366).contains(days) { properties["displayed_trial_days"] = days }
+        if let eligible = context?["trial_eligible"] as? Bool { properties["displayed_trial_eligible"] = eligible }
+        emit("checkout_received", properties)
+    }
+    func storeRequested(catalog: [String: Any]) {
+        guard !finished else { return }
+        for key in ["product_id", "offering_id", "package_id", "price_amount", "currency", "localized_price"] {
+            if let value = catalog[key] { properties[key] = value }
+        }
+        properties["store_requested"] = true
+        emit("checkout_store_requested", properties)
+    }
+    func finish(_ reply: [String: Any], reason: String? = nil, errorCode: Int? = nil) -> [String: Any] {
+        guard !finished else { return reply }
+        finished = true
+        properties["result"] = reply["ok"] as? Bool == true && reply["entitled"] as? Bool == true ? "purchased"
+            : reply["cancelled"] as? Bool == true ? "cancelled"
+            : reply["pending"] as? Bool == true ? "pending"
+            : reply["ok"] as? Bool == true ? "not_entitled" : "error"
+        properties["elapsed_ms"] = Int(Date().timeIntervalSince(started) * 1000)
+        if let reason { properties["failure_stage"] = reason }
+        if let errorCode { properties["error_code"] = errorCode }
+        emit("checkout_result", properties)
+        return reply
+    }
+}
+// CHECKOUT_ATTEMPT_END
+
+// CHECKOUT_OUTBOX_BEGIN
+// Persist only checkout telemetry, including its original identity/timestamp/UUID.
+// A transient network failure must not turn an attempted purchase into a silent
+// paywall exit. Sending/retrying never delays or retries the purchase itself.
+final class KonvoCheckoutOutbox {
+    private let queue = DispatchQueue(label: "konvo.checkout.telemetry")
+    private var items: [Data]
+    private var sending = false, retryScheduled = false
+    private var retryDelay: TimeInterval = 2
+    private let save: (Data) -> Void
+    private let send: (Data, @escaping (Int?) -> Void) -> Void
+    private let schedule: (TimeInterval, @escaping () -> Void) -> Void
+    init(load: () -> Data?, save: @escaping (Data) -> Void,
+         send: @escaping (Data, @escaping (Int?) -> Void) -> Void,
+         schedule: @escaping (TimeInterval, @escaping () -> Void) -> Void = { delay, work in
+             DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + delay, execute: DispatchWorkItem(block: work))
+         }) {
+        self.save = save; self.send = send; self.schedule = schedule
+        items = (load().flatMap { try? JSONDecoder().decode([Data].self, from: $0) }) ?? []
+    }
+    func enqueue(_ payload: Data) {
+        queue.async {
+            // Bound persistent storage if telemetry is blocked for a long time.
+            if self.items.count >= 500 { self.items.removeFirst() }
+            self.items.append(payload); self.persist(); self.drain()
+        }
+    }
+    func flush() { queue.async { self.drain() } }
+    private func persist() { if let data = try? JSONEncoder().encode(items) { save(data) } }
+    private func drain() {
+        guard !sending, !retryScheduled, let payload = items.first else { return }
+        sending = true
+        send(payload) { status in
+            self.queue.async {
+                self.sending = false
+                let accepted = status.map { (200..<300).contains($0) } ?? false
+                let permanent = status.map { (400..<500).contains($0) && $0 != 408 && $0 != 429 } ?? false
+                if accepted || permanent {
+                    // Capacity eviction may have removed this in-flight item.
+                    if self.items.first == payload { self.items.removeFirst() }
+                    self.retryDelay = 2; self.persist(); self.drain()
+                } else {
+                    self.retryScheduled = true
+                    let delay = self.retryDelay; self.retryDelay = min(300, delay * 2)
+                    self.schedule(delay) {
+                        self.queue.async { self.retryScheduled = false; self.drain() }
+                    }
+                }
+            }
+        }
+    }
+}
+// CHECKOUT_OUTBOX_END
+
 @objc(KonvoStore)
 public class KonvoStore: NSObject, WKScriptMessageHandler {
     private static let purchaseController = RCPurchaseController()
@@ -957,7 +1067,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         }
 
         Task { @MainActor in
-            let reply = await Self.run(cmd, productId)
+            let reply = await Self.run(cmd, productId, checkout: body["checkout"] as? [String: Any])
             let json: String
             if let data = try? JSONSerialization.data(withJSONObject: reply),
                let text = String(data: data, encoding: .utf8) {
@@ -1095,7 +1205,8 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         return offer
     }
 
-    static func run(_ cmd: String, _ productId: String) async -> [String: Any] {
+    private static var purchaseInFlight = false
+    @MainActor static func run(_ cmd: String, _ productId: String, checkout: [String: Any]? = nil) async -> [String: Any] {
         switch cmd {
         case "onboardingExperiment":
             return await resolveExperiment(fresh: productId == "fresh")
@@ -1312,28 +1423,41 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 return productFailure("store_unavailable", code: (error as NSError).code)
             }
         case "purchase":
+            let attempt = KonvoCheckoutAttempt(productId: productId, context: checkout, emit: track)
+            guard !purchaseInFlight else {
+                return attempt.finish(["ok": false, "error": "purchase in progress"], reason: "purchase_in_progress")
+            }
+            purchaseInFlight = true
+            defer { purchaseInFlight = false }
+            var storeRequested = false
             do {
                 guard let offering = try await selectedOffering() else {
-                    return ["ok": false, "error": "offering unavailable"]
+                    return attempt.finish(["ok": false, "error": "offering unavailable"], reason: "offering_unavailable")
                 }
                 let selectedPackage: Package?
                 if productId == specialProductIdentifier {
                     guard experimentTest, specialOfferEligible, let regular = offering.annual else {
-                        return ["ok": false, "error": "special offer unavailable"]
+                        return attempt.finish(["ok": false, "error": "special offer unavailable"], reason: "special_offer_unavailable")
                     }
                     selectedPackage = try await specialOfferPackage(regular: regular)
                 } else {
                     selectedPackage = offering.availablePackages.first { $0.storeProduct.productIdentifier == productId }
                 }
-                guard let package = selectedPackage else { return ["ok": false, "error": "unknown product"] }
+                guard let package = selectedPackage else { return attempt.finish(["ok": false, "error": "unknown product"], reason: "product_unavailable") }
                 if experimentTest && !validPersonalizedPackage(package) {
-                    return ["ok": false, "error": "invalid experimental purchase"]
+                    return attempt.finish(["ok": false, "error": "invalid experimental purchase"], reason: "invalid_product")
                 }
                 KonvoActivationAnalytics.shared.record("native_plan_selected", ["plan": productId])
+                let product = package.storeProduct
+                attempt.storeRequested(catalog: ["product_id": product.productIdentifier,
+                    "offering_id": productId == specialProductIdentifier ? specialOfferingIdentifier : offering.identifier,
+                    "package_id": package.identifier, "price_amount": NSDecimalNumber(decimal: product.price),
+                    "currency": product.currencyCode ?? "", "localized_price": product.localizedPriceString])
+                storeRequested = true
                 let result = try await Purchases.shared.purchase(package: package)
                 if result.userCancelled {
                     if experimentTest && productId != specialProductIdentifier { specialOfferEligible = true }
-                    return ["ok": false, "cancelled": true]
+                    return attempt.finish(["ok": false, "cancelled": true])
                 }
                 let ok = result.customerInfo.entitlements.active["Pro"] != nil
                 if onboardingPreview {
@@ -1343,19 +1467,20 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 if ok {
                     KonvoActivationAnalytics.shared.record("native_purchase_completed", ["plan": productId])
                 }
-                return ["ok": ok, "entitled": ok]
+                return attempt.finish(["ok": ok, "entitled": ok])
             } catch {
                 if let rcError = error as? RevenueCat.ErrorCode, rcError == .purchaseCancelledError {
                     if experimentTest && productId != specialProductIdentifier { specialOfferEligible = true }
-                    return ["ok": false, "cancelled": true]
+                    return attempt.finish(["ok": false, "cancelled": true])
                 }
                 if let rcError = error as? RevenueCat.ErrorCode,
                    rcError == .paymentPendingError {
                     // Ask to Buy and the like: the entitlement lands later,
                     // and the launch check in CAGE_SCRIPT picks it up.
-                    return ["ok": false, "pending": true]
+                    return attempt.finish(["ok": false, "pending": true])
                 }
-                return ["ok": false, "error": "\(error)"]
+                return attempt.finish(["ok": false, "error": "\(error)"],
+                    reason: storeRequested ? "store_purchase" : "catalog_lookup", errorCode: (error as NSError).code)
             }
         case "restore":
             let info = try? await Purchases.shared.restorePurchases()
@@ -1464,6 +1589,18 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         m.start(queue: .global(qos: .background))
         return m
     }()
+    private static let checkoutOutbox = KonvoCheckoutOutbox(
+        load: { UserDefaults.standard.data(forKey: "konvo.checkout.telemetry.v1") },
+        save: { UserDefaults.standard.set($0, forKey: "konvo.checkout.telemetry.v1") },
+        send: { body, done in
+            guard let url = URL(string: KonvoShared.posthogCapture) else { done(400); return }
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"; request.httpBody = body; request.timeoutInterval = 20
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            URLSession.shared.dataTask(with: request) { _, response, error in
+                done(error == nil ? (response as? HTTPURLResponse)?.statusCode : nil)
+            }.resume()
+        })
     static func track(_ event: String, _ props: [String: Any]) {
         // distinct_id is RevenueCat's anonymous id, and Purchases.shared is
         // a fatalError until configure() has run. Build 88 tracked from
@@ -1496,15 +1633,29 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
         // by build kills that class; date pins never could.
         properties["build"] =
             Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
-        let payload: [String: Any] = [
+        let checkoutEvent = properties["checkout_attempt_id"] != nil &&
+            ["purchase_started", "purchase_result", "checkout_received", "checkout_store_requested", "checkout_result"].contains(event)
+        var payload: [String: Any] = [
             "api_key": KonvoShared.posthogKey,
             "event": event,
             "distinct_id": Purchases.shared.appUserID,
             "properties": properties,
         ]
+        if checkoutEvent {
+            let format = ISO8601DateFormatter()
+            format.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            payload["timestamp"] = format.string(from: Date())
+            payload["uuid"] = UUID().uuidString
+        }
         guard let url = URL(string: KonvoShared.posthogCapture),
               let body = try? JSONSerialization.data(withJSONObject: payload)
         else { return }
+        if checkoutEvent {
+            checkoutOutbox.enqueue(body)
+            return
+        }
+        // A normal app event also resumes pending telemetry after relaunch.
+        checkoutOutbox.flush()
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

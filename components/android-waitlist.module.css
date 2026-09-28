@@ -1,0 +1,29 @@
+.waitlist { width: 100%; max-width: 440px; margin: 15px auto 0; text-align: left; }
+.trigger { display: flex; justify-content: center; align-items: center; gap: 8px; min-height: 44px; color: #17477d; font-size: 14px; cursor: pointer; list-style: none; border-radius: 10px; }
+.trigger::-webkit-details-marker { display: none; }
+.trigger strong { color: #0756de; font-weight: 650; }
+.trigger:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+.trigger:focus-visible { outline: 3px solid #0a5cf0; outline-offset: 3px; }
+.arrow { color: #0756de; font-size: 18px; }
+.waitlist[open] .arrow { transform: rotate(90deg); }
+.card { margin-top: 10px; padding: 22px; border: 1px solid rgba(23, 71, 125, .15); border-radius: 18px; background: rgba(255, 255, 255, .82); box-shadow: 0 12px 32px rgba(28, 63, 109, .07); }
+.card h2 { margin: 0 0 7px; font-size: 22px; font-weight: 700; letter-spacing: -.025em; line-height: 1.2; color: #171d2e; }
+.card p { margin: 0; color: #4c5870; font-size: 14px; line-height: 1.5; }
+.label { display: block; margin: 18px 0 7px; color: #171d2e; font-size: 13px; font-weight: 600; }
+.fields { display: flex; gap: 8px; flex-wrap: wrap; }
+.fields input { flex: 1 1 180px; min-width: 0; width: 100%; border: 1px solid #a9bdd4; background: #fff; color: #171d2e; border-radius: 10px; min-height: 48px; padding: 11px 12px; font: inherit; font-size: 16px; }
+.fields input::placeholder { color: #727e90; }
+.fields input:focus-visible { outline: 3px solid #0a5cf0; outline-offset: 2px; }
+.fields button { flex: 1 0 auto; min-height: 48px; padding: 11px 16px; border: 0; border-radius: 10px; background: #0a5cf0; color: #fff; font: inherit; font-size: 14px; font-weight: 650; cursor: pointer; }
+.fields button:hover { background: #074bcc; }
+.fields button:disabled { opacity: .65; cursor: wait; }
+.card .consent { margin-top: 12px; font-size: 11.5px; line-height: 1.55; }
+.consent a { color: #17477d; text-decoration: underline; text-underline-offset: 2px; }
+.card .error { margin-top: 10px; color: #a31c24; font-size: 13px; }
+.honeypot { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.success { text-align: center; padding: 6px 0; }
+.check { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; margin: 0 auto 12px; color: #0a5cf0; background: #e6efff; font-size: 23px; }
+@media (min-width: 900px) {
+  .waitlist { margin-inline: 0; }
+  .trigger { justify-content: flex-start; }
+}

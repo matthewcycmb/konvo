@@ -661,7 +661,7 @@
     delete pending[id];
     if (cb) cb(res || null);
   };
-  function storekit(cmd, productId, cb) {
+  function storekit(cmd, productId, cb, checkout) {
     seq++;
     pending[seq] = cb;
     if(cmd === "products") {
@@ -669,7 +669,7 @@
     }
     try {
       window.webkit.messageHandlers.konvoStore.postMessage(
-        { cmd: cmd, id: seq, productId: productId || "" });
+        { cmd: cmd, id: seq, productId: productId || "", checkout: checkout || undefined });
     } catch (e) { delete pending[seq]; cb(null); }
   }
 
@@ -742,6 +742,7 @@
   // Passive diagnostics. No inactivity timeout, field values, URLs, or page
   // text. Foreground time excludes time spent in Passwords/another app.
   var loginReadyStages = {}, loginDetectedStages = {}, loginSlowStages = {}, loginStageForegroundStart = {};
+  var loginReadinessStage = null, resetState = null;
   var loginForegroundMs = 0, loginForegroundAt = Date.now(), loginHiddenAt = 0;
   function loginForegroundTime() {
     return loginForegroundMs + (document.visibilityState === "hidden" ? 0 : Date.now() - loginForegroundAt);
@@ -758,14 +759,28 @@
     }
     return true;
   }
+  function loginFields(st) {
+    // Recovery accepts email, phone OR username. Its field name is not the
+    // same as the sign-in page's. Scope the broader selector to recovery.
+    return document.querySelectorAll(st === "reset"
+      ? 'input:not([type]),input[type=text],input[type=email],input[type=tel],input[type=password],input[autocomplete=one-time-code]'
+      : 'input[name=username],input[name=email],input[type=password],input[autocomplete=one-time-code],input[name*=verification i],input[name*=code i]');
+  }
   function checkLoginReadiness(st) {
-    if (document.visibilityState === "hidden" || loginReadyStages[st]) return;
+    if (document.visibilityState === "hidden") return;
+    if (loginReadinessStage !== st) {
+      loginReadinessStage = st;
+      delete loginReadyStages[st]; delete loginDetectedStages[st]; delete loginSlowStages[st];
+      loginStageForegroundStart[st] = loginForegroundTime(); resetState = null;
+    }
+    if (loginReadyStages[st] && st !== "reset") return;
     if (loginStageForegroundStart[st] === undefined) loginStageForegroundStart[st] = loginForegroundTime();
     var stageForegroundMs = loginForegroundTime() - loginStageForegroundStart[st];
-    var fields = document.querySelectorAll("input[name=username],input[name=email],input[type=password],input[autocomplete=one-time-code],input[name*=verification i],input[name*=code i]");
+    var fields = loginFields(st), visibleField = false;
     for (var i = 0; i < fields.length; i++) {
       var field = fields[i];
       if (!visibleLoginField(field)) continue;
+      visibleField = true;
       if (!loginDetectedStages[st]) {
         loginDetectedStages[st] = true;
         track("login_form_detected", { stage: st, ms: Date.now() - loginDocumentStartedAt });
@@ -778,9 +793,26 @@
       var y = Math.max(0, Math.min(window.innerHeight - 1, r.top + r.height / 2));
       var hit = document.elementFromPoint && document.elementFromPoint(x, y);
       if (hit !== field) continue;
-      loginReadyStages[st] = true;
-      track("login_form_ready", { stage: st, ms: Date.now() - loginDocumentStartedAt,
-        foreground_ms: stageForegroundMs, load_state: document.readyState });
+      if (!loginReadyStages[st]) {
+        loginReadyStages[st] = true;
+        track("login_form_ready", { stage: st, ms: Date.now() - loginDocumentStartedAt,
+          foreground_ms: stageForegroundMs, load_state: document.readyState });
+      }
+      if (st === "reset" && resetState !== "form_ready") {
+        resetState = "form_ready";
+        track("login_reset_state", { stage: st, state: resetState, foreground_ms: stageForegroundMs });
+      }
+      return;
+    }
+    // After requesting a link Instagram can show instructions with no input.
+    // We cannot distinguish that from an unrecognized/loading page without
+    // reading private content. Report an ambiguous state, never a false stall
+    // or reset-success claim. No timers navigate, refocus, or clear fields.
+    if (st === "reset" && !visibleField) {
+      if (stageForegroundMs >= 8000 && resetState !== "no_input") {
+        resetState = "no_input";
+        track("login_reset_state", { stage: st, state: resetState, foreground_ms: stageForegroundMs });
+      }
       return;
     }
     if (!loginSlowStages[st] && stageForegroundMs >= 8000) {
@@ -884,8 +916,10 @@
     }
     els = document.querySelectorAll("input[type=password]");
     for (i = 0; i < els.length; i++) {
-      if (els[i].getAttribute("autocomplete") !== "current-password")
-        els[i].setAttribute("autocomplete", "current-password");
+      var token = st === "reset" || els[i].getAttribute("autocomplete") === "new-password"
+        ? "new-password" : "current-password";
+      if (els[i].getAttribute("autocomplete") !== token)
+        els[i].setAttribute("autocomplete", token);
     }
   }
   // The hint shows the moment the sign-in form is on screen (Aug 23), not
@@ -989,6 +1023,11 @@
     // Waits for the body: the strip and footer live inside it, and the
     // rise must start with something to show.
     if (!/iPhone|iPad|iPod/.test(navigator.userAgent) || !document.body) return;
+    if (st !== "reset") {
+      var oldResetBar = document.getElementById("im-reset-bar");
+      if (oldResetBar) oldResetBar.remove();
+      resetBarShown = false;
+    }
     var strip = document.getElementById("im-sheet"), foot;
     if (!strip) {
       var css = document.createElement("style");
@@ -1032,6 +1071,10 @@
       // Back from the email with the reset page still up: one way back.
       document.addEventListener("visibilitychange", function () {
         if (document.visibilityState !== "visible" || loginStage() !== "reset" || resetBarShown) return;
+        // Returning from Notes/Passwords does not mean a reset is complete.
+        // Keep the recovery form unobstructed while it still has usable inputs.
+        var fields = loginFields("reset");
+        for (var i = 0; i < fields.length; i++) if (visibleLoginField(fields[i])) return;
         resetBarShown = true;
         var bar = document.createElement("div");
         bar.id = "im-reset-bar";
@@ -3169,7 +3212,9 @@
         if (w.parentNode) w.parentNode.removeChild(w);
       }, 850);
     }
+    var purchaseBusy = false;
     function buy(btn, productId) {
+      if (purchaseBusy) return;
       // Beta builds cannot complete a purchase - App Store products do not
       // load until the Paid Apps agreement is active - so the main CTA
       // would spin and strand the tester on the wall. Let it through to
@@ -3186,27 +3231,40 @@
         finish("s13_paywall");
         return;
       }
+      purchaseBusy = true;
       btn.disabled = true;
+      var plan = productId.indexOf("yearly") > 0 ? "annual"
+        : productId.indexOf("monthly") > 0 ? "monthly" : "lifetime";
+      var product = P && P[plan === "annual" ? "yearly" : plan] || {};
+      var attempt = window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID()
+        : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+      var started = Date.now();
+      var props = { checkout_attempt_id: attempt, checkout_tracking_version: 1,
+        plan: plan, product_id: productId, screen_id: "s13_paywall", paywall_id: "original",
+        placement: lapsedWall ? "lapsed" : "onboarding", offering_id: P && P.offeringId || "",
+        displayed_price: product.price || "", currency: product.currency || "",
+        trial_days: product.trialDays || 0, trial_eligible: !!product.trialDays };
+      if (typeof product.amount === "number" && isFinite(product.amount)) props.price_amount = product.amount;
+      track("purchase_started", Object.assign({}, props));
       storekit("purchase", productId, function (res) {
+        purchaseBusy = false;
         btn.disabled = false;
         // What happened after the buy tap (Sep 2): Apple's sheet closed,
         // a StoreKit error, a pending approval, or a purchase. Until now
         // 84 people who compared plans and walked were indistinguishable
         // from a broken sheet. Enum only, never the error text.
-        track("purchase_result", {
-          plan: productId.indexOf("yearly") > 0 ? "annual"
-            : productId.indexOf("monthly") > 0 ? "monthly" : "lifetime",
+        track("purchase_result", Object.assign({}, props, {
+          elapsed_ms: Date.now() - started,
           result: !res ? "no_bridge" : (res.ok && res.entitled) ? "purchased"
             : res.cancelled ? "cancelled" : res.pending ? "pending"
             : res.ok ? "not_entitled" : "error",
-          screen_id: "s13_paywall",
-        });
+        }));
         if (res && res.ok && res.entitled) {
           setCache(true);
           lastBuy = productId;
           finish("s13_paywall");
         }
-      });
+      }, props);
     }
     function tickRows() {
       var rows = wall.querySelectorAll(".imp-row");
@@ -3334,6 +3392,7 @@
         var t = e.target.closest("[data-act]");
         if (!t || !wall) return;
         var act = t.getAttribute("data-act");
+        if (purchaseBusy) return;
         if (act === "pk-y" || act === "pk-m" || act === "pk-l") {
           var plan = act.slice(3);
           track("plan_selected", { plan: plan === "y" ? "annual"

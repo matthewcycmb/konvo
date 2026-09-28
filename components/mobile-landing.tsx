@@ -4,6 +4,7 @@ import { useState } from "react";
 import { track } from "@/lib/analytics";
 import { APP_STORE_URL } from "@/lib/links";
 import { DownloadModal } from "./download-modal";
+import { AndroidWaitlist } from "./android-waitlist";
 import styles from "./mobile-landing.module.css";
 
 /**
@@ -143,7 +144,7 @@ export function MobileLanding({ mobilePreview = false }: { mobilePreview?: boole
               </svg>
             ))}
           </span>
-          <span style={{ color: INK, fontWeight: 600 }}>Loved by 1,500+ users</span>
+          <span style={{ color: INK, fontWeight: 600 }}>Loved by 10,000 users</span>
         </div>
 
         <div className={styles.downloads}>
@@ -159,6 +160,8 @@ export function MobileLanding({ mobilePreview = false }: { mobilePreview?: boole
           Also available on Mac <span aria-hidden="true">↗</span>
         </button>
         </div>
+
+        <AndroidWaitlist />
 
         <a
           href="https://www.instagram.com/matthewasherelol/"

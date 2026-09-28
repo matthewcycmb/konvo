@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "tauri": "tauri",
-    "test": "node --check src-tauri/src/cage.js && node --check src-tauri/src/onboarding-experiment.js && cd test && node test_chat_handoff.js && node test_profile_routing.js && node test_authenticated_appearance.js && node test_onboarding_experiment.js && node test_onboarding_loading.js && node test_onboarding_handoff.js && node test_inbox_reveal_loading.js && node test_login_readiness.js && node test_weekly_paywall.js && node test_special_offer.js && node test_original_only.js && node test_release_stability.js && node test_bridge.js && node test_cage.js && node test_onboarding.js && node test_onboarding_theme.js",
+    "test": "node --check src-tauri/src/cage.js && node --check src-tauri/src/onboarding-experiment.js && cd test && node test_chat_handoff.js && node test_profile_routing.js && node test_authenticated_appearance.js && node test_onboarding_experiment.js && node test_onboarding_loading.js && node test_onboarding_handoff.js && node test_inbox_reveal_loading.js && node test_login_readiness.js && node test_checkout.js && node test_weekly_paywall.js && node test_special_offer.js && node test_original_only.js && node test_release_stability.js && node test_bridge.js && node test_cage.js && node test_onboarding.js && node test_onboarding_theme.js",
+    "test:checkout:native": "node test/test_checkout_native.js",
     "test:paywall:visual": "node test/test_paywall_visual.cjs",
     "test:wrapper:visual": "node test/test_wrapper_visual.cjs",
     "test:cage:native": "node test/test_cage_native.js",

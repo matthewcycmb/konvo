@@ -43,7 +43,7 @@ const TABLE = {
   entitlements:  { arg: 'unused', replies: ['entitled'] },
   products:      { arg: 'unused', replies: ['ok', 'error', 'yearly', 'monthly',
                                             'lifetime', 'offeringId'] },
-  purchase:      { arg: 'product identifier', replies: ['ok', 'error', 'entitled',
+  purchase:      { arg: 'product identifier; optional checkout context (attempt ID and public displayed catalog metadata) in message body', replies: ['ok', 'error', 'entitled',
                                                         'cancelled', 'pending'] },
   restore:       { arg: 'unused', replies: ['ok', 'entitled'] },
   paywall:       { arg: 'placement name', replies: ['ok', 'entitled'] },

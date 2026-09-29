@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.7",
+    "@vercel/analytics": "^2.0.1",
     "humanbehavior-js": "^0.8.2",
     "jose": "^6.2.3",
     "next": "16.2.10",

@@ -75,6 +75,38 @@ function boot({form = true, hidden = false, covered = false, returning = false, 
     assert(usable.events.some(e => e.event === 'login_resumed' && e.props.form_ready));
     assert(!JSON.stringify(usable.events).includes('fixture-secret'), 'diagnostics must never contain input values');
 
+    const controls = boot({markup: '<main><input name="username"><input type="password"><button type="button">Show password</button><button type="button">Log in</button></main>'}); cases.push(controls);
+    await controls.advance(1500);
+    const credential=controls.d.querySelector('input[type=password]');
+    const valueProperty=Object.getOwnPropertyDescriptor(controls.w.HTMLInputElement.prototype,'value');
+    let credentialReads=0;
+    Object.defineProperty(credential,'value',{get(){credentialReads++;return valueProperty.get.call(this);},set(v){valueProperty.set.call(this,v);}});
+    credential.value = 'never-read-this-password';
+    controls.d.querySelector('button').click();
+    assert(!controls.events.some(e => e.event === 'login_submitted'), 'showing a password is not a login attempt');
+    controls.d.querySelectorAll('button')[1].click();
+    assert.equal(controls.events.filter(e => e.event === 'login_submitted').length, 1, 'the actual login button records an attempt');
+    assert.equal(credentialReads,0,'submission detection must never read the password value');
+    assert(!JSON.stringify(controls.events).includes('never-read-this-password'));
+    const help = controls.d.querySelector('[data-act=login_help]');
+    assert(help, 'help is available in the existing Instagram address strip');
+    assert(!controls.d.getElementById('im-login-help'), 'help does not interrupt sign-in automatically');
+    help.click();
+    assert(controls.d.getElementById('im-login-help').textContent.includes('Notes'));
+    assert.equal(help.getAttribute('aria-expanded'), 'true');
+    controls.visibility('hidden'); await controls.advance(300000); controls.visibility('visible');
+    assert.equal(controls.d.querySelector('input[type=password]').value, 'never-read-this-password');
+    assert.deepEqual(controls.navigation, [], 'even a five-minute app switch does not reload or redirect');
+    controls.d.querySelector('input').focus();
+    assert(!controls.d.getElementById('im-login-help'), 'help clears when the user returns to a field');
+    help.click(); controls.d.querySelector('[data-act=login_reset]').click();
+    assert.deepEqual(controls.navigation, ['/accounts/password/reset/'], 'only the explicit reset action opens Instagram recovery');
+    assert.equal(controls.events.filter(e => e.event === 'login_submitted').length, 1, 'Konvo help never counts as Instagram submission');
+    controls.d.querySelector('main').insertAdjacentHTML('beforeend','<button type="button">Continue as private_fixture_name</button>');
+    controls.d.querySelector('main button:last-child').click();
+    assert.equal(controls.events.filter(e => e.event === 'login_submitted').length, 2, 'a saved-account Continue as action is still a real sign-in attempt');
+    assert(!JSON.stringify(controls.events).includes('private_fixture_name'));
+
     const delayed = boot({hidden: true}); cases.push(delayed); await delayed.advance(1500);
     assert(delayed.d.getElementById('im-boot'), 'hidden fields do not count as usable');
     assert(!delayed.events.some(e => e.event === 'login_form_ready'));
@@ -126,6 +158,9 @@ function boot({form = true, hidden = false, covered = false, returning = false, 
     assert.deepEqual(confirmation.navigation, []);
     confirmation.visibility('hidden'); await confirmation.advance(30000); confirmation.visibility('visible');
     assert(confirmation.d.getElementById('im-reset-bar'), 'a field-free reset page still offers a manual return after email lookup');
+    confirmation.d.querySelector('main').innerHTML = '<input type="password" autocomplete="new-password">';
+    await confirmation.advance(1500);
+    assert(!confirmation.d.getElementById('im-reset-bar'), 'a delayed recovery form removes the stale return prompt without navigation');
     confirmation.loc.pathname = '/accounts/login/'; await confirmation.advance(1500);
     assert(!confirmation.d.getElementById('im-reset-bar'), 'the reset prompt is removed on SPA return to login');
 

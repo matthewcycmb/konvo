@@ -79,10 +79,9 @@ const settle = ms => new Promise(r => setTimeout(r, ms || 1000));
 process.on('exit', () => open.forEach(d => d.window.close()));
 
 (async () => {
-  // 1. Everything feed-shaped stays caged. Home is in the list: in-app posting
-  //    is gone, so nothing needs "/" to be reachable, and the feed can no
-  //    longer render even behind CSS. The two exemptions — a sent reel (7) and
-  //    stories (8) — are each asserted in both directions below.
+  // 1. Ordinary home and feed routes stay caged. Explicit Stories entry and
+  //    native Story creation are separately covered in test_stories.js.
+  //    Sent reels (7) and Story permalinks (8) remain reachable below.
   const leaks = ['/', '/?variant=following', '/reels/', '/explore/',
     '/someuser/reels/', '/someuser/tagged/'].map(p => [p, boot(p, '')]);
   await settle();
@@ -361,10 +360,10 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   await settle();
   assert(!activity.went.includes('/direct/inbox/'), 'the activity page must stay reachable');
 
-  // The build-29 /create/story/ probe is gone: tested on device 2026-07-31,
-  // Instagram redirected it through "/", so no posting doorway may exist.
+  // Story creation belongs to Instagram's own circle in the Stories tab;
+  // do not restore the old custom posting button in Messages.
   assert(!heartPhone.window.document.getElementById('im-create'),
-    'the story probe must stay deleted - the experiment is settled');
+    'Messages must not gain a custom Story creation button');
 
   // 10. The paywall sequence. iOS is the paid platform: an unpaid iPhone at
   //     the inbox gets S12 connected -> S12b loader -> perks comparison ->
@@ -487,8 +486,8 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   await settle(450);   // crossfade
   assert(/Start your 7-day FREE trial to continue\./.test(payText()),
     'Continue for FREE reaches S13, titled for the trial');
-  assert(/7 days free, then \$19\.99 per year \(\$1\.67\/mo\)/.test(payText()),
-    'the bottom line states the free days and the real yearly charge');
+  assert(/\$19\.99\/year starting/.test(payText()),
+    'the checkout summary states the real yearly charge and its start date');
   assert(/7 DAYS FREE/.test(payText()) && /SAVE 76%/.test(payText()) && !/POPULAR|RECOMMENDED|3 DAYS FREE/.test(payText()),
     'the Yearly card: free days on the badge, the live saving under the price; Monthly carries no trial badge');
   assert(/Yearly/.test(payText()) && /Monthly/.test(payText()) && !/Annual/.test(payText()),
@@ -506,8 +505,8 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'no Lifetime card: two plans, wider cards (Aug 21)');
   assert(/Start My 7-Day Free Trial/.test(payText()),
     'the trial CTA names the free days');
-  assert(/No Payment Due Now/.test(payText()) && /7 days free, then \$19\.99 per year/.test(payText()),
-    'the check row sits above the trial CTA, the price line under it');
+  assert(/No Payment Due Now/.test(payText()) && /\$19\.99\/year starting/.test(payText()),
+    'the check row and selected charge sit next to the trial CTA');
   assert(/In 5 Days - Reminder/.test(payText()) && /In 7 Days - Billing Starts/.test(payText()),
     'three nodes only: today, the reminder, billing - the page must fit one screen');
   assert(!/In 12 days/.test(payText()),
@@ -520,7 +519,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   wtap('pk-m');
   assert(/Try for \$6\.99 a month, cancel anytime\./.test(payText()),
     'the Monthly story states its price and no trial');
-  assert(/Continue with Monthly/.test(payText()) && /No commitment, cancel anytime/.test(payText()) &&
+  assert(/Continue with Monthly/.test(payText()) && /\$6\.99 charged today\./.test(payText()) &&
     !/days free, then/.test(payText()),
     'the Monthly CTA promises nothing free');
   assert(/Every month/.test(payText()) && /Renews at \$6\.99/.test(payText()),
@@ -563,7 +562,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   ltap('pay');
   await settle(450);
   const ltext = ldoc0.getElementById('im-pay').textContent;
-  assert(/7 days free, then US\$39\.99 per year \(US\$3\.33\/mo\)/.test(ltext),
+  assert(/US\$39\.99\/year starting/.test(ltext),
     'live values must replace the stand-ins');
   assert(/US\$3\.33\/mo/.test(ltext),
     'the card must carry the live monthly equivalent');
@@ -573,7 +572,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'reminder and billing nodes must follow the live trial length');
   ltap('pk-m');
   const mtext = ldoc0.getElementById('im-pay').textContent;
-  assert(/Start your 3-day FREE trial/.test(mtext) && /3 days free, then US\$4\.99 per month/.test(mtext) &&
+  assert(/Start your 3-day FREE trial/.test(mtext) && /US\$4\.99\/month starting/.test(mtext) &&
     /Start My 3-Day Free Trial/.test(mtext) && /In 1 Day - Reminder/.test(mtext) && /In 3 Days - Billing Starts/.test(mtext),
     'a live monthly intro offer renders its own trial story, no rebuild needed');
   assert(posted.includes('products:'),
@@ -1133,9 +1132,9 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'a lapsed install must open straight on the paywall with live prices');
   assert(!/Instagram connected/.test(lddoc.getElementById('im-pay').textContent),
     'and never replay the connected page');
-  assert(/Your plan ended\./.test(lddoc.getElementById('im-pay').textContent) &&
+  assert(/Continue with Konvo/.test(lddoc.getElementById('im-pay').textContent) &&
     /Instagram is unblocked until you pick a plan\./.test(lddoc.getElementById('im-pay').textContent),
-    'the lapsed wall says why it is there');
+    'a completion flag without verified subscription history uses neutral returning copy');
   assert(!lddoc.querySelector("#im-pay [data-act='notready']") && !lddoc.querySelector("#im-pay [data-act='done']"),
     'and offers no way past it but a plan or Restore');
   assert(lapsedLog.includes('track:paywall_viewed') && !lapsedLog.includes('track:inbox_reveal_viewed'),
@@ -2124,7 +2123,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   const ft = frText();
   assert(/Commence ton essai GRATUIT de 7 jours pour continuer\./.test(ft),
     'the paywall headline must be French');
-  assert(/7 jours gratuits, puis \$19\.99 par an \(\$1\.67\/mois\)/.test(ft),
+  assert(/\$19\.99\/an à partir du/.test(ft),
     'the bottom line must carry the real price in French');
   assert(/Commencer mes 7 jours gratuits/.test(ft), 'the CTA must be French');
   assert(/7 JOURS GRATUITS/.test(ft) && /\$1\.67\/mois/.test(ft) && /\$6\.99\/mois/.test(ft) && /Annuel/.test(ft) && /Mensuel/.test(ft),
@@ -2161,7 +2160,7 @@ process.on('exit', () => open.forEach(d => d.window.close()));
   twoTap('pay'); await settle(450);
   assert(!/Loading your plans/.test(twoText()),
     'two real prices must never leave the wall on the pending page');
-  assert(/7 days free, then \$24\.99 per year/.test(twoText()) && /\$9\.99\/mo/.test(twoText()),
+  assert(/\$24\.99\/year starting/.test(twoText()) && /\$9\.99\/mo/.test(twoText()),
     'the wall paints the live yearly and monthly prices without a lifetime product');
   assert(twoLog.filter(c => c === 'products').length === 1,
     'and does not keep re-fetching what it already has');

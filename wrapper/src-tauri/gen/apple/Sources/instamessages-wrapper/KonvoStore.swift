@@ -101,7 +101,8 @@ final class KonvoCheckoutAttempt {
         properties = ["checkout_attempt_id": validID ? supplied : UUID().uuidString,
             "checkout_tracking_version": 1, "product_id": productId, "store_requested": false]
         for (key, allowed) in ["screen_id": ["s13_paywall", "new_paywall"],
-                               "paywall_id": ["original", "inbox_annual_weekly_v3", "inbox_special_annual_v3"],
+                               "paywall_id": ["original", "expired_inbox_v1", "inbox_annual_weekly_v3", "inbox_special_annual_v3"],
+                               "checkout_copy_version": ["clarity_v1", "expired_inbox_v1"],
                                "placement": ["onboarding", "lapsed"],
                                "plan": ["annual", "monthly", "weekly", "lifetime", "annual_special"]] {
             if let value = context?[key] as? String, allowed.contains(value) { properties[key] = value }
@@ -378,6 +379,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 snapStack.removeAll()
                 settledSnap = nil
                 cancelPreparedChat()
+                cancelTabTransition()
             }
         }
     }
@@ -386,6 +388,57 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
     // Taptic Engine up synchronously, and it was being allocated on the
     // exact frame the swipe animation starts.
     fileprivate static let haptic = UIImpactFeedbackGenerator(style: .light)
+
+    // TAB_TRANSITION_BEGIN
+    fileprivate static var tabRoot = false
+    private static var tabCover: UIView?
+    private static var tabOutgoing: UIView?
+    private static var tabTimeout: DispatchWorkItem?
+    fileprivate static func cancelTabTransition() {
+        tabTimeout?.cancel()
+        tabTimeout = nil
+        tabCover?.removeFromSuperview()
+        tabCover = nil
+        tabOutgoing = nil
+    }
+    fileprivate static func prepareTabTransition(_ webView: WKWebView) {
+        cancelTabTransition()
+        guard !swiping, !UIAccessibility.isReduceMotionEnabled,
+              let host = webView.superview,
+              let outgoing = webView.snapshotView(afterScreenUpdates: false)
+        else { return }
+        // Keep the 64pt web tab bar stationary and interactive. Only the page
+        // above it is covered while Instagram replaces its route's DOM.
+        let cover = UIView(frame: CGRect(
+            origin: webView.frame.origin,
+            size: CGSize(width: webView.bounds.width, height: max(0, webView.bounds.height - 64))))
+        cover.clipsToBounds = true
+        cover.backgroundColor = .clear
+        outgoing.frame = webView.bounds
+        outgoing.isUserInteractionEnabled = false
+        cover.addSubview(outgoing)
+        host.addSubview(cover)
+        tabCover = cover
+        tabOutgoing = outgoing
+        let timeout = DispatchWorkItem { cancelTabTransition() }
+        tabTimeout = timeout
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.6, execute: timeout)
+    }
+    fileprivate static func finishTabTransition(_ webView: WKWebView, forward: Bool) {
+        guard let cover = tabCover, let outgoing = tabOutgoing,
+              !UIAccessibility.isReduceMotionEnabled
+        else { cancelTabTransition(); return }
+        let distance = webView.bounds.width * (forward ? 1 : -1)
+        // Reveal the live destination underneath the departing page. Freezing
+        // a second screenshot here hid Instagram's continuing render, then
+        // visibly jumped to the newer content when that screenshot disappeared.
+        UIView.animate(withDuration: 0.16, delay: 0, options: [.curveEaseOut, .beginFromCurrentState]) {
+            outgoing.transform = CGAffineTransform(translationX: -distance, y: 0)
+        } completion: { _ in
+            if tabCover === cover { cancelTabTransition() }
+        }
+    }
+    // TAB_TRANSITION_END
 
     // CHAT_PREPARATION_BEGIN
     fileprivate static var preparedChat: UIView?
@@ -513,7 +566,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                 // Any screen that is not the inbox can be swiped back -
                 // threads, profiles, posts. The inbox is the floor: back
                 // from there is Instagram's login chain.
-                guard KonvoStore.route != "inbox", snap == nil,
+                guard KonvoStore.route != "inbox", !KonvoStore.tabRoot, snap == nil,
                       let s = wv.snapshotView(afterScreenUpdates: false)
                 else { return }
                 // What the drag reveals: the screen underneath this one on
@@ -615,6 +668,15 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
                   g.location(in: nil).y < KonvoStore.keyboardTop - 96
             else { return }
             wv.endEditing(true)
+        }
+        func gestureRecognizer(
+            _ gestureRecognizer: UIGestureRecognizer,
+            shouldReceive touch: UITouch
+        ) -> Bool {
+            if gestureRecognizer is UIScreenEdgePanGestureRecognizer {
+                return !KonvoStore.tabRoot && KonvoStore.route != "inbox"
+            }
+            return true
         }
         func gestureRecognizer(
             _ gestureRecognizer: UIGestureRecognizer,
@@ -962,6 +1024,20 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             DispatchQueue.main.async { [weak webView] in
                 if cmd == "nav-cancel" { Self.cancelPreparedChat() }
                 else if let webView { Self.prepareChat(webView) }
+            }
+            return
+        }
+
+        if cmd == "tab-root" || cmd == "tab-prepare" || cmd == "tab-reveal" || cmd == "tab-cancel" {
+            DispatchQueue.main.async { [weak webView] in
+                switch cmd {
+                case "tab-root": Self.tabRoot = productId == "1"
+                case "tab-prepare": if let webView { Self.prepareTabTransition(webView) }
+                case "tab-reveal":
+                    if let webView { Self.finishTabTransition(webView, forward: productId == "next") }
+                    else { Self.cancelTabTransition() }
+                default: Self.cancelTabTransition()
+                }
             }
             return
         }
@@ -1329,7 +1405,7 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             }
             return ["ok": true]
         case "entitlements":
-            return ["entitled": await entitled()]
+            return await accessStatus()
         case "products":
             // Live localized values (locked decision: never hardcode money).
             // Shapes consumed by pay() in CAGE_SCRIPT. trialDays is present
@@ -1567,6 +1643,26 @@ public class KonvoStore: NSObject, WKScriptMessageHandler {
             return ["ok": false]
         }
     }
+
+    // ACCESS_STATUS_BEGIN
+    static func accessStatus() async -> [String: Any] {
+        _ = configureOnce
+        guard let info = try? await Purchases.shared.customerInfo() else {
+            // Unknown must not clear a subscriber's offline access cache.
+            return ["accessState": "unknown"]
+        }
+        if info.entitlements.active["Pro"] != nil {
+            // Includes cancelled auto-renewal with time remaining and billing grace.
+            return ["entitled": true, "accessState": "active"]
+        }
+        if let prior = info.entitlements.all["Pro"],
+           let expiry = prior.expirationDate, expiry <= Date() {
+            return ["entitled": false, "accessState": prior.periodType == .trial
+                ? "expired_trial" : "expired_subscription"]
+        }
+        return ["entitled": false, "accessState": "none"]
+    }
+    // ACCESS_STATUS_END
 
     static func entitled() async -> Bool {
         _ = configureOnce

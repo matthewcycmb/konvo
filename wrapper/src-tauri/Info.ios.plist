@@ -20,11 +20,11 @@
 	     "take photo crashes back to the home screen" bug. All three are reachable
 	     from the message composer, so all three need a purpose string. -->
 	<key>NSCameraUsageDescription</key>
-	<string>Konvo uses the camera so you can take a photo and send it in a conversation.</string>
+	<string>Konvo uses the camera so you can take a photo for a conversation or your Instagram Story.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Konvo uses the microphone so you can record and send a voice note.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Konvo uses your photo library so you can send an existing photo in a conversation.</string>
+	<string>Konvo uses your photo library so you can choose a photo for a conversation or your Instagram Story.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Konvo saves photos from a conversation to your photo library when you download them.</string>
 </dict>

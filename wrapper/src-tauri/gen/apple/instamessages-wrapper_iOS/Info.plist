@@ -28,21 +28,21 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.9.0</string>
+	<string>2.1.1</string>
 	<key>CFBundleVersion</key>
-	<string>130</string>
+	<string>149</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Konvo uses the camera so you can take a photo and send it in a conversation.</string>
+	<string>Konvo uses the camera so you can take a photo for a conversation or your Instagram Story.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Konvo uses the microphone so you can record and send a voice note.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Konvo saves photos from a conversation to your photo library when you download them.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Konvo uses your photo library so you can send an existing photo in a conversation.</string>
+	<string>Konvo uses your photo library so you can choose a photo for a conversation or your Instagram Story.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

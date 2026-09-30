@@ -80,7 +80,8 @@ var events: [(String,[String:Any])] = []
 let attempt = KonvoCheckoutAttempt(productId:"konvo.pro.yearly", context:[
     "checkout_attempt_id":"fixture-123", "screen_id":"s13_paywall", "placement":"onboarding",
     "plan":"annual", "displayed_price":"CA$34.99", "currency":"CAD", "trial_days":7,
-    "trial_eligible":true, "password":"private-secret", "url":"private-secret"
+    "trial_eligible":true, "checkout_copy_version":"clarity_v1", "paywall_id":"original",
+    "password":"private-secret", "url":"private-secret"
 ]) { events.append(($0,$1)) }
 attempt.storeRequested(catalog:["product_id":"konvo.pro.yearly", "offering_id":"default",
     "price_amount":34.99, "currency":"CAD", "localized_price":"CA$34.99", "password":"private-secret"])
@@ -91,6 +92,11 @@ assert(events.allSatisfy{$0.1["checkout_attempt_id"] as? String == "fixture-123"
 assert(events.last!.1["result"] as? String == "cancelled")
 assert(events.last!.1["currency"] as? String == "CAD")
 assert(events.last!.1["displayed_trial_eligible"] as? Bool == true)
+assert(events.allSatisfy{$0.1["checkout_copy_version"] as? String == "clarity_v1"})
+let expired = KonvoCheckoutAttempt(productId:"konvo.pro.yearly",context:["paywall_id":"expired_inbox_v1","checkout_copy_version":"expired_inbox_v1"]) { events.append(($0,$1)) }
+assert(events.last!.1["paywall_id"] as? String == "expired_inbox_v1")
+let invalid = KonvoCheckoutAttempt(productId:"konvo.pro.yearly",context:["checkout_copy_version":"private-secret"]) { events.append(($0,$1)) }
+assert(events.last!.1["checkout_copy_version"] == nil)
 assert(!String(describing:events).contains("private-secret"))
 for (reply,outcome) in [(["ok":true,"entitled":true],"purchased"),(["ok":false,"pending":true],"pending"),(["ok":true],"not_entitled"),(["ok":false],"error")] {
     let a = KonvoCheckoutAttempt(productId:"konvo.pro.monthly",context:nil) { events.append(($0,$1)) }

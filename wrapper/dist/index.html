@@ -362,19 +362,20 @@ html.experiment-new .screen:not(.dark) .glow,html.experiment-new .halo{display:n
   @media (prefers-color-scheme: dark) {
     .bubble { background: #17191f; box-shadow: 0 8px 22px rgba(0,0,0,0.5) }
   }
-  /* The laurel block is Matthew's own image (proof.png: laurels, count,
-     stars); its baked-in caption is covered by a live one so the words
-     follow the theme and the language. Cover bounds = the caption band
-     inside the image (measured). */
-  .laurel { position: absolute; left: 50%; top: 44.3%; transform: translateX(-50%);
-            width: 240px }
-  .laurel img { display: block; width: 100%; height: auto }
-  .laurel .cover { position: absolute; left: 25%; right: 23%; top: 71%; bottom: 13%;
-                   background: #f6f7fb; display: flex; align-items: center;
-                   justify-content: center }
-  @media (prefers-color-scheme: dark) { .laurel .cover { background: var(--bg) } }
-  .laurel .cap { font-size: 19px; font-weight: 700; letter-spacing: -0.02em;
-                 color: var(--ink); white-space: nowrap }
+  /* Live text keeps the verified community count accessible and updatable. */
+  .laurel { position:absolute;left:50%;top:44%;transform:translateX(-50%);width:300px;text-align:center }
+  .laurel .cap { display:block;font-size:15px;font-weight:600;color:var(--ink);line-height:1.35 }
+  .laurel strong { display:block;font-size:48px;line-height:1.15;font-weight:850;letter-spacing:-2px;color:var(--accent) }
+  .laurel .proof-stars { color:var(--accent);font-size:21px;letter-spacing:3px;margin-top:4px }
+  .laurel svg { position:absolute;inset:0;width:100%;height:100%;pointer-events:none }
+  #s9t .bubble.b2 { top:26% }
+  #s9t .bubble.b3 { top:64% }
+  @media(max-height:740px) {
+    #s9t .laurel { width:280px;top:43% }
+    #s9t .laurel strong { font-size:44px }
+    #s9t .bubble.b2 { top:22% }
+    #s9t .bubble.b3 { top:66% }
+  }
   /* The reveal (Sep 1): the laurels bloom first, the four bubbles drop in
      one by one from their own side, the button rises last. Everything
      starts hidden (fill-mode both) so nothing flashes before its cue, and
@@ -664,18 +665,12 @@ html.experiment-new .screen:not(.dark) .glow,html.experiment-new .halo{display:n
   </div>
 
   <div class="screen t-fade" id="s9t">
-    <!-- Social proof (Sep 1): the composition of the classic rating screen,
-         measured from a reference at 390x844. Three quotes are verbatim
-         excerpts of public LinkedIn comments on the launch post, the third
-         (sam.yshi) of a five-star App Store review, Sep 2026 (bold =
-         emphasis, not rewording; its three emoji became a comma so it fits
-         the box), first name or handle and initial shown. No stars drawn. The count is Matthew's launch-week
-         projection (PROOF_COUNT); the caption completes it per language. -->
+    <!-- Verified community scale; existing attributed customer comments retained. -->
     <div class="halo" aria-hidden="true"></div>
     <div class="proof" id="quotes">
       <figure class="bubble b1"><p>&ldquo;<b>I&rsquo;ve been searching for something like this for so long</b> - that&rsquo;s insane!&rdquo;</p><figcaption><span class="av">K</span>Kateryna</figcaption></figure>
       <figure class="bubble b2"><p>&ldquo;don&rsquo;t wanna delete social media because of dms, <b>so this sounds useful!</b>&rdquo;</p><figcaption><span class="av">H</span>Harima</figcaption></figure>
-      <div class="laurel"><img src="proof.png" alt=""><div class="cover"><span class="cap" id="proof-cap">users love Konvo</span></div></div>
+      <div class="laurel"><svg viewBox="0 0 300 150" fill="none" aria-hidden="true"><g stroke="#c99967" stroke-width="3"><path d="M39 136C10 109 5 63 27 18M261 136C290 109 295 63 273 18"/></g><g fill="#c99967"><path id="proof-leaves" d="M23 40Q8 30 15 15Q29 23 23 40M17 63Q0 53 4 37Q20 45 17 63M19 87Q1 81 2 63Q20 69 19 87M26 111Q7 107 6 90Q23 92 26 111M39 134Q19 134 15 118Q31 117 39 134M24 45Q25 27 41 23Q43 38 24 45M20 69Q25 51 40 51Q39 66 20 69M23 94Q26 77 42 75Q43 91 23 94M32 118Q33 102 49 98Q52 113 32 118"/><use href="#proof-leaves" transform="translate(300 0) scale(-1 1)"/></g></svg><span class="cap" id="proof-cap">Join <strong>10,000+</strong> people on Konvo</span><div class="proof-stars" aria-hidden="true">★★★★★</div></div>
       <figure class="bubble b3"><p>&ldquo;<b>my scrolling addiction stopped</b>, i haven&rsquo;t opened reels since last week!!&rdquo;</p><figcaption><span class="av">S</span>sam.yshi</figcaption></figure>
       <figure class="bubble b4"><p>&ldquo;<b>Really smart approach</b> to solving that problem&rdquo;</p><figcaption><span class="av">M</span>Muhammad</figcaption></figure>
     </div>
@@ -777,7 +772,7 @@ html.experiment-new .screen:not(.dark) .glow,html.experiment-new .halo{display:n
       "Lock the app when you’re ready.": "Verrouille l'app quand tu veux.",
       "You keep two 5 minute passes a day to post a story or call someone.": "Tu gardes deux passes de 5 minutes par jour pour poster une story ou appeler quelqu'un.",
       "Continue": "Continuer",
-      "users love Konvo": "utilisateurs adorent Konvo",
+      "Join {count} people on Konvo": "Rejoignez {count} personnes sur Konvo",
       "Konvo does not collect your Instagram information.": "Konvo ne collecte aucune information de ton compte Instagram.",
       "Your password goes to Instagram, never to us": "Ton mot de passe va à Instagram, jamais à nous",
       "Your messages are never stored by us": "Tes messages ne sont jamais stockés chez nous",
@@ -853,7 +848,7 @@ html.experiment-new .screen:not(.dark) .glow,html.experiment-new .halo{display:n
       "Lock the app when you’re ready.": "準備好了再鎖住 App。",
       "You keep two 5 minute passes a day to post a story or call someone.": "你每天保留兩張 5 分鐘通行證，用來發限時動態或打電話。",
       "Continue": "繼續",
-      "users love Konvo": "位用戶喜愛 Konvo",
+      "Join {count} people on Konvo": "加入 {count} 位 Konvo 用戶",
       "Konvo does not collect your Instagram information.": "Konvo 不會收集你的 Instagram 資料。",
       "Your password goes to Instagram, never to us": "密碼只會送到 Instagram，不會經過我們",
       "Your messages are never stored by us": "我們不會儲存你的訊息",
@@ -929,7 +924,7 @@ html.experiment-new .screen:not(.dark) .glow,html.experiment-new .halo{display:n
       "Lock the app when you’re ready.": "준비되면 앱을 잠그세요.",
       "You keep two 5 minute passes a day to post a story or call someone.": "스토리를 올리거나 전화할 때 쓸 5분 패스가 하루 2번 남아요.",
       "Continue": "계속",
-      "users love Konvo": "명이 Konvo를 사랑해요",
+      "Join {count} people on Konvo": "{count}명과 함께 Konvo를 이용하세요",
       "Konvo does not collect your Instagram information.": "Konvo는 인스타그램 정보를 수집하지 않아요.",
       "Your password goes to Instagram, never to us": "비밀번호는 인스타그램으로만 가고, 저희에겐 오지 않아요",
       "Your messages are never stored by us": "메시지는 저희 서버에 저장되지 않아요",
@@ -980,10 +975,8 @@ html.experiment-new .screen:not(.dark) .glow,html.experiment-new .halo{display:n
   // Quiz state. M is the messaging range's upper bound; "I don't know" is a
   // transparent 20-minute estimate.
 
-  // Social proof (Sep 1): the count and stars are baked into proof.png
-  // (Matthew's image, his launch-week projection: 482 opens on Sep 1);
-  // swap the image to change them. The caption is live, per language.
-  document.getElementById("proof-cap").textContent = T("users love Konvo");
+  // Count confirmed against tracked onboarding users, September 29.
+  document.getElementById("proof-cap").innerHTML = T("Join {count} people on Konvo", { count: "<strong>10,000+</strong>" });
 
   // Funnel events, fire-and-forget through the bridge. Lean payloads:
   // enums only, never free text. Quiz answers and attribution source ride

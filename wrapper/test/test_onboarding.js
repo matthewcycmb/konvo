@@ -252,20 +252,23 @@ process.on('exit', () => open.forEach(d => d.window.close()));
     'the attribution screen is gone from the document');
   assert(!doc.getElementById('s8d') && !doc.getElementById('s8e'),
     'the studies and founder pages are gone (Aug 21)');
-  assert(doc.querySelector('#quotes .laurel img[src="proof.png"]'), 'the laurel block is the proof image');
+  assert(!doc.querySelector('#quotes .laurel img'), 'the old baked-in count must not remain visible');
+  assert.strictEqual(doc.querySelector('#proof-cap strong').textContent, '10,000+');
   assert(doc.querySelector('#s9t .foot > #signin') && !doc.querySelector('#s9t .next'),
     'the proof screen ends on the standard full-width button like every other screen');
   assert(/@keyframes proof-bloom/.test(HTML) && /prefers-reduced-motion: no-preference/.test(HTML) &&
     /#s9t\.on \.b4 \{ animation-name: proof-drop-r; animation-delay: 1\.2s \}/.test(HTML),
     'the reveal is a staggered animation, gated on the motion preference');
-  assert.strictEqual(doc.getElementById('proof-cap').textContent, 'users love Konvo');
+  assert.strictEqual(doc.getElementById('proof-cap').textContent, 'Join 10,000+ people on Konvo');
   assert.strictEqual(doc.querySelectorAll('#quotes .bubble').length, 4, 'four bubbles around the laurels');
   assert(/Really smart approach/.test(doc.getElementById('quotes').textContent)
     && /Muhammad/.test(doc.getElementById('quotes').textContent)
     && doc.querySelector('#quotes .bubble b'),
     'quotes are verbatim excerpts with a first name and an emphasised phrase');
-  assert(!/[★⭐]|\d\.\d ?\//.test(doc.getElementById('s9t').textContent),
-    'no rating figures in the text');
+  assert(!/\d\.\d ?\//.test(doc.getElementById('s9t').textContent),
+    'the community count must not become an invented numeric store rating');
+  assert.strictEqual(doc.querySelector('.proof-stars').getAttribute('aria-hidden'), 'true',
+    'the existing stars remain decorative');
   assert(!doc.getElementById('s10') && !doc.getElementById('s10b'),
     'both standalone privacy steps are removed');
   assert.strictEqual(doc.getElementById('signin').textContent, 'Continue with Instagram');

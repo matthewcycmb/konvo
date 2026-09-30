@@ -47,6 +47,25 @@
   })();
   var I18N = {
     fr: {
+      "Waiting for Apple approval. You can restore your purchase after approval.": "En attente de l’approbation Apple. Tu pourras restaurer ton achat après approbation.",
+      "No active subscription was found. Try Restore or choose a plan.": "Aucun abonnement actif trouvé. Essaie Restaurer ou choisis une formule.",
+      "Your purchase could not be completed. Please try again.": "Ton achat n’a pas pu être finalisé. Réessaie.",
+      "Help": "Aide",
+      "Sign-in help": "Aide à la connexion",
+      "Use your existing Instagram account.": "Utilise ton compte Instagram habituel.",
+      "You can check Passwords, Notes or email, then return here to continue.": "Tu peux consulter Mots de passe, Notes ou tes e-mails, puis revenir ici pour continuer.",
+      "Reset Instagram password": "Réinitialiser le mot de passe Instagram",
+      "Close help": "Fermer l’aide",
+      "{price} charged today. One-time purchase.": "{price} facturés aujourd’hui. Achat unique.",
+      "{price} charged today.": "{price} facturés aujourd’hui.",
+      "{price}/year starting {date}": "{price}/an à partir du {date}",
+      "{price}/month starting {date}": "{price}/mois à partir du {date}",
+      "Renews at {price}/year unless cancelled.": "Renouvellement à {price}/an, sauf annulation.",
+      "Renews at {price}/month unless cancelled.": "Renouvellement à {price}/mois, sauf annulation.",
+      "{price} billed annually": "{price} facturés par an",
+      "Cancel anytime · How to cancel": "Annule quand tu veux · Comment annuler",
+      "Settings → your name → Subscriptions → Konvo → Cancel.": "Réglages → ton nom → Abonnements → Konvo → Annuler.",
+      "Cancel at least 24 hours before your trial ends to avoid being charged.": "Annule au moins 24 heures avant la fin de l’essai pour éviter la facturation.",
       "Instagram connected.": "Instagram connecté.",
       "Your DMs and Stories are ready.": "Tes DM et tes stories sont prêts.",
       "Setting up your Konvo": "Préparation de ton Konvo",
@@ -77,6 +96,15 @@
       "In 12 months": "Dans 12 mois",
       "Renews at {price}, <b>cancel anytime</b> before.": "Renouvelé à {price}, <b>annulable à tout moment</b> avant.",
       "Your plan ended.": "Ta formule est terminée.",
+      "Your trial has ended.": "Ton essai est terminé.",
+      "Don't lose your inbox": "Ne perds pas ta messagerie",
+      "Your Instagram inbox": "Ta messagerie Instagram",
+      "Your messages stay on Instagram.": "Tes messages restent sur Instagram.",
+      "Billed annually": "Facturé annuellement",
+      "Billed monthly": "Facturé mensuellement",
+      "Continue with Konvo": "Continuer avec Konvo",
+      "{price} billed annually. Renews unless cancelled.": "{price} facturés par an. Renouvellement sauf résiliation.",
+      "{price} billed monthly. Renews unless cancelled.": "{price} facturés par mois. Renouvellement sauf résiliation.",
       "We want you to try Konvo for free.": "On veut que tu essaies Konvo gratuitement.",
       "No Payment Due Now": "Aucun paiement maintenant",
       "We offer {days} so <i>everyone</i> can try Konvo.": "On offre {days} pour que <i>tout le monde</i> puisse essayer Konvo.",
@@ -176,6 +204,25 @@
       "Could not open the share sheet. Try again.": "Impossible d'ouvrir le partage. Réessaie."
     },
     zh: {
+      "Waiting for Apple approval. You can restore your purchase after approval.": "正在等待 Apple 核准。核准後，你可以恢復購買。",
+      "No active subscription was found. Try Restore or choose a plan.": "找不到有效訂閱。請嘗試恢復購買或選擇方案。",
+      "Your purchase could not be completed. Please try again.": "無法完成購買。請再試一次。",
+      "Help": "說明",
+      "Sign-in help": "登入說明",
+      "Use your existing Instagram account.": "請使用你現有的 Instagram 帳號。",
+      "You can check Passwords, Notes or email, then return here to continue.": "你可以查看「密碼」、備忘錄或電子郵件，再回到這裡繼續。",
+      "Reset Instagram password": "重設 Instagram 密碼",
+      "Close help": "關閉說明",
+      "{price} charged today. One-time purchase.": "今天收取 {price}。一次性購買。",
+      "{price} charged today.": "今天收取 {price}。",
+      "{price}/year starting {date}": "從 {date} 起，每年 {price}",
+      "{price}/month starting {date}": "從 {date} 起，每月 {price}",
+      "Renews at {price}/year unless cancelled.": "除非取消，否則每年以 {price} 續訂。",
+      "Renews at {price}/month unless cancelled.": "除非取消，否則每月以 {price} 續訂。",
+      "{price} billed annually": "每年收取 {price}",
+      "Cancel anytime · How to cancel": "隨時取消 · 取消方式",
+      "Settings → your name → Subscriptions → Konvo → Cancel.": "設定 → 你的姓名 → 訂閱項目 → Konvo → 取消。",
+      "Cancel at least 24 hours before your trial ends to avoid being charged.": "請至少在試用結束前 24 小時取消，以避免收費。",
       "Instagram connected.": "Instagram 已連結。",
       "Your DMs and Stories are ready.": "你的私訊和限時動態準備好了。",
       "Setting up your Konvo": "正在設定你的 Konvo",
@@ -206,6 +253,15 @@
       "In 12 months": "12 個月後",
       "Renews at {price}, <b>cancel anytime</b> before.": "以 {price} 續訂，之前<b>隨時可取消</b>。",
       "Your plan ended.": "你的方案已結束。",
+      "Your trial has ended.": "你的試用已結束。",
+      "Don't lose your inbox": "別失去你的收件匣",
+      "Your Instagram inbox": "你的 Instagram 收件匣",
+      "Your messages stay on Instagram.": "你的訊息仍保留在 Instagram。",
+      "Billed annually": "按年計費",
+      "Billed monthly": "按月計費",
+      "Continue with Konvo": "繼續使用 Konvo",
+      "{price} billed annually. Renews unless cancelled.": "每年收費 {price}。除非取消，否則自動續訂。",
+      "{price} billed monthly. Renews unless cancelled.": "每月收費 {price}。除非取消，否則自動續訂。",
       "We want you to try Konvo for free.": "我們想讓你免費試試 Konvo。",
       "No Payment Due Now": "現在不用付款",
       "We offer {days} so <i>everyone</i> can try Konvo.": "我們提供{days}，讓<i>每個人</i>都能試試 Konvo。",
@@ -305,6 +361,25 @@
       "Could not open the share sheet. Try again.": "無法打開分享選單，再試一次。"
     },
     ko: {
+      "Waiting for Apple approval. You can restore your purchase after approval.": "Apple 승인을 기다리고 있어요. 승인 후 구매를 복원할 수 있어요.",
+      "No active subscription was found. Try Restore or choose a plan.": "활성 구독을 찾을 수 없어요. 구매를 복원하거나 요금제를 선택하세요.",
+      "Your purchase could not be completed. Please try again.": "구매를 완료하지 못했어요. 다시 시도하세요.",
+      "Help": "도움말",
+      "Sign-in help": "로그인 도움말",
+      "Use your existing Instagram account.": "기존 Instagram 계정을 사용하세요.",
+      "You can check Passwords, Notes or email, then return here to continue.": "암호, 메모 또는 이메일을 확인한 뒤 여기로 돌아와 계속할 수 있어요.",
+      "Reset Instagram password": "Instagram 비밀번호 재설정",
+      "Close help": "도움말 닫기",
+      "{price} charged today. One-time purchase.": "오늘 {price} 결제. 일회성 구매입니다.",
+      "{price} charged today.": "오늘 {price} 결제.",
+      "{price}/year starting {date}": "{date}부터 연 {price}",
+      "{price}/month starting {date}": "{date}부터 월 {price}",
+      "Renews at {price}/year unless cancelled.": "취소하지 않으면 연 {price}로 갱신됩니다.",
+      "Renews at {price}/month unless cancelled.": "취소하지 않으면 월 {price}로 갱신됩니다.",
+      "{price} billed annually": "매년 {price} 청구",
+      "Cancel anytime · How to cancel": "언제든 취소 · 취소 방법",
+      "Settings → your name → Subscriptions → Konvo → Cancel.": "설정 → 사용자 이름 → 구독 → Konvo → 취소.",
+      "Cancel at least 24 hours before your trial ends to avoid being charged.": "요금이 청구되지 않으려면 체험 종료 최소 24시간 전에 취소하세요.",
       "Instagram connected.": "인스타그램 연결 완료.",
       "Your DMs and Stories are ready.": "DM과 스토리가 준비됐어요.",
       "Setting up your Konvo": "Konvo 설정 중",
@@ -335,6 +410,15 @@
       "In 12 months": "12개월 후",
       "Renews at {price}, <b>cancel anytime</b> before.": "{price}로 갱신, 그 전에 <b>언제든 해지</b>.",
       "Your plan ended.": "플랜이 종료됐어요.",
+      "Your trial has ended.": "무료 체험이 종료됐어요.",
+      "Don't lose your inbox": "메시지함을 놓치지 마세요",
+      "Your Instagram inbox": "내 Instagram 메시지함",
+      "Your messages stay on Instagram.": "메시지는 Instagram에 그대로 있어요.",
+      "Billed annually": "매년 결제",
+      "Billed monthly": "매월 결제",
+      "Continue with Konvo": "Konvo 계속 이용하기",
+      "{price} billed annually. Renews unless cancelled.": "매년 {price} 결제. 취소하지 않으면 자동 갱신됩니다.",
+      "{price} billed monthly. Renews unless cancelled.": "매월 {price} 결제. 취소하지 않으면 자동 갱신됩니다.",
       "We want you to try Konvo for free.": "Konvo를 무료로 써보세요.",
       "No Payment Due Now": "지금은 결제 없음",
       "We offer {days} so <i>everyone</i> can try Konvo.": "<i>누구나</i> Konvo를 써볼 수 있도록 {days}을 드려요.",
@@ -556,21 +640,477 @@
   // "reels?" re-cages shared reels, and dropping to "reel" opens the feed.
   // Swiping out of that one reel into the next is shut off separately, below.
   //
-  // /stories/ is deliberately absent: a story is a friend's post, not the
-  // algorithm's — the viewer only walks people you follow and exits to "/",
-  // which bounces. Restoring the pattern re-cages story viewing everywhere.
+  // Story permalinks remain open. Home is only reachable through the explicit
+  // Stories tab below, behind a document-start mask that exposes no feed DOM.
   var FEED = [
     /^\/$/, /^\/reels(\/|$)/, /^\/reel\/?$/, /^\/explore(\/|$)/,
     /^\/[A-Za-z0-9._]+\/(reels|tagged|saved)(\/|$)/
   ];
-  // No exemptions. Posting a story used to open "/" behind a CSS blanket, and
-  // every leak that cost time - the compose bar following the user into
-  // threads, Following/Favorites rendering blank, a markup change away from
-  // showing the live feed - traced back to that one hole. Posting belongs to
-  // Instagram; this app is for talking. Home is simply unreachable now.
   function blocked(p) {
+    if (p === "/" && storiesHome()) return false;
     return FEED.some(function (r) { return r.test(p); });
   }
+
+  // Stories are read from Instagram's own tray, not a second API/session.
+  // Keep the actual horizontal tray in place: no cloned avatars, replacement
+  // grid, headings or buttons. Reveal only verified native Story controls and
+  // the native player; the remaining home content stays masked.
+  var storiesAccess = function () {
+    if (window.__konvoOnboardingPreview) return false;
+    try { return !!(localStorage.konvoPaid || localStorage.konvoWelcomed || localStorage.konvoBetaFree); }
+    catch (e) { return false; }
+  };
+  var storiesStyle = null, storiesObserver = null, storiesActive = false;
+  var storiesTimer = 0, storiesStarted = 0, storiesReported = {slow:false,ready:false};
+  var storiesNodes = new Set(), storiesPlayers = new Set(), storiesEditor = null;
+  var acknowledgedStoryNotices = new WeakSet();
+  var retiredStories = new Map(), retiredStoriesObserver = null;
+  var storyPull = null, storyRefreshUI = null, storyRefreshBusy = false, storyRefreshTimer = 0;
+  var STORIES_HOME = "/?konvo_stories=1";
+  var STORY_CLOSE = 'svg:has(polyline[points="20.643 3.357 12 12 3.353 20.647"])';
+  function storiesIntent(value) {
+    var uid = (document.cookie.match(/(?:^|; )ds_user_id=([0-9]+)/) || [])[1];
+    try {
+      if (value === false) sessionStorage.removeItem("konvoStoriesAccount");
+      else if (value === true && uid) sessionStorage.konvoStoriesAccount = uid;
+      return !!uid && sessionStorage.konvoStoriesAccount === uid;
+    } catch (e) { return false; }
+  }
+  function storiesHome() {
+    return location.pathname === "/" && signedIn() &&
+      (new URLSearchParams(location.search).get("konvo_stories") === "1" || storiesIntent());
+  }
+  function storyCreationRoute() { return /^\/create\/story\/?$/.test(location.pathname); }
+  function storiesGuardRoute() {
+    // Mask ALL home routes, including a rejected one, before its first paint.
+    // A Story opened from a DM/profile keeps Instagram's existing viewer.
+    var home = location.pathname === "/";
+    if (!home) resetStoryPull();
+    if (home && storiesHome()) storiesIntent(true);
+    var creating = storyCreationRoute();
+    if (!home && !creating && !/^\/stories\//.test(location.pathname)) storiesIntent(false);
+    var guarded = home || ((creating || /^\/stories\//.test(location.pathname)) && storiesIntent());
+    document.documentElement.classList.toggle("im-stories-guard", guarded);
+    document.documentElement.classList.toggle("im-stories-home", home && storiesHome());
+    document.documentElement.classList.toggle("im-stories-watching", guarded && !home && !creating);
+    document.documentElement.classList.toggle("im-stories-creating", guarded && creating);
+    if (home && storiesHome()) clearRetiredStories();
+    if (guarded && !storiesStyle) {
+      storiesStyle = document.createElement("style");
+      storiesStyle.textContent =
+        'html.im-stories-guard{background:#fff!important;overflow:hidden!important}' +
+        'html.im-stories-guard body{overflow:hidden!important}' +
+        // Instagram's two-class mobile overflow rule outvotes the generic
+        // guard after a modal closes. Keep Stories home horizontal-only.
+        'html.im-stories-guard.im-stories-home body{overflow:hidden!important;overscroll-behavior-y:none!important}' +
+        'html.im-stories-home{overscroll-behavior-y:none!important}' +
+        // The fixed tab bar needs no body scroll space on this horizontal-only page.
+        'html.im-stories-home body{padding-bottom:0!important}' +
+        'html.im-stories-home,html.im-stories-home body{scrollbar-width:none!important}' +
+        'html.im-stories-home::-webkit-scrollbar:vertical,html.im-stories-home body::-webkit-scrollbar:vertical{display:none!important;width:0!important}' +
+        'html.im-stories-guard body *{visibility:hidden!important}' +
+        'html.im-stories-guard #im-tabs,html.im-stories-guard #im-tabs *,' +
+        'html.im-stories-guard #im-pay,html.im-stories-guard #im-pay *,' +
+        'html.im-stories-guard #im-pass-sheet,html.im-stories-guard #im-pass-sheet *{visibility:visible!important}' +
+        'html.im-stories-home #im-stories-refresh,html.im-stories-home #im-stories-refresh *{visibility:visible!important}' +
+        '#im-stories-refresh{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:2147482999;' +
+        'display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:24px;background:#fff;color:#626873;' +
+        'box-shadow:0 3px 16px #0002;font:500 12px -apple-system,system-ui,sans-serif;white-space:nowrap}' +
+        '#im-stories-refresh[hidden]{display:none}' +
+        '#im-stories-refresh .im-refresh-ring{width:18px;height:18px;border:2px solid #8e8e9338;' +
+        'border-top-color:#0a84ff;border-radius:50%;box-sizing:border-box}' +
+        '#im-stories-refresh[aria-busy=true] .im-refresh-ring{animation:im-refresh-spin .7s linear infinite}' +
+        '@keyframes im-refresh-spin{to{transform:rotate(360deg)}}' +
+        '@media(prefers-color-scheme:dark){#im-stories-refresh{background:#25282e;color:#e5e5ea}}' +
+        '@media(prefers-reduced-motion:reduce){#im-stories-refresh .im-refresh-ring{animation:none!important}}' +
+        'html.im-stories-home .im-stories-tray,html.im-stories-home .im-stories-scroll,' +
+        'html.im-stories-home .im-story-native,html.im-stories-home .im-story-native *{visibility:visible!important}' +
+        'html.im-stories-watching{background:#000!important}' +
+        'html.im-stories-watching .im-stories-player,html.im-stories-watching .im-stories-player *{visibility:visible!important}' +
+        'html.im-stories-creating{background:#000!important}' +
+        'html.im-stories-creating .im-stories-editor,html.im-stories-creating .im-stories-editor *,' +
+        'html.im-stories-creating .im-story-dialog,html.im-stories-creating .im-story-dialog *{visibility:visible!important}' +
+        'html .im-stories-retired,html .im-stories-retired *{visibility:hidden!important}' +
+        '@media(prefers-color-scheme:dark){html.im-stories-home{background:#0c1013!important}}';
+      (document.head || document.documentElement).appendChild(storiesStyle);
+    }
+    return guarded;
+  }
+  // Runs synchronously both at document start and after every history change.
+  storiesGuardRoute();
+
+  function clearRetiredStories() {
+    if (retiredStoriesObserver) { retiredStoriesObserver.disconnect(); retiredStoriesObserver = null; }
+    retiredStories.forEach(function (_, root) { root.classList.remove("im-stories-retired"); });
+    retiredStories.clear();
+  }
+  function retireStoriesHome() {
+    // React may keep home's old MAIN mounted after the route changes. Keep
+    // that exact content hidden until it is removed, instead of throwing
+    // away the whole document (and Instagram's loaded router/cache).
+    document.querySelectorAll("main").forEach(function (root) {
+      // React retains hidden responsive/previous trees. They cannot flash
+      // and must not keep a cleanup observer alive for the rest of the app.
+      for (var parent = root; parent && parent !== document.body; parent = parent.parentElement) {
+        if (getComputedStyle(parent).display === "none") return;
+      }
+      var markers = Array.prototype.slice.call(root.querySelectorAll("article"));
+      storiesNodes.forEach(function (node) {
+        if (root.contains(node) && node.classList.contains("im-story-native")) markers.push(node);
+      });
+      if (!markers.length) return;
+      root.classList.add("im-stories-retired"); retiredStories.set(root, markers);
+    });
+    if (!retiredStories.size || retiredStoriesObserver) return;
+    retiredStoriesObserver = new MutationObserver(function () {
+      retiredStories.forEach(function (markers, root) {
+        if (!root.isConnected || !markers.some(function (node) { return root.contains(node); })) {
+          root.classList.remove("im-stories-retired"); retiredStories.delete(root);
+        }
+      });
+      if (!retiredStories.size) clearRetiredStories();
+    });
+    retiredStoriesObserver.observe(document.documentElement, {childList:true,subtree:true});
+  }
+
+  function instagramNavigate(href) {
+    var target = new URL(href, location.href);
+    if (target.origin !== new URL(location.href).origin) return false;
+    // Existing links own Instagram's event handling and take precedence.
+    var links = document.querySelectorAll("a[href]");
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].closest("#im-tabs")) continue;
+      if (links[i].origin === target.origin && links[i].pathname === target.pathname && links[i].search === target.search) {
+        links[i].click(); return true;
+      }
+    }
+    // The mobile inbox renders no links for the other tabs. Use the SAME
+    // initialized router Instagram uses for its own Story editor/navigation,
+    // verified on iPhone, instead of fabricating history.pushState entries.
+    // This is a compatibility adapter: a changed/missing module falls back
+    // to an ordinary load. No background pages or private API requests.
+    try {
+      if (typeof window.require !== "function") return false;
+      var navigation = window.require("browserHistory_DO_NOT_USE");
+      var dispatcher = navigation && typeof navigation.getCometRouterDispatcher === "function" && navigation.getCometRouterDispatcher();
+      if (!dispatcher || typeof dispatcher.withContext !== "function" ||
+          !navigation.browserHistory || typeof navigation.browserHistory.push !== "function") return false;
+      navigation.browserHistory.push(target.pathname + target.search + target.hash);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function openStories(e) {
+    if (e) e.preventDefault();
+    if (!signedIn() || !storiesAccess() || document.getElementById("im-pay")) return;
+    if (storiesHome()) return;
+    storiesIntent(true);
+    ownButtonAt = Date.now();
+    track("stories_tab_opened");
+    if (!instagramNavigate(STORIES_HOME)) location.assign(STORIES_HOME);
+  }
+  function tapHaptic() {
+    try { window.webkit.messageHandlers.konvoStore.postMessage({cmd:"haptic",id:0,productId:""}); }
+    catch (e) {}
+  }
+  function nativeModalOpen() {
+    return Array.prototype.some.call(document.querySelectorAll('[role="dialog"]'), function (dialog) {
+      var rect = dialog.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 && !dialog.closest('[hidden],[aria-hidden="true"]');
+    });
+  }
+  function canRefreshStories() {
+    return storiesHome() && storiesAccess() && !document.hidden &&
+      !document.querySelector("#im-pay,#im-sheet,#im-pass-sheet") && !nativeReplyOverlayOpen() &&
+      !nativeModalOpen();
+  }
+  function resetStoryPull() {
+    storyPull = null; storyRefreshBusy = false;
+    clearTimeout(storyRefreshTimer); storyRefreshTimer = 0;
+    if (storyRefreshUI) { storyRefreshUI.hidden = true; storyRefreshUI.removeAttribute("aria-busy"); }
+  }
+  function showStoryRefresh(label, busy, distance) {
+    if (!storyRefreshUI) {
+      storyRefreshUI = document.createElement("div");
+      storyRefreshUI.id = "im-stories-refresh";
+      storyRefreshUI.setAttribute("role", "status");
+      storyRefreshUI.setAttribute("aria-live", "polite");
+      storyRefreshUI.innerHTML = '<span class="im-refresh-ring" aria-hidden="true"></span><span></span>';
+      (document.body || document.documentElement).appendChild(storyRefreshUI);
+    }
+    storyRefreshUI.hidden = false;
+    storyRefreshUI.setAttribute("aria-busy", busy ? "true" : "false");
+    if (storyRefreshUI.lastChild.textContent !== label) storyRefreshUI.lastChild.textContent = label;
+    storyRefreshUI.firstChild.style.transform = "rotate(" + Math.min(distance || 0, 160) * 2 + "deg)";
+  }
+  function reloadStoriesFromPull() {
+    if (storyRefreshBusy || !canRefreshStories()) { resetStoryPull(); return; }
+    storyPull = null;
+    if (navigator.onLine === false) {
+      showStoryRefresh("You're offline. Try again.", false);
+      storyRefreshTimer = setTimeout(resetStoryPull, 2500);
+      return;
+    }
+    storyRefreshBusy = true;
+    showStoryRefresh("Refreshing Stories…", true);
+    tapHaptic();
+    // A deliberate user refresh loads Instagram's latest home data using the
+    // existing session. Keep the document-start feed mask and account intent.
+    // There is no private API, timed reload or fabricated watched-state change.
+    storiesIntent(true);
+    storyRefreshTimer = setTimeout(resetStoryPull, 12000);
+    location.reload();
+  }
+  document.addEventListener("touchstart", function (e) {
+    storyPull = null;
+    if (storyRefreshBusy || !canRefreshStories() || e.touches.length !== 1 ||
+        (document.scrollingElement && document.scrollingElement.scrollTop > 0) ||
+        (e.target.closest && e.target.closest('#im-tabs,#im-stories-refresh,input,textarea,[contenteditable="true"]'))) return;
+    clearTimeout(storyRefreshTimer); storyRefreshTimer = 0;
+    var touch = e.touches[0];
+    storyPull = {x:touch.clientX,y:touch.clientY,vertical:false,distance:0};
+  }, {capture:true,passive:true});
+  document.addEventListener("touchmove", function (e) {
+    if (!storyPull) return;
+    if (e.touches.length !== 1 || !canRefreshStories()) { resetStoryPull(); return; }
+    var dx = e.touches[0].clientX - storyPull.x, dy = e.touches[0].clientY - storyPull.y;
+    if (!storyPull.vertical) {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 12) return;
+      // Give horizontal/diagonal drags entirely to Instagram's carousel.
+      if (dy <= 0 || Math.abs(dx) >= dy * .75) { resetStoryPull(); return; }
+      storyPull.vertical = true;
+    }
+    storyPull.distance = Math.max(0, dy);
+    if (e.cancelable) e.preventDefault();
+    showStoryRefresh(dy >= 100 ? "Release to refresh" : "Pull to refresh", false, dy);
+  }, {capture:true,passive:false});
+  document.addEventListener("touchend", function (e) {
+    if (!storyPull) return;
+    var refresh = storyPull.vertical && storyPull.distance >= 100;
+    // A vertical pull beginning on a circle must not become a Story tap.
+    if (storyPull.vertical && e.cancelable) e.preventDefault();
+    if (refresh) reloadStoriesFromPull(); else resetStoryPull();
+  }, {capture:true,passive:false});
+  document.addEventListener("touchcancel", resetStoryPull, {capture:true,passive:true});
+  document.addEventListener("visibilitychange", function () { if (document.hidden) resetStoryPull(); });
+  function storyControls() {
+    // Instagram uses UL/LI on desktop and direct DIV children in the iPhone
+    // carousel (verified over USB). Identify the native Story button itself,
+    // not one platform's container. Article avatars are never sources.
+    var candidates = Array.prototype.filter.call(document.querySelectorAll(
+      'main [role="button"],main button'), function (el) {
+      return !el.closest("article") && el.querySelectorAll("img").length === 1;
+    });
+    function ring(el) { return el.querySelectorAll("canvas").length === 1; }
+    var controls = candidates.filter(function (el) {
+      // iPhone's own circle has no aria-label or ring when no Story is active.
+      // Its native file input and plus glyph distinguish it from feed creation.
+      var ownPicker = el.querySelector('form input[type="file"][accept*="image/"]') &&
+        (ring(el) || (el.querySelector('svg line[x1="12"][x2="12"][y1="3"][y2="21"]') &&
+        el.querySelector('svg line[x1="21"][x2="3"][y1="12"][y2="12"]')));
+      return ownPicker || (ring(el) && el.hasAttribute("aria-label") &&
+        /^[A-Za-z0-9._]{1,30}$/.test(el.textContent.trim()));
+    });
+    // An active own Story may use a localized "Your story" caption. Keep the
+    // first ring in an already verified tray without depending on English.
+    controls.slice().forEach(function (control) {
+      var first = control.closest("ul") ? control.closest("ul").firstElementChild : control.parentElement.firstElementChild;
+      var own = candidates.find(function (el) { return (el === first || first.contains(el)) && ring(el); });
+      if (own && controls.indexOf(own) === -1) controls.unshift(own);
+    });
+    return controls;
+  }
+  function nativeStoryEditor() {
+    if (!storyCreationRoute()) return null;
+    // Actual iPhone editor: a full-screen SECTION with direct canvas layers,
+    // a toolbar HEADER and a share FOOTER. Never reveal a feed ancestor.
+    return Array.prototype.find.call(document.querySelectorAll("section"), function (el) {
+      return !el.closest("main,article") && !el.querySelector("main,article") &&
+        el.querySelector(":scope > canvas") && el.querySelector(":scope > header button") &&
+        el.querySelector(':scope > footer [role="button"],:scope > footer button');
+    }) || null;
+  }
+  function nativeStoryPlayers() {
+    var players = new Set();
+    if (!/^\/stories\//.test(location.pathname)) return players;
+    function liveBoundary(el) {
+      if (!el || !el.isConnected || el.closest("main,article") || el.querySelector("main,article")) return false;
+      for (var parent = el; parent && parent !== document.body; parent = parent.parentElement) {
+        if (parent.hidden || parent.getAttribute("aria-hidden") === "true" || getComputedStyle(parent).display === "none") return false;
+      }
+      return true;
+    }
+    // Instagram replaces the photo/video between Story taps while retaining
+    // its player shell. A temporary absence of media is not a closed player.
+    // Keep that already verified boundary (and its controls) visible until
+    // Instagram removes/hides it or navigation leaves the Story route.
+    storiesPlayers.forEach(function (player) {
+      if (liveBoundary(player) && player.querySelector(STORY_CLOSE)) players.add(player);
+    });
+    // The iPhone viewer is a DIV portal, while desktop uses a SECTION.
+    // Instagram can retain an earlier Close icon in the hidden home tree.
+    // Find the smallest boundary containing a Close control and Story media,
+    // never a boundary containing the feed or just the header's tiny avatar.
+    var closes = document.querySelectorAll(STORY_CLOSE);
+    for (var i = 0; i < closes.length; i++) {
+      if (!liveBoundary(closes[i])) continue;
+      for (var el = closes[i].parentElement; el && el !== document.body; el = el.parentElement) {
+        if (el.matches("main,article") || el.querySelector("main,article") || getComputedStyle(el).display === "none") break;
+        if (el.querySelector("video") || Array.prototype.some.call(el.querySelectorAll("img"), function (img) {
+          return img.getBoundingClientRect().height > 100;
+        })) { players.add(el); break; }
+      }
+    }
+    return players;
+  }
+  function refreshStorySurface() {
+    var players = nativeStoryPlayers();
+    // Instagram's cube transition renders outgoing and incoming Story panes
+    // together. Reveal each verified native pane, leaving their animation and
+    // stacking to Instagram; selecting only the first Close hides the next one.
+    storiesPlayers.forEach(function (player) {
+      if (!players.has(player)) player.classList.remove("im-stories-player");
+    });
+    players.forEach(function (player) { player.classList.add("im-stories-player"); });
+    storiesPlayers = players;
+    return players;
+  }
+  function dismissStoriesAnnouncement() {
+    if (!storiesHome() || !storiesAccess()) return;
+    document.querySelectorAll('[role="dialog"][aria-modal="true"]').forEach(function (dialog) {
+      if (acknowledgedStoryNotices.has(dialog) || dialog.closest("main,article") ||
+          dialog.querySelector('form,input,textarea,select,a[href],[contenteditable="true"]')) return;
+      var buttons = dialog.querySelectorAll('button,[role="button"]');
+      if (buttons.length !== 1 || buttons[0].disabled || buttons[0].getAttribute("aria-disabled") === "true") return;
+      // This exact celebratory inbox sprite identifies Instagram's "messaging
+      // tab has a new look" notice across languages (inspected on iPhone).
+      // Require both exact English sentences if Instagram changes the sprite.
+      // Never blanket-click OK or remove modal DOM: its own callback must
+      // release Instagram's focus/scroll lock and record acknowledgement.
+      var knownIcon = Array.prototype.some.call(dialog.querySelectorAll('i[role="img"][data-visualcompletion="css-img"]'), function (icon) {
+        return /\/rsrc\.php\/y0\/r\/r-Dq8k6uHHA\.webp(?:["')?]|$)/.test(icon.style.backgroundImage);
+      });
+      var text = Array.prototype.map.call(dialog.querySelectorAll("span"), function (el) { return el.textContent.trim(); });
+      var knownCopy = text.indexOf("The messaging tab has a new look") !== -1 &&
+        text.indexOf("You can now go to your inbox by tapping this icon.") !== -1;
+      if (!knownIcon && !knownCopy) return;
+      acknowledgedStoryNotices.add(dialog);
+      buttons[0].click();
+    });
+  }
+  function refreshStories() {
+    if (!storiesGuardRoute()) { stopStories(); return; }
+    if (!storiesHome() && !storiesIntent()) return;
+    if (!storiesAccess()) { location.replace("/direct/inbox/"); return; }
+    if (!document.body) return;
+    dismissStoriesAnnouncement();
+    if (!storiesActive) {
+      storiesActive = true;
+      storiesStarted = Date.now(); storiesReported = {slow:false,ready:false};
+    }
+    // The feed stays hidden even while React leaves its old tree mounted.
+    refreshStorySurface();
+    Array.prototype.forEach.call(document.querySelectorAll("video,audio"), function (media) {
+      if (!media.closest(".im-stories-player") && !media.paused) media.pause();
+    });
+    var editor = nativeStoryEditor();
+    if (storiesEditor !== editor) {
+      if (storiesEditor) storiesEditor.classList.remove("im-stories-editor");
+      storiesEditor = editor;
+      if (editor) editor.classList.add("im-stories-editor");
+    }
+    var controls = storiesHome() ? storyControls() : [], nodes = new Set(), lists = new Set(), scrollers = new Set();
+    // Native discard/keep and editor dialogs are rendered outside the canvas.
+    if (editor) Array.prototype.forEach.call(document.querySelectorAll('[role="dialog"]'), function (dialog) {
+      if (!dialog.closest("main,article") && !dialog.querySelector("main,article")) nodes.add(dialog);
+    });
+    controls.forEach(function (control) {
+      nodes.add(control); lists.add(control.closest("ul") || control.parentElement);
+    });
+    lists.forEach(function (list) {
+      nodes.add(list);
+      // Visible children of a visibility:hidden overflow container can be
+      // tapped and moved with scrollLeft, but cannot be finger-scrolled.
+      // Reveal only the native horizontal scroller itself, never its subtree.
+      for (var scroll = list, level = 0; scroll && level < 5; level++, scroll = scroll.parentElement) {
+        if (scroll.matches("main,article") || scroll.querySelector("article")) break;
+        if (scroll.clientWidth > 0 && scroll.scrollWidth > scroll.clientWidth &&
+            /^(auto|scroll)$/.test(getComputedStyle(scroll).overflowX)) {
+          nodes.add(scroll); scrollers.add(scroll); break;
+        }
+      }
+      // Keep Instagram's own carousel arrows, including translated buttons.
+      // Never reveal their parent container: it may also contain feed content.
+      var container = list.parentElement;
+      for (var depth = 0; container && depth < 4; depth++, container = container.parentElement) {
+        if (container.querySelector("article")) break;
+        Array.prototype.forEach.call(container.querySelectorAll(
+          'button[aria-label="Next"],button[aria-label="Previous"],button:has(svg[aria-label="Next"]),' +
+          'button:has(svg[aria-label="Previous"]),button[aria-label][tabindex="-1"]'), function (button) {
+          if (button.closest("li,article")) return;
+          var r = button.getBoundingClientRect(), tray = list.getBoundingClientRect();
+          if (/^(Next|Previous)$/.test(button.getAttribute("aria-label")) ||
+              button.querySelector('svg[aria-label="Next"],svg[aria-label="Previous"]') ||
+              (r.width > 0 && r.bottom > tray.top && r.top < tray.bottom &&
+                (r.left > tray.left + tray.width / 2 || r.right < tray.left + tray.width / 2))) nodes.add(button);
+        });
+      }
+    });
+    storiesNodes.forEach(function (el) {
+      if (!nodes.has(el)) el.classList.remove("im-story-native", "im-stories-tray", "im-stories-scroll", "im-story-dialog");
+    });
+    nodes.forEach(function (el) { el.classList.add(scrollers.has(el) ? "im-stories-scroll" : lists.has(el) ? "im-stories-tray" : el.getAttribute("role") === "dialog" ? "im-story-dialog" : "im-story-native"); });
+    storiesNodes = nodes;
+    if (!storiesHome()) return;
+    if (!controls.length && Date.now() - storiesStarted > 12000 && !storiesReported.slow) {
+      storiesReported.slow = true; track("stories_loading_slow");
+    }
+    if (controls.length && !storiesReported.ready) {
+      storiesReported.ready = true;
+      track("stories_ready", {count:new Set(controls.map(function (el) { return el.textContent.trim(); })).size,ms:Date.now()-storiesStarted});
+    }
+  }
+  // Observe native taps without replacing Instagram's handler or DOM nodes.
+  document.addEventListener("click", function (e) {
+    var control = e.target.closest && e.target.closest(".im-story-native");
+    if (storiesHome() && control && control.querySelector("canvas") && !document.getElementById("im-pay")) {
+      storiesStarted = Date.now(); track("story_open_tapped");
+    }
+  }, true);
+  function stopStories() {
+    if (storiesObserver) { storiesObserver.disconnect(); storiesObserver = null; }
+    clearTimeout(storiesTimer); storiesTimer = 0;
+    storiesPlayers.forEach(function (player) { player.classList.remove("im-stories-player"); });
+    storiesPlayers.clear();
+    if (storiesEditor) { storiesEditor.classList.remove("im-stories-editor"); storiesEditor = null; }
+    storiesNodes.forEach(function (el) { el.classList.remove("im-story-native", "im-stories-tray", "im-stories-scroll", "im-story-dialog"); });
+    storiesNodes.clear(); storiesActive = false;
+  }
+  function syncStories() {
+    if (!storiesGuardRoute()) { stopStories(); return; }
+    refreshStories();
+    if (!storiesObserver) {
+      storiesObserver = new MutationObserver(function () {
+        // Reveal the native player in the mutation microtask, before paint.
+        // The tray/feed scan can wait; holding a mounted player hidden for
+        // its old 100ms debounce produced a visible black flash on iPhone.
+        if (document && document.documentElement && storiesIntent() && /^\/stories\//.test(location.pathname)) {
+          refreshStorySurface();
+          return;
+        }
+        if (storiesTimer) return;
+        storiesTimer = setTimeout(function () { storiesTimer = 0; refreshStories(); }, 100);
+      });
+      storiesObserver.observe(document.documentElement, {childList:true,subtree:true});
+    }
+  }
+  document.addEventListener("play", function (e) {
+    // play can arrive before the DOM observer tags the newly mounted viewer.
+    if (!document.documentElement.classList.contains("im-stories-guard")) return;
+    var allowed = false;
+    refreshStorySurface().forEach(function (player) { if (player.contains(e.target)) allowed = true; });
+    if (!allowed) e.target.pause();
+  }, true);
   // The inbox proper only. Message Requests (/direct/requests/) is a pushed
   // page like a thread: its back arrow returns to the inbox, and counting
   // it as the inbox hid that arrow (user report, Sep 5).
@@ -714,11 +1254,10 @@
   // names and enums only; nothing typed is ever read, and a "Continue as
   // <name>" button loses its name.
   var loginWatched = false, loginSubmits = 0, loginT0 = Date.now(), lastSubmitAt = 0;
-  // Instagram's Log in is a React button, never a form submit, so the
-  // submit listener alone reported nothing in the field (Sep 1: zero
-  // login_submitted since launch). A tap on a button while the password
-  // field holds text is the submit; a native submit within a beat of it
-  // is the same attempt.
+  // React can submit without a form event. Recognize the action itself;
+  // showing a password or dismissing a dialog is not a submission. Never
+  // inspect field values to infer intent. The form listener covers other
+  // languages and keyboard submission; duplicate events are coalesced.
   function noteSubmit(st) {
     if (Date.now() - lastSubmitAt < 800) return;
     lastSubmitAt = Date.now();
@@ -840,13 +1379,18 @@
       if (!st || !b) return;
       // The sheet's own buttons report as login_sheet, not as taps on
       // Instagram's page.
-      if (b.closest("#im-sheet,#im-reset-bar")) return;
+      if (b.closest("#im-sheet,#im-reset-bar,#im-login-help")) return;
       var label = (b.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
       if (!label) return;
       label = label.replace(/^(continue|log in) as .*$/, "$1 as").slice(0, 24);
       track("login_tap", { stage: st, label: label });
-      var pw = document.querySelector("input[type=password]");
-      if (b.tagName !== "A" && pw && pw.value) noteSubmit(st);
+      var submitAction = st === "login"
+        ? /^(log in|login|sign in|continue as|log in as|se connecter|connexion|登入|登录|로그인)$/.test(label)
+        : st === "reset"
+          ? /^(send login link|reset password|envoyer.*lien|réinitialiser.*|傳送登入連結|发送登录链接|비밀번호 재설정)$/.test(label)
+          : /^(confirm|verify|submit|confirmer|確認|确认|확인)$/.test(label);
+      if (b.tagName !== "A" && !b.disabled &&
+          (submitAction || (b.type === "submit" && b.form))) noteSubmit(st);
     }, true);
     // The keyboard's Passwords key is the whole trick and nobody looks
     // for it: say so once, the first time a login field takes focus, and
@@ -999,7 +1543,26 @@
   // band above it is native (appearance "black") and goes with the sheet.
   // Half of the people lost at login never touched the page (95 of 193
   // in the week before this); the sheet is for them.
-  var resetBarShown = false, footLine = "", pageAppearance = "";
+  var resetBarShown = false, footLine = "", pageAppearance = "", helpStage = null;
+  function closeLoginHelp() {
+    var panel = document.getElementById("im-login-help");
+    if (panel) panel.remove();
+    var toggle = document.querySelector("#im-sheet [data-act=login_help]");
+    if (toggle) toggle.setAttribute("aria-expanded", "false");
+  }
+  function showLoginHelp() {
+    if (document.getElementById("im-login-help")) { closeLoginHelp(); return; }
+    var panel = document.createElement("section");
+    panel.id = "im-login-help";
+    panel.setAttribute("aria-label", T("Sign-in help"));
+    panel.innerHTML = "<b>" + T("Use your existing Instagram account.") + "</b><p>" +
+      T("You can check Passwords, Notes or email, then return here to continue.") + "</p>" +
+      (loginStage() === "login" ? "<button type='button' data-act='login_reset'>" + T("Reset Instagram password") + "</button>" : "") +
+      "<button type='button' data-act='help_close'>" + T("Close help") + "</button>";
+    panel.addEventListener("click", sheetAct);
+    document.body.appendChild(panel);
+    document.querySelector("#im-sheet [data-act=login_help]").setAttribute("aria-expanded", "true");
+  }
   var LOCK = "<svg width='11' height='13' viewBox='0 0 11 13' aria-hidden='true'>" +
     "<path d='M2 5V4a3.5 3.5 0 0 1 7 0v1h.5A1.5 1.5 0 0 1 11 6.5v5A1.5 1.5 0 0 1 9.5 13h-8" +
     "A1.5 1.5 0 0 1 0 11.5v-5A1.5 1.5 0 0 1 1.5 5H2zm1.5 0h4V4a2 2 0 0 0-4 0v1z' fill='currentColor'/></svg>";
@@ -1017,16 +1580,29 @@
     var act = t.getAttribute("data-act");
     track("login_sheet", { act: act, stage: loginStage() });
     if (act === "reset_return") location.assign("/accounts/login/");
+    else if (act === "login_help") showLoginHelp();
+    else if (act === "help_close") { closeLoginHelp(); document.querySelector("#im-sheet [data-act=login_help]").focus(); }
+    else if (act === "login_reset" && loginStage() === "login") {
+      closeLoginHelp(); location.assign("/accounts/password/reset/");
+    }
     else if (act === "reload") location.reload();
   }
   function loginSheet(st) {
     // Waits for the body: the strip and footer live inside it, and the
     // rise must start with something to show.
     if (!/iPhone|iPad|iPod/.test(navigator.userAgent) || !document.body) return;
+    if (helpStage !== st) { closeLoginHelp(); helpStage = st; }
     if (st !== "reset") {
       var oldResetBar = document.getElementById("im-reset-bar");
       if (oldResetBar) oldResetBar.remove();
       resetBarShown = false;
+    } else if (document.getElementById("im-reset-bar")) {
+      // Instagram may mount its recovery form after returning from email.
+      // Withdraw our earlier prompt as soon as the live form appears.
+      var recoveryFields = loginFields("reset");
+      for (var rf = 0; rf < recoveryFields.length; rf++) if (visibleLoginField(recoveryFields[rf])) {
+        document.getElementById("im-reset-bar").remove(); resetBarShown = false; break;
+      }
     }
     var strip = document.getElementById("im-sheet"), foot;
     if (!strip) {
@@ -1047,7 +1623,13 @@
         "#im-sheet .ims-card{background:#f7f7f7;border-radius:12px 12px 0 0;border-bottom:1px solid #d9d9de}" +
         "#im-sheet .ims-grab{width:36px;height:5px;border-radius:3px;background:#c7c7cc;margin:6px auto 0}" +
         "#im-sheet .ims-bar{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;height:46px;padding:0 10px}" +
-        "#im-sheet button{border:0;background:none;color:#0a84ff;font:400 21px/1 -apple-system,system-ui,sans-serif;padding:8px 6px;margin:0;text-align:right}" +
+        "#im-sheet button{border:0;background:none;color:#0a84ff;font:400 21px/1 -apple-system,system-ui,sans-serif;padding:8px 6px;margin:0;text-align:right;min-height:44px}" +
+        "#im-sheet [data-act=login_help]{font-size:14px;text-align:left}" +
+        "#im-login-help{position:fixed;top:70px;left:12px;right:12px;z-index:2147483647;max-height:55vh;overflow-y:auto;" +
+        "padding:16px;border:1px solid #d9d9de;border-radius:16px;background:#f7f7f7;color:#1c1c1e;font:14px/1.45 -apple-system,system-ui,sans-serif;box-shadow:0 6px 24px #0003}" +
+        "#im-login-help b{color:#1c1c1e}#im-login-help p{margin:8px 0 12px;color:#3c3c43}" +
+        "#im-login-help button{display:block;width:100%;min-height:44px;margin-top:6px;border:0;border-radius:10px;background:#0a5cf0;color:#fff;font:600 14px/1.3 -apple-system,system-ui,sans-serif}" +
+        "#im-login-help [data-act=help_close]{background:#e8e8ed;color:#1c1c1e}" +
         "#im-sheet .ims-url{display:flex;align-items:center;justify-content:center;gap:5px;font-size:15px;color:#1c1c1e;white-space:nowrap;overflow:hidden}" +
         "#im-sheet .ims-url svg{color:#3c3c43;flex:none}" +
         "#im-sheet .ims-path{color:#8e8e93;overflow:hidden;text-overflow:ellipsis}" +
@@ -1060,7 +1642,8 @@
       document.head.appendChild(css);
       strip = document.createElement("div");
       strip.id = "im-sheet";
-      strip.innerHTML = "<div class='ims-card'><div class='ims-grab'></div><div class='ims-bar'><span></span>" +
+      strip.innerHTML = "<div class='ims-card'><div class='ims-grab'></div><div class='ims-bar'>" +
+        "<button type='button' data-act='login_help' aria-expanded='false' aria-controls='im-login-help'>" + T("Help") + "</button>" +
         "<div class='ims-url'>" + LOCK + "<span class='ims-host'></span><span class='ims-path'></span></div>" +
         "<button data-act='reload' aria-label='" + T("Reload") + "'>↻</button></div></div>";
       strip.addEventListener("click", sheetAct);
@@ -1068,6 +1651,10 @@
       foot.id = "im-sheet-foot";
       document.body.appendChild(strip);
       document.body.appendChild(foot);
+      document.addEventListener("focusin", function (e) {
+        if (e.target && e.target.matches("input,textarea")) closeLoginHelp();
+      });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLoginHelp(); });
       // Back from the email with the reset page still up: one way back.
       document.addEventListener("visibilitychange", function () {
         if (document.visibilityState !== "visible" || loginStage() !== "reset" || resetBarShown) return;
@@ -1104,6 +1691,7 @@
   // The session is here (this document or the one before it): the sheet
   // and its band go, and the look is the phone's again.
   function dropLoginSheet() {
+    closeLoginHelp(); helpStage = null;
     var ids = ["im-sheet", "im-sheet-foot", "im-reset-bar"], had = false;
     for (var i = 0; i < ids.length; i++) {
       var el = document.getElementById(ids[i]);
@@ -1198,6 +1786,7 @@
   var profileRouteReady = function () {};
   function enforce() {
     if (!location.hostname.endsWith("instagram.com")) return;
+    syncStories();
     if (/iPhone|iPad|iPod/.test(navigator.userAgent)) sizeViewport();
     if (atInbox()) sweepKeepBack();
     if (blocked(location.pathname)) {
@@ -1459,6 +2048,7 @@
   }
 
   var navSuppress = 0, navPath = "", pendingChat = null;
+  var pendingTabSwitch = null, tabSwipeUntil = 0, tabSwipeClick = false, lastNativeTabRoot = null;
   function nativeNav(cmd, value) {
     try { window.webkit.messageHandlers.konvoStore.postMessage({cmd:cmd,id:0,productId:value || ""}); } catch (e) {}
   }
@@ -1480,6 +2070,7 @@
   }, true);
   function nav(dir) {
     if (!isPhone) return;
+    if (pendingTabSwitch) { pendingTabSwitch.check(); return; }
     if (navSuppress && Date.now() - navSuppress < 400 && location.pathname === navPath) return;
     navSuppress = Date.now(); navPath = location.pathname;
     cancelChatHandoff();
@@ -1512,6 +2103,7 @@
       if (next !== location.pathname && /^\/direct\/t\//.test(next)) { cancelChatHandoff(); prepareChat(); }
     } catch (e) {}
     push.apply(null, arguments);
+    storiesGuardRoute();
     setTimeout(function () {
       // Opening a post is not a screen you walk into sideways - the photo
       // belongs to the profile behind it, so no slide. It still has to be
@@ -1525,7 +2117,7 @@
     }, 0);
   };
   var replace = history.replaceState.bind(history);
-  history.replaceState = function () { replace.apply(null, arguments); setTimeout(enforce, 0); };
+  history.replaceState = function () { replace.apply(null, arguments); storiesGuardRoute(); setTimeout(enforce, 0); };
   window.addEventListener("popstate", function () {
     // Direction follows what the user did, not what Instagram's router
     // did. Opening a conversation from a profile's Message button is a
@@ -1712,13 +2304,8 @@
     // Message Requests tab in the inbox header
     'a[href="/direct/requests/"]',
     'a[href^="/direct/requests"]',
-    // Instagram's own "+". Hidden everywhere, and this is SETTLED, not a
-    // default: builds 28-29 (2026-07-31) ran the story-posting experiment a
-    // tester asked for - the CSS unhide revealed nothing (the DM inbox
-    // renders no create entry) and a direct probe at /create/story/ was
-    // bounced through "/" by Instagram itself, on device. Web posting cannot
-    // work without exempting home, and home is where every 07-29 leak came
-    // from. Posting lives in the real Instagram app.
+    // Keep general feed-post creation hidden. The own-Story circle has its
+    // own native photo input/plus glyph and is exposed only in Stories.
     '[role="link"]:has(svg[aria-label="New post"])',
     'div[role="button"]:has(svg[aria-label="New post"])',
     'a:has(svg[aria-label="New post"])',
@@ -1753,19 +2340,191 @@
     "svg,[role='button']{-webkit-user-select:none}";
   (document.head || document.documentElement).appendChild(style);
 
+  function nativeReplyOverlayOpen() {
+    // Notes opens a fixed presentation portal without leaving /direct/inbox/.
+    // Hide navigation before the field receives focus, not just after the
+    // keyboard appears. Ignore retained hidden portals; never inspect drafts.
+    var fields = document.querySelectorAll(
+      '[role="presentation"] [role="textbox"][contenteditable="true"],' +
+      '[role="dialog"] [role="textbox"][contenteditable="true"],[role="dialog"] textarea');
+    for (var i = 0; i < fields.length; i++) {
+      if (!fields[i].closest("#im-pay,#im-sheet") && visibleLoginField(fields[i])) return true;
+    }
+    return false;
+  }
   function updateBottomTabs() {
+    if (!document || !document.documentElement) return;
     var root = document.documentElement, bar = document.getElementById("im-tabs");
     if (!bar) return;
     var p = location.pathname;
     var profile = /^\/[A-Za-z0-9._]+\/?$/.test(p) && worthSliding(p);
-    var visible = signedIn() && (atInbox() || profile || /^\/(notifications|accounts\/(activity|edit))\/?$/.test(p));
-    root.classList.toggle("im-tabs-visible", !!visible && !watchingReel());
-    var current = atInbox() ? "im-messages" : profile || p === "/accounts/edit/" ? "im-me" : "im-heart";
+    var visible = signedIn() && (atInbox() || storiesHome() || profile || /^\/(notifications|accounts\/(activity|edit))\/?$/.test(p));
+    var hasTabs = !!visible && !watchingReel();
+    // A reply covers the tabs without changing the underlying page layout.
+    // Removing its spacer clamps a scrolled inbox and makes the screen jump.
+    root.classList.toggle("im-tabs-layout", hasTabs);
+    root.classList.toggle("im-tabs-visible", hasTabs && !nativeReplyOverlayOpen());
+    var tabRoot = hasTabs && mainTabIndex() >= 0;
+    if (tabRoot !== lastNativeTabRoot) {
+      lastNativeTabRoot = tabRoot; nativeNav("tab-root", tabRoot ? "1" : "0");
+    }
+    var current = atInbox() ? "im-messages" : storiesHome() ? "im-stories" : profile || p === "/accounts/edit/" ? "im-me" : "im-heart";
     Array.prototype.forEach.call(bar.querySelectorAll("a"), function (el) {
       if (el.id === current) el.setAttribute("aria-current", "page");
       else el.removeAttribute("aria-current");
     });
   }
+
+  function mainTabIndex() {
+    if (!signedIn()) return -1;
+    if (atInbox()) return 0;
+    if (storiesHome()) return 1;
+    if (/^\/(notifications|accounts\/activity)\/?$/.test(location.pathname)) return 2;
+    // A friend's profile is a pushed page, not the user's Profile tab.
+    try {
+      var uid = (document.cookie.match(/(?:^|; )ds_user_id=(\d+)/) || [])[1];
+      var handle = localStorage.konvoHandle || "";
+      if (uid && localStorage.konvoHandleUid === uid && /^[A-Za-z0-9._]{1,30}$/.test(handle) &&
+          location.pathname.replace(/\/$/, "").toLowerCase() === "/" + handle.toLowerCase()) return 3;
+    } catch (e) {}
+    return -1;
+  }
+  function cancelTabSwitch() {
+    if (pendingTabSwitch) { pendingTabSwitch.cancel(); pendingTabSwitch = null; }
+    nativeNav("tab-cancel");
+    tabSwipeUntil = 0;
+  }
+  function switchTabFromSwipe(index) {
+    var ids = ["im-messages", "im-stories", "im-heart", "im-me"], button = document.getElementById(ids[index]);
+    if (!button || pendingTabSwitch || index < 0 || index >= ids.length) return;
+    var fromIndex = mainTabIndex();
+    if (fromIndex < 0 || Math.abs(index - fromIndex) !== 1) return;
+    var forward = index > fromIndex;
+    var observer, limit, frame, finished = false, source = location.pathname;
+    // Instagram commits the URL before replacing its React page. Remember
+    // rendered source content, not just the route, so we never slide a second
+    // copy of the old page and then jump to the destination at completion.
+    function laidOut(el) { return el.isConnected && el.getClientRects().length > 0; }
+    function inViewport(el) {
+      var r = el.getBoundingClientRect();
+      return laidOut(el) && r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight &&
+        r.right > 0 && r.left < innerWidth && getComputedStyle(el).visibility !== "hidden";
+    }
+    var mains = Array.from(document.querySelectorAll('main,[role="main"]'));
+    // Stories masks its main while explicitly revealing only the story tray.
+    // That laid-out tree still identifies the route being departed.
+    var sourceMain = mains.find(inViewport) || mains.find(laidOut);
+    var contentSelector = 'img,button,[role="button"],h1,h2,header,a';
+    function nativeContent(el) { return !el.closest('[id^="im-"],[id^="konvo-"]') && inViewport(el); }
+    if (!sourceMain && fromIndex === 0) {
+      // The mobile inbox can be a div-only React tree, without either main
+      // landmark. Its root can also use display:contents. Find that tree by
+      // its rendered native content; never treat our tab bar as the source.
+      sourceMain = Array.from(document.body.children).find(function(el) {
+        return !/^(SCRIPT|STYLE|NOSCRIPT)$/.test(el.tagName) && !el.closest('[id^="im-"],[id^="konvo-"]') &&
+          Array.from(el.querySelectorAll(contentSelector)).some(nativeContent);
+      });
+    }
+    var sourceNodes = sourceMain ? Array.from(sourceMain.querySelectorAll(contentSelector)).filter(nativeContent).slice(0,40) : [];
+    if (sourceMain && !sourceNodes.length) {
+      sourceNodes = Array.from(sourceMain.querySelectorAll('*')).filter(function(el){return !el.children.length && inViewport(el);}).slice(0,40);
+    }
+    var sourceChildren = sourceMain ? Array.from(sourceMain.childNodes) : [];
+    function destinationReady() {
+      if (mainTabIndex() !== index || button.getAttribute("aria-current") !== "page") return false;
+      if (!sourceMain) return false; // Unknown markup: bounded cancellation, never a stale slide.
+      // A display:contents root has no layout box even while its old children
+      // are visible. Wait for those children to retire, not for a root box.
+      if (!sourceMain.isConnected || (!laidOut(sourceMain) && !sourceNodes.some(laidOut))) return true;
+      // visibility:hidden is also used by our feed guard before React commits;
+      // it must not count as the source page having been replaced.
+      if (sourceNodes.length) return sourceNodes.filter(function(el){return !laidOut(el);}).length >= Math.ceil(sourceNodes.length * .75);
+      return sourceChildren.some(function(node){return !node.isConnected;}) || sourceMain.childNodes.length !== sourceChildren.length;
+    }
+    function cleanup() { finished = true; if(observer)observer.disconnect(); clearTimeout(limit); cancelAnimationFrame(frame); }
+    function reveal() {
+      frame = 0;
+      if (finished) return;
+      if (document.hidden || mainTabIndex() !== index) { cancelTabSwitch(); return; }
+      if (!destinationReady()) return;
+      cleanup(); pendingTabSwitch = null;
+      navSuppress = Date.now(); navPath = location.pathname; ownButtonAt = 0;
+      tabSwipeUntil = Date.now() + 180;
+      nativeNav("tab-reveal", forward ? "next" : "previous");
+    }
+    function check() {
+      if (finished) return;
+      if (document.hidden || (location.pathname !== source && mainTabIndex() !== index)) { cancelTabSwitch(); return; }
+      if (!destinationReady() || frame) return;
+      // Give the destination a paint, without waiting for all Instagram DOM
+      // updates to stop. Notes, badges and images can keep changing after the
+      // page is usable; restarting a quiet timer made swipes feel unresponsive.
+      frame = requestAnimationFrame(function () { frame = requestAnimationFrame(reveal); });
+    }
+    pendingTabSwitch = {check:check,cancel:cleanup};
+    nativeNav("tab-prepare");
+    observer = new MutationObserver(check); observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["style","hidden","aria-current"]});
+    limit = setTimeout(cancelTabSwitch, 900); // A slow/changed Instagram page cannot trap a snapshot.
+    tabSwipeClick = true;
+    try { button.click(); } finally { tabSwipeClick = false; }
+    check();
+  }
+  // TAB_SWIPE_BEGIN
+  // Disabled for release: Instagram's destination loading makes these main-tab
+  // gestures feel uneven. Keep tab taps and pushed-page/chat navigation intact.
+  var mainTabSwipesEnabled = false;
+  if (isPhone && mainTabSwipesEnabled) {
+    var tabTouch = null;
+    function tabGestureAllowed() {
+      return mainTabIndex() >= 0 && !document.hidden && !pendingTabSwitch && Date.now() >= tabSwipeUntil &&
+        document.documentElement.classList.contains("im-tabs-visible") &&
+        !document.querySelector("#im-pay,#im-sheet,#im-pass-sheet") && !nativeModalOpen() &&
+        !nativeReplyOverlayOpen() && !storyRefreshBusy &&
+        !(document.activeElement && document.activeElement.matches('input,textarea,select,[contenteditable="true"],[role="textbox"]'));
+    }
+    document.addEventListener("touchstart", function (e) {
+      tabTouch = null;
+      if (e.touches.length !== 1 || !tabGestureAllowed()) return;
+      var target = e.target;
+      if (target.closest && target.closest('#im-tabs,.im-stories-tray,.im-stories-scroll,.im-story-native,article,[role="tablist"],[role="slider"],input,textarea,select,[contenteditable="true"],video,canvas')) return;
+      for (var el = target; el && el !== document.body; el = el.parentElement) {
+        // Notes and carousels retain the entire gesture, even at their ends.
+        if (el.scrollWidth > el.clientWidth + 4 && /^(auto|scroll|hidden)$/.test(getComputedStyle(el).overflowX)) return;
+      }
+      var t = e.touches[0];
+      tabTouch = {x:t.clientX,y:t.clientY,index:mainTabIndex(),path:location.pathname,dx:0,horizontal:false};
+    }, {capture:true,passive:true});
+    document.addEventListener("touchmove", function (e) {
+      if (!tabTouch) return;
+      if (e.touches.length !== 1 || !tabGestureAllowed() || location.pathname !== tabTouch.path) { tabTouch = null; return; }
+      var dx = e.touches[0].clientX - tabTouch.x, dy = e.touches[0].clientY - tabTouch.y;
+      if (!tabTouch.horizontal) {
+        if (Math.max(Math.abs(dx),Math.abs(dy)) < 12) return;
+        if (Math.abs(dx) < Math.abs(dy) * 1.35) { tabTouch = null; return; }
+        // Lock the initial horizontal direction. At either end, leave the
+        // gesture alone instead of wrapping around or animating a dead end.
+        tabTouch.step = dx < 0 ? 1 : -1;
+        var targetIndex = tabTouch.index + tabTouch.step;
+        if (targetIndex < 0 || targetIndex > 3) { tabTouch = null; return; }
+        tabTouch.horizontal = true;
+      }
+      tabTouch.dx = dx;
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+    }, {capture:true,passive:false});
+    document.addEventListener("touchend", function (e) {
+      var gesture = tabTouch; tabTouch = null;
+      if (!gesture || !gesture.horizontal) return;
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      if (!tabGestureAllowed() || location.pathname !== gesture.path || -gesture.step * gesture.dx < Math.max(64,innerWidth * .22)) return;
+      switchTabFromSwipe(gesture.index + gesture.step);
+    }, {capture:true,passive:false});
+    document.addEventListener("touchcancel", function () { tabTouch = null; }, {capture:true,passive:true});
+    document.addEventListener("visibilitychange", function () { if(document.hidden){tabTouch=null;cancelTabSwitch();} });
+    window.addEventListener("pagehide", cancelTabSwitch);
+  }
+  // TAB_SWIPE_END
 
   // One stable phone navigation bar across inbox, notifications and profiles.
   // Hide it inside conversations so Instagram keeps the full composer area.
@@ -1774,6 +2533,22 @@
     tabs.id = "im-tabs";
     tabs.setAttribute("aria-label", "Konvo navigation");
     (document.body || document.documentElement).appendChild(tabs);
+    // Confirm a committed selection, not touch-down: dragging away, disabled
+    // controls and tapping the already-selected tab should not vibrate.
+    tabs.addEventListener("click", function (e) {
+      if (!tabSwipeClick) cancelTabSwitch();
+      var button = e.target.closest && e.target.closest("a,button");
+      if (!button || button.parentElement !== tabs || button.disabled ||
+          button.getAttribute("aria-current") === "page" || button.getAttribute("aria-busy") === "true") return;
+      tapHaptic();
+    }, true);
+    // Native reply sheets can mount/unmount or be retained and hidden with no
+    // URL change. Mutation delivery happens before paint, avoiding a frame of
+    // Konvo tabs covering the composer. This does not move or replace it.
+    new MutationObserver(updateBottomTabs).observe(document.documentElement, {
+      childList: true, subtree: true, attributes: true,
+      attributeFilter: ["style", "hidden", "aria-hidden"]
+    });
     // Single-quoted on purpose: starting a double-quoted string with a hash
     // would put quote-then-hash in the source, which closes the Rust raw
     // string this script lives in.
@@ -1793,33 +2568,41 @@
       '#im-tabs a,#im-tabs #im-pass{position:static!important;display:flex!important;flex:1;' +
       'height:52px!important;width:auto!important;margin:0;padding:0;border:0;box-shadow:none!important;' +
       'border-radius:12px;background:transparent!important;color:#a5aab4;align-items:center;' +
-      'justify-content:center;text-decoration:none}' +
-      '#im-tabs a[aria-current=page]{color:#fff;background:rgba(255,255,255,.07)!important}' +
-      'html.im-tabs-visible body{padding-bottom:64px;box-sizing:border-box}' +
+      'justify-content:center;text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;' +
+      'transition:transform .24s cubic-bezier(.2,.9,.3,1.3),background-color .16s ease,color .16s ease}' +
+      '#im-tabs svg{transition:transform .24s cubic-bezier(.2,.9,.3,1.3);transform-origin:center}' +
+      '#im-tabs a:active,#im-tabs #im-pass:not(:disabled):active{transform:scale(.94);transition-duration:.07s;' +
+      'background:rgba(128,128,128,.12)!important}' +
+      '#im-tabs a:active svg,#im-tabs #im-pass:not(:disabled):active svg{transform:scale(.9);transition-duration:.07s}' +
+      '#im-tabs a[aria-current=page]{color:#fff;background:rgba(255,255,255,.09)!important;' +
+      'box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important}' +
+      '#im-tabs a:focus-visible,#im-tabs #im-pass:focus-visible{outline:2px solid #0a84ff;outline-offset:-3px}' +
+      'html.im-tabs-layout body{padding-bottom:64px;box-sizing:border-box}' +
       '#im-tabs #im-pass:disabled{opacity:.35}' +
       '@media(prefers-color-scheme:light){#im-tabs{background:#fff}' +
       '#im-tabs a,#im-tabs #im-pass{color:#626873}' +
-      '#im-tabs a[aria-current=page]{color:#0a5cf0;background:#eef3ff!important}}' +
+      '#im-tabs a[aria-current=page]{color:#0a5cf0;background:#eef3ff!important;box-shadow:inset 0 1px 0 #ffffffd9!important}}' +
+      '@media(prefers-reduced-motion:reduce){#im-tabs a,#im-tabs #im-pass,#im-tabs svg{transition:none!important;transform:none!important}}' +
       'body:has(#im-pay) #im-tabs{display:none!important}' +
       // Hide only duplicate navigation links, never message buttons on profiles.
-      'html.im-tabs-visible a[href="/direct/inbox/"]:not(#im-messages),' +
-      'html.im-tabs-visible a[href="/notifications/"]:not(#im-heart){display:none!important}';
+      'html.im-tabs-layout a[href="/direct/inbox/"]:not(#im-messages),' +
+      'html.im-tabs-layout a[href="/notifications/"]:not(#im-heart){display:none!important}';
     // Delegate to an existing Instagram link so its router owns navigation
     // and inbox refreshes. A normal navigation is the fallback when absent.
     function spaGo(href, e) {
       e.preventDefault();
       var target = new URL(href, location.href);
-      if (target.pathname === location.pathname) return;
+      if (target.pathname.replace(/\/$/, "") === location.pathname.replace(/\/$/, "") && target.search === location.search) return;
       ownButtonAt = Date.now();
+      if (document.documentElement.classList.contains("im-stories-guard")) {
+        if (storiesHome()) retireStoriesHome();
+        else { storiesIntent(false); location.assign(target.href); return; }
+        storiesIntent(false);
+      }
       // Let Instagram keep its router state and normal inbox refresh/read flow.
       // Fabricating an empty history entry bypasses that state and a 500ms
       // text comparison can reload a perfectly healthy, slower navigation.
-      var links = document.querySelectorAll("a[href]");
-      for (var i = 0; i < links.length; i++) {
-        if (links[i].closest("#im-tabs")) continue;
-        if (links[i].pathname === target.pathname) { links[i].click(); return; }
-      }
-      location.assign(target.href);
+      if (!instagramNavigate(target.href)) location.assign(target.href);
     }
     var messages = document.createElement("a");
     messages.id = "im-messages"; messages.href = "/direct/inbox/";
@@ -1827,6 +2610,13 @@
     messages.innerHTML = "<svg width='23' height='23' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z'/></svg>";
     messages.addEventListener("click", function(e) { spaGo(messages.href, e); });
     tabs.appendChild(messages);
+    var stories = document.createElement("a");
+    stories.id = "im-stories"; stories.href = STORIES_HOME;
+    stories.setAttribute("aria-label", "Friends’ Stories");
+    stories.title = "Stories";
+    stories.innerHTML = "<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><circle cx='12' cy='12' r='9' stroke-dasharray='13 5.85' stroke-linecap='round'/><circle cx='12' cy='12' r='5'/></svg>";
+    stories.addEventListener("click", openStories);
+    tabs.appendChild(stories);
     var heart = document.createElement("a");
     heart.id = "im-heart";
     // /notifications/ is the phone route; /accounts/activity/ is desktop.
@@ -1917,9 +2707,7 @@
   }
 
 
-  // The notes/stories tray in the inbox is deliberately visible now: with
-  // home caged it is the only doorway into a friend's story on either
-  // platform. The hideTray() that removed it died with the /stories/ bounce.
+  // The inbox notes/stories tray stays visible alongside the Stories tab.
   //
   // The Requests tab is hidden by its href in the css list above; the old
   // English text scan ("Requests (2)") died on the French walk of Aug 31,
@@ -1948,7 +2736,7 @@
     var pics = document.querySelectorAll("img[alt$='profile picture']");
     for (var i = 0; i < pics.length; i++) {
       var a = pics[i].closest("a[href]");
-      if (a && !a.closest("main")) a.style.display = "none";
+      if (a && !a.closest("main") && !/^\/stories\//.test(a.pathname)) a.style.display = "none";
     }
   }
   // A link someone sends in a DM opens nowhere: Instagram marks it
@@ -2039,6 +2827,7 @@
   // in the app - which is the most expensive thing a finger could trigger.
   var reeling = false, reelKnown = false;
   function watchingReel() {
+    if (/^\/stories\//.test(location.pathname) || storiesHome()) return false;
     if (/^\/reel\//.test(location.pathname)) return true;
     // A post page is not the reel player, however tall its video renders:
     // locking gestures there kills comment scrolling and the desktop's
@@ -2180,6 +2969,7 @@
           localStorage.getItem("konvoBetaFree"));
       } catch (e) { return false; }
     }
+    storiesAccess = function () { return cached() || seenSequence(); };
     function grantBeta() {
       try { localStorage.setItem("konvoBetaFree", "1"); } catch (e) {}
     }
@@ -2188,6 +2978,13 @@
         if (v) localStorage.setItem("konvoPaid", "1");
         else localStorage.removeItem("konvoPaid");
       } catch (e) {}
+    }
+    var accessState = "unknown";
+    function expiredAccess() {
+      return accessState === "expired_trial" || accessState === "expired_subscription";
+    }
+    function currentPaywallId() {
+      return lapsedWall && expiredAccess() ? "expired_inbox_v1" : "original";
     }
 
     // ---- v3 paywall (grilled Aug 3): S12 connected -> S12b loader -> perks
@@ -2368,6 +3165,22 @@
       'text-align:left;padding:16px 14px 14px;border-radius:16px}' +
       '#im-pay .imp-plan b{font-size:14px;font-weight:600}' +
       '#im-pay .imp-plan i{font-size:16px;font-weight:800;margin-top:3px}' +
+      '#im-pay .imp-plan-billing{display:block;font-size:11px;color:var(--mut);margin-top:4px;line-height:1.3}' +
+      '#im-pay .imp-checkout-summary{text-align:center;margin:10px 0 0;line-height:1.4}' +
+      '#im-pay .imp-checkout-summary strong{display:block;font-size:14px;font-weight:650;color:var(--ink)}' +
+      '#im-pay .imp-checkout-summary span{display:block;font-size:12px;color:var(--mut);margin-top:2px}' +
+      '#im-pay .imp-cancel-help{text-align:center;font-size:12px;color:var(--mut);margin-top:4px}' +
+      '#im-pay .imp-cancel-help summary{min-height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:underline;list-style:none}' +
+      '#im-pay .imp-cancel-help summary::-webkit-details-marker{display:none}' +
+      '#im-pay .imp-cancel-help p{line-height:1.4;padding:0 6px 8px;max-height:100px;overflow-y:auto}' +
+      '#im-pay .imp-checkout-status{font-size:13px;line-height:1.4;color:var(--ink);text-align:center;padding:8px;margin-bottom:8px;background:var(--icbg);border-radius:8px}' +
+      '#im-pay .imp-checkout-plans{display:flex;gap:10px;margin:0 0 12px;padding-top:12px}' +
+      '@media(max-height:700px){#im-pay .imp-checkout-head{display:none}' +
+      '#im-pay .imp-checkout-mid{padding-top:12px!important}' +
+      '#im-pay .imp-checkout-mid h2{font-size:23px!important;margin-bottom:12px!important}' +
+      '#im-pay .imp-checkout-mid .imp-tl h4{font-size:14px}' +
+      '#im-pay .imp-checkout-mid .imp-tl p{font-size:12px}' +
+      '#im-pay .imp-checkout-mid .imp-tl>div:last-child{padding-top:2px!important;padding-bottom:8px!important}}' +
       '#im-pay .imp-radio{width:22px;height:22px;border-radius:50%;flex:none;' +
       'box-shadow:inset 0 0 0 2px var(--line);display:inline-flex;align-items:center;justify-content:center}' +
       '#im-pay .imp-pk.on .imp-radio{background:var(--accent);box-shadow:none}' +
@@ -2619,10 +3432,11 @@
     }
     // A plan card, Cal AI style: name and monthly price on the left, a
     // radio on the right, the trial badge on the card's top edge.
-    function planCard(act, on, badge, name, price, save) {
+    function planCard(act, on, badge, name, price, save, billing) {
       return "<div class='imp-pk imp-plan" + (on ? " on" : "") + "' data-act='" + act + "'>" +
         (badge ? "<span class='imp-rec'>" + badge + "</span>" : "") +
         "<div><b>" + name + "</b><i>" + price + "</i>" +
+        (billing ? "<small class='imp-plan-billing'>" + billing + "</small>" : "") +
         (save ? "<u class='imp-save'>" + save + "</u>" : "") + "</div>" +
         "<span class='imp-radio'>" + (on ? CHECK : "") + "</span></div>";
     }
@@ -2634,29 +3448,49 @@
         node(STAR, T("In {n} Days - Billing Starts", { n: n }),
           T("Charged on {date} unless you cancel before.", { date: dateIn(n) }), false, true);
     }
+    // Only the selected, StoreKit-priced plan supplies these terms. No extra
+    // screen or checkout delay; cancellation help expands in the same footer.
+    function checkoutSummary(plan) {
+      var product = prod()[plan === "m" ? "monthly" : plan === "l" ? "lifetime" : "yearly"];
+      var trial = product.trialDays || 0, annual = plan === "y", lifetime = plan === "l";
+      var main = lifetime ? T("{price} charged today. One-time purchase.", {price:product.price})
+        : trial ? T(annual ? "{price}/year starting {date}" : "{price}/month starting {date}", {price:product.price,date:dateIn(trial)})
+        : T("{price} charged today.", {price:product.price});
+      var renewal = lifetime ? T("Pay once. No subscription.")
+        : T(annual ? "Renews at {price}/year unless cancelled." : "Renews at {price}/month unless cancelled.", {price:product.price});
+      return "<div class='imp-checkout-summary' data-checkout-copy='clarity_v1'><strong>" + main +
+        "</strong>" + (trial ? "" : "<span>" + renewal + "</span>") + "</div>";
+    }
+    function cancelHelp(plan) {
+      if (plan === "l") return "";
+      var product = prod()[plan === "m" ? "monthly" : "yearly"];
+      return "<details class='imp-cancel-help'><summary>" + T("Cancel anytime · How to cancel") +
+        "</summary><p>" + T("Settings → your name → Subscriptions → Konvo → Cancel.") +
+        (product.trialDays ? "<br>" + T("Cancel at least 24 hours before your trial ends to avoid being charged.") : "") +
+        "</p></details>";
+    }
     // S13. plan: 'y' | 'm' | 'l'. The Annual state renders the trial only
     // when RevenueCat says this user is eligible - the timeline never
     // describes a trial that will not happen. Lifetime is a one-time
     // purchase: one-step story, "Lifetime access", never "forever".
     function pay(plan) {
       if (!pricesReady()) return pricePendingPage();
+      if (lapsedWall && expiredAccess()) return expiredPaywall(plan);
       var pr = prod(), y = pr.yearly, m = pr.monthly, l = pr.lifetime;
       var td = plan === "y" ? (y.trialDays || 0) : 0;
       var mtd = plan === "m" ? (m.trialDays || 0) : 0;
       var sp = y.savePct || 0;
       var perMo = y.perMonth || y.perWeek || y.price;
-      var head, cta, act, tl, foot;
+      var head, cta, act, tl;
       if (mtd) {
         head = T("Start your {n}-day FREE <br>trial to continue.", { n: mtd });
         cta = T("Start My {n}-Day Free Trial", { n: mtd });
         act = "buy-m";
-        foot = T("{n} days free, then {price} per month", { n: mtd, price: m.price });
         tl = trialTimeline(mtd);
       } else if (plan === "m") {
         head = T("Try for {price} a month, cancel anytime.", { price: m.price });
         cta = T("Continue with Monthly");
         act = "buy-m";
-        foot = T("No commitment, cancel anytime");
         tl = node(LOCK, T("Today"), T("Unlock your DMs and Stories in Konvo. Pay {price}.",
                { price: m.price }), true) +
              node(STAR, T("Every month"), T("Renews at {price}, <b>cancel anytime</b>.",
@@ -2665,25 +3499,21 @@
         head = T("{price} once. Lifetime access.", { price: l.price });
         cta = T("Get Lifetime access");
         act = "buy-l";
-        foot = T("Pay once. No subscription.");
         tl = node(LOCK, T("Today"), T("Pay {price} once. That's it.", { price: l.price }), false, true);
       } else if (td) {
         head = T("Start your {n}-day FREE <br>trial to continue.", { n: td });
         cta = T("Start My {n}-Day Free Trial", { n: td });
         act = "buy-y";
-        foot = y.perMonth ? T("{n} days free, then {price} per year ({m}/mo)", { n: td, price: y.price, m: y.perMonth })
-          : T("{n} days free, then {price} per year", { n: td, price: y.price });
         tl = trialTimeline(td);
       } else {
         head = T("{price} a year ({m}/month).", { price: y.price, m: perMo });
         cta = T("Continue with Yearly");
         act = "buy-y";
-        foot = T("No commitment, cancel anytime");
         tl = node(LOCK, T("Today"), T("Unlock your DMs and Stories in Konvo."), true) +
              node(STAR, T("In 12 months"), T("Renews at {price}, <b>cancel anytime</b> before.",
                { price: y.price }), false, true);
       }
-      return "<div class='imp-head'>" +
+      return "<div class='imp-head imp-checkout-head'>" +
         "<div style='position:absolute;inset:0;background:radial-gradient(circle at 50% 30%," +
         "rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 60%)'></div>" +
         "<div style='position:absolute;left:34px;top:20%;width:74px;height:22px;" +
@@ -2701,25 +3531,25 @@
         " stroke-width='2.2' stroke-linejoin='round'><path d='M12 4c-4.4 0-8 3-8 6.8 " +
         "0 2.1 1.1 4 2.9 5.2v3.2l3.6-1.7c.5.1 1 .1 1.5.1 4.4 0 8-3 8-6.8S16.4 4 12 4Z'/>" +
         "</svg></div></div>" +
-        "<div class='imp-mid' style='justify-content:flex-start;padding:28px 24px 0;flex:1 1 auto;min-height:0'>" +
+        "<div class='imp-mid imp-checkout-mid' style='justify-content:flex-start;padding:28px 24px 0;flex:1 1 auto;min-height:0'>" +
         "<h2 style='font-size:26px;font-weight:700;text-align:center;margin-bottom:24px'>" +
-        (lapsedWall ? T("Your plan ended.") : head) + "</h2>" +
+        (lapsedWall ? T("Continue with Konvo") : head) + "</h2>" +
         (lapsedWall ? "<p style='font-size:15px;color:var(--ink);margin:-12px 0 18px;text-align:center'>" +
           T("Instagram is unblocked until you pick a plan. ") + head + "</p>" : "") +
-        tl +
+        tl + "</div><div class='imp-foot' style='padding:6px 24px 22px'>" +
         // Yearly stays on the left and preselected (Matthew, Sep 6); its
         // badge is the free days when this user is eligible, else the
         // live saving.
-        "<div style='display:flex;gap:10px;margin:auto 0 10px;padding-top:10px'>" +
+        "<div class='imp-checkout-plans'>" +
         planCard("pk-y", plan === "y",
           y.trialDays ? T("{n} DAYS FREE", { n: y.trialDays }) : "",
-          T("Yearly"), T("{price}/mo", { price: perMo }), sp ? T("SAVE {n}%", { n: sp }) : "") +
+          T("Yearly"), T("{price}/mo", { price: perMo }), sp ? T("SAVE {n}%", { n: sp }) : "", T("{price} billed annually", {price:y.price})) +
         planCard("pk-m", plan === "m", "", T("Monthly"), T("{price}/mo", { price: m.price })) +
-        "</div></div>" +
-        "<div class='imp-foot' style='padding:6px 24px 22px'>" +
+        "</div>" +
         (td || mtd ? okRow() : "") +
         "<button class='imp-btn' data-act='" + act + "'>" + cta + "</button>" +
-        fine(foot) +
+        checkoutSummary(plan) +
+        cancelHelp(plan) +
         // Restore lives in the footer row: the four-node trial timeline
         // pushed a centered one below the fold, and App Review needs it
         // findable without scrolling.
@@ -2727,6 +3557,101 @@
         "<div class='imp-links'><span data-act='terms'>" + T("Terms of Use") + "</span>" +
         "<span data-act='privacy'>" + T("Privacy Policy") + "</span>" +
         "<span data-act='restore'>" + T("Restore") + "</span></div></div>";
+    }
+
+    // Returning subscribers see their inbox, while first-time trial education
+    // keeps its existing timeline. Only the native receipt selects this layout.
+    style.textContent +=
+      '#im-pay .imp-return{display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto}' +
+      '#im-pay .imp-return-title{text-align:center;padding:22px 22px 14px;flex:none}' +
+      '#im-pay .imp-return-title p{color:var(--mut);font-size:14px;margin:0 0 7px}' +
+      '#im-pay .imp-return-title h2{font-size:32px}' +
+      '#im-pay .imp-return-preview{position:relative;flex:1;min-height:160px;overflow:hidden}' +
+      '#im-pay .imp-return-device{position:relative;width:min(72vw,274px);aspect-ratio:720/1452;margin:0 auto}' +
+      '#im-pay .imp-return-device>img{position:absolute;inset:0;width:100%;height:100%;z-index:2}' +
+      '#im-pay .imp-return-screen{position:absolute;inset:2.5% 4.5%;border-radius:32px;overflow:hidden;background:#0c1013;color:#f5f5f5;color-scheme:dark}' +
+      '#im-pay .imp-return-fallback{padding:35px 18px;text-align:center;font-size:15px;line-height:1.5}' +
+      '#im-pay .imp-return-fallback b{display:block;font-size:21px;margin-bottom:18px}' +
+      '#im-pay .imp-return-preview:after{content:"";position:absolute;inset:auto 0 0;height:64px;background:linear-gradient(transparent,var(--bg));z-index:3}' +
+      '#im-pay .imp-return-plans{display:flex;gap:10px;margin:12px 24px 8px;flex:none}' +
+      '#im-pay .imp-return-plans .imp-plan{flex:1;min-width:0;cursor:pointer;appearance:none;-webkit-appearance:none;' +
+      'background:var(--bg);color:var(--ink);font-family:inherit;text-align:left;border:1px solid var(--line)}' +
+      '#im-pay .imp-return-plans .imp-plan.on{border:2px solid var(--accent);background:var(--icbg)}' +
+      '#im-pay .imp-return-plans .imp-plan i{font-size:20px}' +
+      '#im-pay .imp-return-plans .imp-plan small{display:block;font-size:11px;color:var(--mut);margin-top:4px;line-height:1.3}' +
+      '#im-pay .imp-return .imp-foot{flex:none;padding:6px 24px max(18px,env(safe-area-inset-bottom))}' +
+      '@media(max-height:650px){#im-pay .imp-return-title{padding-top:14px}#im-pay .imp-return-title h2{font-size:28px}' +
+      '#im-pay .imp-return-device{width:235px}#im-pay .imp-return-plans{margin-top:6px}}';
+    function expiredPaywall(plan) {
+      var pr = prod(), yearly = plan !== "m", selected = yearly ? pr.yearly : pr.monthly;
+      function card(key, title, product, detail) {
+        var on = (key === "y") === yearly;
+        return "<button type='button' class='imp-pk imp-plan" + (on ? " on" : "") +
+          "' data-act='pk-" + key + "' aria-pressed='" + on + "'><div><b>" + title +
+          "</b><i>" + product.price + "</i><small>" + detail + "</small></div>" +
+          "<span class='imp-radio'>" + (on ? CHECK : "") + "</span></button>";
+      }
+      var billing = yearly ? T("{price} billed annually. Renews unless cancelled.", {price:selected.price})
+        : T("{price} billed monthly. Renews unless cancelled.", {price:selected.price});
+      // Respect any real offer supplied by the store, even for a former subscriber.
+      if (selected.trialDays) billing = yearly
+        ? T("{n} days free, then {price} per year", {n:selected.trialDays,price:selected.price})
+        : T("{n} days free, then {price} per month", {n:selected.trialDays,price:selected.price});
+      return "<div class='imp-return' data-paywall-id='expired_inbox_v1'>" +
+        "<header class='imp-return-title'><p>" + T(accessState === "expired_trial" ? "Your trial has ended." : "Your plan ended.") +
+        "</p><h2>" + T("Don't lose your inbox") + "</h2></header>" +
+        "<div class='imp-return-preview' role='img' aria-label='" + T("Your Instagram inbox") + "'>" +
+        "<div class='imp-return-device' inert aria-hidden='true'><div class='imp-return-screen'>" +
+        "<div class='imp-return-fallback'><b>" + T("Your Instagram inbox") + "</b>" +
+        T("Your messages stay on Instagram.") + "</div></div><img src='" + FRAME_IMG + "' alt=''></div></div>" +
+        "<div class='imp-return-plans'>" +
+        card("y", T("Yearly"), pr.yearly, T("Billed annually")) +
+        card("m", T("Monthly"), pr.monthly, T("Billed monthly")) + "</div>" +
+        "<div class='imp-foot'><button class='imp-btn' data-act='buy-" + (yearly ? "y" : "m") + "'>" +
+        T("Continue with Konvo") + "</button>" + fine(billing) +
+        "<div class='imp-links'><span data-act='terms'>" + T("Terms of Use") + "</span>" +
+        "<span data-act='privacy'>" + T("Privacy Policy") + "</span>" +
+        "<span data-act='restore'>" + T("Restore") + "</span></div></div></div>";
+    }
+    var returnPreviewTimer = null, returnPreviewResize = null, returnPreviewSnapshot = null;
+    function stopReturnPreview(clearSnapshot) {
+      clearTimeout(returnPreviewTimer);
+      if (returnPreviewResize) returnPreviewResize.disconnect();
+      returnPreviewResize = null;
+      if (clearSnapshot) returnPreviewSnapshot = null;
+    }
+    function showReturnPreview() {
+      stopReturnPreview(false);
+      var host = wall && wall.querySelector(".imp-return-screen");
+      if (!host) return;
+      var tries = 0;
+      function capture() {
+        if (!host.isConnected || !wall) return;
+        var api = window.KonvoOnboardingExperiment;
+        if (!returnPreviewSnapshot && api && api.captureInbox) {
+          // Wait for actual conversation rows rather than capturing a loading header.
+          var root = api.inboxRoot();
+          if (root && root.querySelector('a[href*="/direct/t/"],[role=row],[role=listitem],img')) {
+            returnPreviewSnapshot = api.captureInbox();
+          }
+        }
+        if (!returnPreviewSnapshot) {
+          if (++tries < 16) returnPreviewTimer = setTimeout(capture, 750);
+          return;
+        }
+        var shadow = host.attachShadow({mode:"open"});
+        var snapshot = returnPreviewSnapshot.cloneNode(true);
+        host.replaceChildren();
+        shadow.appendChild(snapshot);
+        snapshot.style.transformOrigin = "0 0";
+        function fit() {
+          var width = parseFloat(snapshot.style.width) || window.innerWidth;
+          snapshot.style.transform = "scale(" + (host.clientWidth / width) + ")";
+        }
+        fit();
+        if (window.ResizeObserver) { returnPreviewResize = new ResizeObserver(fit); returnPreviewResize.observe(host); }
+      }
+      capture();
     }
 
     // Beta testers see the real price and the real screen, then take this
@@ -3200,6 +4125,7 @@
     // wall fades off the now-correct chat over .8s. The reveal IS the
     // payoff moment - an instant removal read as a glitch.
     function dismiss() {
+      stopReturnPreview(true);
       stopExperimentView();
       if (!wall) return;
       if (wall.querySelector("[data-act^='buy-']")) track("paywall_exited", {});
@@ -3215,6 +4141,8 @@
     var purchaseBusy = false;
     function buy(btn, productId) {
       if (purchaseBusy) return;
+      var previousStatus = wall && wall.querySelector(".imp-checkout-status");
+      if (previousStatus) previousStatus.remove();
       // Beta builds cannot complete a purchase - App Store products do not
       // load until the Paid Apps agreement is active - so the main CTA
       // would spin and strand the tester on the wall. Let it through to
@@ -3240,7 +4168,8 @@
         : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
       var started = Date.now();
       var props = { checkout_attempt_id: attempt, checkout_tracking_version: 1,
-        plan: plan, product_id: productId, screen_id: "s13_paywall", paywall_id: "original",
+        checkout_copy_version: currentPaywallId() === "original" ? "clarity_v1" : "expired_inbox_v1",
+        plan: plan, product_id: productId, screen_id: "s13_paywall", paywall_id: currentPaywallId(),
         placement: lapsedWall ? "lapsed" : "onboarding", offering_id: P && P.offeringId || "",
         displayed_price: product.price || "", currency: product.currency || "",
         trial_days: product.trialDays || 0, trial_eligible: !!product.trialDays };
@@ -3259,6 +4188,16 @@
             : res.cancelled ? "cancelled" : res.pending ? "pending"
             : res.ok ? "not_entitled" : "error",
         }));
+        if (btn.isConnected && !(res && res.cancelled) && !(res && res.ok && res.entitled)) {
+          var status = document.createElement("p");
+          status.className = "imp-checkout-status";
+          status.setAttribute("role", "status");
+          status.textContent = res && res.pending
+            ? T("Waiting for Apple approval. You can restore your purchase after approval.")
+            : res && res.ok ? T("No active subscription was found. Try Restore or choose a plan.")
+            : T("Your purchase could not be completed. Please try again.");
+          btn.parentNode.insertBefore(status, btn);
+        }
         if (res && res.ok && res.entitled) {
           setCache(true);
           lastBuy = productId;
@@ -3279,7 +4218,10 @@
     // background the whole time, or the live inbox behind it peeks through
     // for the length of the fade.
     function setPage(html, still) {
+      stopReturnPreview(false);
       var wasPaywall = !!wall.querySelector("[data-act^='buy-']");
+      var previousPaywallId = wall.querySelector("[data-paywall-id]");
+      previousPaywallId = previousPaywallId ? previousPaywallId.getAttribute("data-paywall-id") : "original";
       // still: repaint without the entrance fade - the package cards
       // replace the same page and must not flash.
       wall.innerHTML = "<div class='imp-page'" +
@@ -3287,13 +4229,15 @@
       var isPaywall = !!wall.querySelector("[data-act^='buy-']");
       // Actual price paint, not an attempted native presentation or price loader.
       // Repainting prices / switching cards is the same paywall impression.
-      if (isPaywall && !wasPaywall) {
+      if (isPaywall && (!wasPaywall || previousPaywallId !== currentPaywallId())) {
         if (experimentContext && experimentContext.enrolled) track("paywall_viewed", {screen_id:"s13_paywall",actual_price_visible:true,offering_id:P&&P.offeringId});
-        track("paywall_presented", { placement: lapsedWall ? "lapsed" : "onboarding", paywall_id: "original" });
-        storekit("paywallImpression", "original", function(){});
+        track("paywall_presented", { placement: lapsedWall ? "lapsed" : "onboarding", paywall_id: currentPaywallId(),
+          checkout_copy_version: currentPaywallId() === "original" ? "clarity_v1" : "expired_inbox_v1" });
+        storekit("paywallImpression", currentPaywallId(), function(){});
       } else if (wasPaywall && !isPaywall) {
         track("paywall_exited", {});
       }
+      if (isPaywall) showReturnPreview();
     }
     function swap(html, then) {
       if (!wall) return;
@@ -3329,7 +4273,7 @@
             connection_type: connectionType, returning_user: returningUser });
         }
       } catch (e) {}
-      if (!setupOnly && (cached() || seenSequence())) {
+      if (!setupOnly && (cached() || (!expiredAccess() && seenSequence()))) {
         // Returning users (paid cache, or a finished/granted sequence) fire
         // login and inbox events but never remount the wall. Say so once
         // per session, or funnels read them as a post-login drop-off - the
@@ -3356,7 +4300,7 @@
       // rises the moment Superwall's sheet ends without an entitlement, so
       // a closed sheet never leaves the inbox open. One attempt per
       // session; after that the floor rules.
-      if (!setupOnly && window.__konvoSW && !(experimentContext && experimentContext.enrolled) && !swTried) {
+      if (!setupOnly && !expiredAccess() && window.__konvoSW && !(experimentContext && experimentContext.enrolled) && !swTried) {
         if (!swPending) {
           swPending = true;
           storekit("paywall", null, function (res) {
@@ -3381,6 +4325,7 @@
       // not replayed at someone who has heard it.
       var lapsed = false;
       try { lapsed = !!localStorage.konvoDone; } catch (e) {}
+      if (expiredAccess()) lapsed = true;
       // A payer opening the Screen Time step from the inbox has konvoDone
       // set and is not lapsed: without this the price fetch below painted
       // the paywall over the setup page (Sep 1, caught by the suite).
@@ -3543,9 +4488,11 @@
       // Live prices first when they arrive in time; the stand-ins after.
       if (lapsed) { setTimeout(showPay, 1500); return; }
       setTimeout(function () {
+        if (lapsedWall) return;
         swap(loaderPage(), tickRows);
       }, 1800);
       setTimeout(function () {
+        if (lapsedWall) return;
         // Screen Time setup before the sell (Aug 16): a supported build
         // goes loader -> connect -> perks. konvo-free included since
         // Aug 17 - the block ships free in v1.0 (pricing deferred, so a
@@ -3784,13 +4731,19 @@
       // Preview the purchase flow even on an already-entitled tester install.
       // Do not erase its paid cache or change its existing Screen Time shields.
       if (window.__konvoOnboardingPreview) return;
-      if (!res) return;
+      if (!res || typeof res.entitled !== "boolean") return;
+      accessState = res.accessState || (res.entitled ? "active" : "unknown");
       setCache(!!res.entitled);
       if (res.entitled) {
         dismiss();
         // No Screen Time step on launch (Sep 1): a payer without a shield
         // has the lock button in the inbox and decides for themselves.
       } else {
+        if (expiredAccess() && wall && !setupOnly) {
+          lapsedWall = true;
+          unmock();
+          setPage(pay("y"));
+        }
         // A lapsed subscription must not hold Instagram hostage: lift the
         // cage unless beta access still covers it. cageOff is a no-op when
         // no cage was ever set.

@@ -144,7 +144,7 @@ export function MobileLanding({ mobilePreview = false }: { mobilePreview?: boole
               </svg>
             ))}
           </span>
-          <span style={{ color: INK, fontWeight: 600 }}>Loved by 10,000 users</span>
+          <span style={{ color: INK, fontWeight: 600 }}>Loved by 15,000 users</span>
         </div>
 
         <div className={styles.downloads}>
